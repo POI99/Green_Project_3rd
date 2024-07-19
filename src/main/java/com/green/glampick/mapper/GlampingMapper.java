@@ -18,6 +18,7 @@ public interface GlampingMapper {
     // 관심등록
     int deleteFavorite(GetFavoriteRequestDto p);
     int insertFavorite(GetFavoriteRequestDto p);
+    Long getIsFavData(GetInfoRequestDto p);
     //글램핑 상세정보
     GetGlampingInformationResponseDto selGlampingInfo(GetInfoRequestDto p); //글램핑정보
     // 룸 정보

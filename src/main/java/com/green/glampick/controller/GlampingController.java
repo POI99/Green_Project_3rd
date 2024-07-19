@@ -53,8 +53,9 @@ public class GlampingController {
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetGlampingInformationResponseDto.class)))
     public ResponseEntity<? super GetGlampingInformationResponseDto> infoGlampingDetail(@ParameterObject @ModelAttribute GetInfoRequestDto p) {
-            return service.infoGlampingDetail(p);
+        return service.infoGlampingDetail(p);
     }
+    /*
     @Operation(summary = "남은 객실 리스트 출력",
             description =
                     "<strong> 변수명 glampId : 글램프 PK </strong> <p>  ex)23 </p>"  +
@@ -82,7 +83,7 @@ public class GlampingController {
     public ResponseEntity<? super GetMoreRoomItemResponseDto> moreDetailsRoom(@ParameterObject @ModelAttribute GetInfoRequestDto p) {
         return service.moreDetailsRoom(p);
     }
-
+     */
     @Operation(
             summary = "관심 글램핑 등록" ,
             description = "<strong> 변수명 glampId :  글램프 PK </strong> <p>  ex)23 </p>",

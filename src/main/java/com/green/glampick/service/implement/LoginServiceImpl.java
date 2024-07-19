@@ -28,6 +28,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -359,10 +360,34 @@ public class LoginServiceImpl implements LoginService {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
 
             //  MimeMessage 에 받아온 유저 이메일과, Text, Code 에 대한 값을 넣는다.  //
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
             helper.setTo(userEmail);
-            helper.setSubject("Your Authentication Code");
-            helper.setText("Your authentication code is: " + mailCode, true);
+            helper.setSubject("글램픽 인증 코드");
+
+            String htmlContent = "<!DOCTYPE html>" +
+                    "<html>" +
+                    "<head>" +
+                    "<style>" +
+                    "@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');" +
+                    "body {font-family: 'Pretendard-Regular', sans-serif;}" +
+                    ".container {padding: 20px; text-align: center;}" +
+                    ".message {font-size: 16px; color: #34495e; margin-top: 20px;}" +
+                    ".code {font-size: 24px; font-weight: bold; color: #2c3e50; margin-top: 10px;}" +
+                    ".highlight {color: #355179;}" + // 이미지 색상과 조화로운 색상
+                    "</style>" +
+                    "</head>" +
+                    "<body>" +
+                    "<div class='container'>" +
+                    "<img src='cid:mailImage' alt='메일 이미지' class='background-image'>" +
+                    "<p class='message'>안녕하세요.</p>" +
+                    "<p class='message'>글램픽 인증 코드는 다음과 같습니다.</p>" +
+                    "<p class='code highlight'>" + mailCode + "</p>" +
+                    "<p class='message'>글램픽을 이용해 주셔서 감사합니다 !</p>" +
+                    "</div>" +
+                    "</body>" +
+                    "</html>";
+            helper.setText(htmlContent, true);
+            helper.addInline("mailImage", new ClassPathResource("mailImage/main-big.png"));
 
             //  위에서 정의한 MimeMessage 를 전송한다.  //
             mailSender.send(mimeMessage);

@@ -15,6 +15,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
 @RequiredArgsConstructor
 @Component
 public class JsonFileReader {
@@ -22,7 +25,7 @@ public class JsonFileReader {
     public void insert(){
         // 파일 경로 지정
         String filePath = "C:\\Users\\Administrator\\Downloads\\camping_data.json";
-
+        RoomInfoDto roomInfoDto = new RoomInfoDto();
         try (FileReader reader = new FileReader(filePath)) {
             // JSONParser 인스턴스 생성
             JSONParser jsonParser = new JSONParser();
@@ -32,9 +35,15 @@ public class JsonFileReader {
             if (obj instanceof JSONArray) {
                 JSONArray jsonArray = (JSONArray) obj;
                 for (Object jsonObject : jsonArray) {
+                    String name = getRoomNameFromJson((JSONObject) jsonObject);
+                    RoomInfoDto roomId = mapper.getRoomId(name);
+                    if (roomId == null) continue;
 
-                    RoomInfoDto roomInfoDto = parseCampingData((JSONObject) jsonObject);
-                        mapper.insRoomData(roomInfoDto);
+                    roomInfoDto = parseCampingData((JSONObject) jsonObject, name);
+                    roomInfoDto.setRoomId(roomId.getRoomId());
+
+                    mapper.insertRoomImg(roomInfoDto);
+
                 }
             } else if (obj instanceof JSONObject) {
                 System.out.println("========");
@@ -43,37 +52,48 @@ public class JsonFileReader {
             e.printStackTrace();
         }
     }
-    private static RoomInfoDto parseCampingData(JSONObject jsonObject) {
-        String glamp_name = (String) jsonObject.get("glamp_name");
+
+    private static RoomInfoDto parseCampingData(JSONObject jsonObject, String roomName) {
+
         RoomInfoDto roomInfoDto = new RoomInfoDto();
-
-            Long pk = (Long) jsonObject.get("pk");
-            JSONObject room = (JSONObject) jsonObject.get("room");
-
-            String checkIn = (String)room.get("check_in_time");
-            String checkOut = (String)room.get("check_out_time");
+        List<String> inputData = new ArrayList<>();
+        Long pk = (Long) jsonObject.get("pk");
+        JSONObject room = (JSONObject) jsonObject.get("room");
+        String name = (String) room.get("name");
+        if (name.equals(roomName)) {
+            JSONArray images = (JSONArray) room.get("images");
+            for (Object item : images) {
+                inputData.add((String)item);
+            }
+            roomInfoDto.setRoomImgName(inputData);
+            System.out.println(roomInfoDto.getRoomImgName());
+            /*
+            String checkIn = (String) room.get("check_in_time");
+            String checkOut = (String) room.get("check_out_time");
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
             LocalTime checkInTime = LocalTime.parse(checkIn, formatter);
             LocalTime checkOutTime = LocalTime.parse(checkOut, formatter);
 
+
             roomInfoDto.setGlampId(pk.intValue());
-            roomInfoDto.setName((String)room.get("name"));
+            roomInfoDto.setName((String) room.get("name"));
             roomInfoDto.setPrice(((Long) room.get("price")).intValue());
             roomInfoDto.setNumPeople(((Long) room.get("room_num_people")).intValue());
             roomInfoDto.setMaxPeople(((Long) room.get("room_max_people")).intValue());
             roomInfoDto.setCheckIn(checkInTime);
             roomInfoDto.setCheckOut(checkOutTime);
-
-
-//            System.out.println("Room Name: " + room.get("name"));
-//            System.out.println("Room Price: " + room.get("price"));
-//            System.out.println("Room checkIn: " + room.get("check_in_time"));
-//            System.out.println("Room checkOut: " + room.get("check_out_time"));
-//            System.out.println("Room numPeople: " + room.get("room_num_people"));
-//            System.out.println("Room maxPeople: " + room.get("room_max_people"));
-//            room.get("check_in_time");
+             */
+        }
 
         return roomInfoDto;
     }
+
+    private static String getRoomNameFromJson(JSONObject jsonObject) {
+        JSONObject room = (JSONObject) jsonObject.get("room");
+        String name = (String) room.get("name");
+        return name;
+    }
 }
+
+

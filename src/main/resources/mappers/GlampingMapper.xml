@@ -14,7 +14,11 @@
     <delete id="deleteFavorite">
         DELETE FROM glamp_favorite WHERE user_id = #{userId} AND glamp_id = #{glampId}
     </delete>
-
+    <select id="getIsFavData">
+        SELECT	A.user_id, A.glamp_id
+        FROM 		glamp_favorite A
+        WHERE 	A.user_id = #{userId} AND A.glamp_id = #{glampId}
+    </select>
     <!-- 글램핑 상세 페이지 글램핑 정보 -->
     <select id="selGlampingInfo">
         SELECT		glamp_id AS glampId,
@@ -45,9 +49,6 @@
         ON 			A.room_id = B.room_id
         GROUP BY 	A.room_id
         HAVING 		A.glamp_id = #{glampId}
-        <if test = "size != 0" >
-            LIMIT 		#{size}
-        </if>
     </select>
     <!-- 체크인 체크아웃 데이트 추출 -->
     <select id="selDate">

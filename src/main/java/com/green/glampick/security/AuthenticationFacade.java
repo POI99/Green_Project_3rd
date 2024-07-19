@@ -7,10 +7,14 @@ import org.springframework.stereotype.Component;
 public class AuthenticationFacade {
 
     public MyUser getLoginUser() {
-        MyUserDetail myUserDetails = (MyUserDetail)SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
-        return myUserDetails == null ? null : myUserDetails.getMyUser();
+        try {
+            MyUserDetail myUserDetails = (MyUserDetail)SecurityContextHolder.getContext()
+                    .getAuthentication()
+                    .getPrincipal();
+            return myUserDetails == null ? null : myUserDetails.getMyUser();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public long getLoginUserId() {

@@ -108,11 +108,16 @@ public class GlampingServiceImpl implements GlampingService {
 
     @Override
     public ResponseEntity<? super GetGlampingInformationResponseDto> infoGlampingDetail(GetInfoRequestDto p) {
-        log.info("p: {}", p);
+
         //글램핑 정보,객실 정보 리스트, 리뷰 리스트, 리뷰 유저수
         GetGlampingInformationResponseDto glampInfoDto = mapper.selGlampingInfo(p);
         List<GlampingRoomListItem> rooms = mapper.selRoomInfo(p);
         List<GlampingDetailReviewItem> reviews = mapper.selReviewInfoInGlamping(p.getGlampId());
+        // 로그인 중 이면 관심 등록 데이터 판단
+        if (facade.getLoginUserId() != 0) {
+                int isFavData = getIsFavData(p, facade.getLoginUserId());
+                glampInfoDto.setIsFav(isFavData);
+        }
 
         int userCount = mapper.selCount(p.getGlampId());
         boolean isReservationAvailable = true;
@@ -147,6 +152,7 @@ public class GlampingServiceImpl implements GlampingService {
             }
 
         }
+        Collections.sort(rooms);
 
         // dto 데이터 세팅
         glampInfoDto.setRoomService(hashServices);
@@ -156,7 +162,7 @@ public class GlampingServiceImpl implements GlampingService {
 
         return new ResponseEntity<>(glampInfoDto,HttpStatus.OK) ;
     }
-
+    /*
     @Override
     public ResponseEntity<? super GetMoreRoomItemResponseDto> moreDetailsRoom(GetInfoRequestDto p) {
         // 객실 정보 리스트
@@ -191,7 +197,7 @@ public class GlampingServiceImpl implements GlampingService {
 
         return new ResponseEntity<>(glampInfoDto,HttpStatus.OK);
     }
-
+     */
     @Override
     public ResponseEntity<? super GetGlampingReviewInfoResponseDto> infoReviewList(ReviewInfoRequestDto p) {
 
@@ -304,6 +310,20 @@ public class GlampingServiceImpl implements GlampingService {
         System.out.println(!start1.isAfter(end2) && !start2.isAfter(end1));
         return !start1.isAfter(end2) && !start2.isAfter(end1); // 날짜가 겹치면 true
     }
+
+    private int getIsFavData(GetInfoRequestDto dto, long loginUserId) {
+        if (loginUserId != 0) {
+            dto.setUserId(loginUserId);
+            if (mapper.getIsFavData(dto) == null){
+                return 0;
+            } else {
+                return 1;
+            }
+        } else {
+            return 0;
+        }
+    }
 }
+
 
 

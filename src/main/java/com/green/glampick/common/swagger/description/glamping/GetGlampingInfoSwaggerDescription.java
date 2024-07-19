@@ -22,6 +22,7 @@ public class GetGlampingInfoSwaggerDescription {
             "<p> infoBasic: 기본 정보</p>" +
             "<p> infoParking: 주차장 정보</p>" +
             "<p> infoNotice: 유의 사항</p>" +
+            "<p> isFav: 값 0 -> 좋아요x 값 1 -> 좋아요등록o</p>" +
             "<strong>[리뷰 정보]</strong>" +
             "<p> userName: 유저닉네임</p>" +
             "<p> content: 리뷰내용</p>" +

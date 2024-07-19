@@ -2,10 +2,11 @@ package com.green.glampick.dto.object.glamping;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 @Data
-public class GlampingRoomListItem {
+public class GlampingRoomListItem implements Comparable<GlampingRoomListItem>{
 
     private List<String> roomServices;
 
@@ -28,4 +29,17 @@ public class GlampingRoomListItem {
     @Schema(example = "true", $dynamicAnchor = "예약가능여부")
     private boolean isReservationAvailable;
 
+
+    @Override
+    public int compareTo(GlampingRoomListItem other) {
+        // 첫 번째 기준: isReservationAvailable이 true이면 우선순위를 높게 설정
+        if (this.isReservationAvailable && !other.isReservationAvailable) {
+            return -1; // 현재 객체가 우선순위가 높음
+        } else if (!this.isReservationAvailable && other.isReservationAvailable) {
+            return 1; // 다른 객체가 우선순위가 높음
+        } else {
+            // 두 번째 기준: roomName을 알파벳 순으로 정렬
+            return this.roomName.compareTo(other.roomName);
+        }
+    }
 }

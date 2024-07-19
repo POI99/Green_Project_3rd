@@ -15,6 +15,8 @@ public class RoomInfoDto {
     private int numPeople;
     private int maxPeople;
 
+
+    private Long roomId;
     private List<String> roomImgName;
 }
 /**
