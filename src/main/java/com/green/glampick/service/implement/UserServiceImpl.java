@@ -204,7 +204,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public ResponseEntity<? super DeleteReviewResponseDto> deleteReview(DeleteReviewRequestDto dto) {
 
-        log.info("dto : {}", dto);
         try {
             dto.setUserId(authenticationFacade.getLoginUserId());
             if (dto.getUserId() <= 0) {
