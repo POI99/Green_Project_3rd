@@ -39,11 +39,6 @@ public class SecurityConfiguration {
                                         "api/user**"
                                         , "api/user/**"
 
-                                        , "/bookingdetail"
-                                        , "/myreview"
-                                        , "/favorite"
-                                        , "/userinfo"
-
                                 ).authenticated()
                                 .anyRequest().permitAll()
                 )
