@@ -28,8 +28,8 @@ public class GetGlampingInformationResponseDto extends ResponseDto {
         private String glampImage;
         @Schema(example = "그린 파인트리글램핑&카라반 ", description = "글램핑 명")
         private String glampName;
-        @Schema(example = "9.5 ", description = "별점")
-        private int starPointAvg;
+        @Schema(example = "4.5 ", description = "별점")
+        private double starPointAvg;
         @Schema(example = "경기 포천시 이동면 연곡리", description = "주소")
         private String glampLocation;
         @Schema(example = "서울 잠실 40분 거리에 2022년 11월 신축 오픈 캠핑장입니다.", description = "글램핑 소개")

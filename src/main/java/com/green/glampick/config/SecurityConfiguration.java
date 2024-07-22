@@ -36,38 +36,16 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
                         auth -> auth.requestMatchers(
-                                        //회원가입, 로그인 인증이 안 되어 있더라도 사용 가능하게 세팅
-                                        "/api/auth/sign-up"
-                                        , "/api/auth/sign-in"
-                                        , "/api/auth/access-token"
-                                        , "/api/auth/mail-send"
-                                        , "/api/auth/mail-check"
-                                        , "/api/auth/send-sms"
-                                        , "/api/auth/check-sms"
+                                       "api/book"
+                                        , "api/book/**"
+                                        , "api/user**"
+                                        , "api/user/**"
+                                        , "/bookingdetail"
+                                        , "/myreview"
+                                        , "/favorite"
+                                        , "/userinfo"
 
-                                        //swagger 사용할 수 있게 세팅
-                                        , "/swagger"
-                                        , "/swagger-ui/**"
-                                        , "/v3/api-docs/**"
-
-                                        //프론트 화면 보일수 있게 세팅
-                                        ,"/"
-                                        ,"/index.html"
-                                        , "/css/**"
-                                        , "/js/**"
-                                        , "/static/**"
-
-                                        //프론트에서 사용하는 라우터 주소
-                                        , "/sign-in"
-                                        , "/sign-up"
-                                        , "/profile/*"
-                                        , "/feed"
-
-                                        //actuator
-                                        , "/actuator"
-                                        , "/actuator/*"
-
-                                ).permitAll()
+                                ).authenticated()
                                 .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

@@ -4,6 +4,7 @@ import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.object.UserReviewListItem;
 import com.green.glampick.dto.request.user.*;
+import com.green.glampick.dto.response.login.PostSignUpResponseDto;
 import com.green.glampick.dto.response.owner.post.PostGlampingInfoResponseDto;
 import com.green.glampick.dto.response.user.*;
 import com.green.glampick.entity.*;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -149,14 +151,15 @@ public class UserServiceImpl implements UserService {
 
 
         ReviewEntity reviewEntity = new ReviewEntity(dto);
-        reviewEntity.setReservationId(dto.getReservationId());
-        reviewEntity.setReviewContent(dto.getReviewContent());
-        reviewEntity.setReviewStarPoint(dto.getReviewStarPoint());
-        reviewEntity = reviewRepository.save(reviewEntity);
-        glampingStarRepository.fin(dto.getReservationId());
 
         try {
             ReservationCompleteEntity reservationCompleteEntity = reservationCompleteRepository.findByReservationId(dto.getReservationId());
+            reviewEntity.setReservationId(dto.getReservationId());
+            reviewEntity.setReviewContent(dto.getReviewContent());
+            reviewEntity.setReviewStarPoint(dto.getReviewStarPoint());
+            reviewEntity.setGlampId(reservationCompleteEntity.getGlampId());
+            reviewEntity = reviewRepository.save(reviewEntity);
+            glampingStarRepository.fin(dto.getReservationId());
             glampingStarRepository.findStarPointAvg(reservationCompleteEntity.getGlampId());
         } catch (Exception e) {
             e.printStackTrace();
@@ -385,11 +388,14 @@ public class UserServiceImpl implements UserService {
         }
 
 
+
         try {
             UserEntity userEntity = userRepository.findById(dto.getUserId()).get();
             if (dto.getUserId() == 0) {
                 return UpdateUserResponseDto.noExistedUser();
             }
+            boolean existedNickname = userRepository.existsByUserNickname(dto.getUserNickname());
+            if (existedNickname) { return PostSignUpResponseDto.duplicatedNickname(); }
 
             if (mf == null || mf.isEmpty()) { dto.setUserProfileImage(null); }
             else {

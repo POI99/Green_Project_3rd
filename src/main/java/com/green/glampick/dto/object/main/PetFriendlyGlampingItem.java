@@ -14,7 +14,7 @@ public class PetFriendlyGlampingItem {
     @Schema(example = "경북", description = "글램핑장의 위치")
     private String region;
     @Schema(example = "4.5", description = "평균 별점")
-    private int starPoint;
+    private double starPoint;
     @Schema(example = "123", description = "리뷰 개수")
     private int reviewCount;
     @Schema(example = "65,500", description = "글램핑장의 가격")

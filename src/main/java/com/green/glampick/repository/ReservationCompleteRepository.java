@@ -22,6 +22,7 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
                             ", A.reservation_id AS reservationId" +
                             ", A.check_in_date AS checkInDate " +
                             ", A.check_out_date AS checkOutDate " +
+                            ", A.status AS status " +
                             ", A.created_at AS createdAt " +
                             ", B.check_in_time AS checkInTime " +
                             ", B.check_out_time AS checkOutTime " +

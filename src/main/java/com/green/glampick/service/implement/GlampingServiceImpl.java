@@ -113,26 +113,31 @@ public class GlampingServiceImpl implements GlampingService {
         GetGlampingInformationResponseDto glampInfoDto = mapper.selGlampingInfo(p);
         List<GlampingRoomListItem> rooms = mapper.selRoomInfo(p);
         List<GlampingDetailReviewItem> reviews = mapper.selReviewInfoInGlamping(p.getGlampId());
+
         // 로그인 중 이면 관심 등록 데이터 판단
         if (facade.getLoginUserId() != 0) {
-                int isFavData = getIsFavData(p, facade.getLoginUserId());
-                glampInfoDto.setIsFav(isFavData);
+            log.info("p: {}", p);
+            log.info("p: {} ", facade.getLoginUserId());
+            int isFavData = getIsFavData(p, facade.getLoginUserId());
+            glampInfoDto.setIsFav(isFavData);
         }
-
+        //리뷰 한 유저 수
         int userCount = mapper.selCount(p.getGlampId());
         boolean isReservationAvailable = true;
 
 
         //중복데이터 방지를 위한 HashSet
         HashSet<String> hashServices = new HashSet<>();
-        //  서비스 가져오기
+        //  서비스 & 예약가능여부 데이터 세팅
         for (GlampingRoomListItem item : rooms) {
             item.setReservationAvailable(isReservationAvailable);
             item.setRoomServices(mapper.selRoomService(item.getRoomId()));
 
             p.setRoomId(item.getRoomId());
+            //객실 별 
             List<GlampingDateItem> dateItems = mapper.selDate(p);
             for (GlampingDateItem dateItem : dateItems) {
+                //검색된 날짜와 예약상태의 객실들 데이터
                 HashMap<String, LocalDate> dateHashMap = parseDate(p.getInDate(), p.getOutDate(), dateItem.getCheckInDate(), dateItem.getCheckOutDate());
                 boolean k = checkOverlap(dateHashMap) ;
 

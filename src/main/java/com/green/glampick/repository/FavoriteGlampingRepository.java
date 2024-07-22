@@ -14,7 +14,7 @@ public interface FavoriteGlampingRepository extends JpaRepository<GlampFavoriteE
 
     @Query(
             value =
-            "SELECT A.glamp_id AS glampId " +
+            "SELECT distinct(A.glamp_id) AS glampId " +
             ", A.glamp_name AS glampName " +
             ", A.glamp_location  AS glampLocation " +
             ", A.star_point_avg AS starPoint " +

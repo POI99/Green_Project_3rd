@@ -10,6 +10,7 @@ public interface GetReservationCompleteResultSet {
     long getReservationId();
     String getCheckInDate();
     String getCheckOutDate();
+    int getStatus();
     String getCreatedAt();
     String getCheckInTime();
     String getCheckOutTime();

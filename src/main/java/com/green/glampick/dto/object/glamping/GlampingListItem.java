@@ -21,12 +21,11 @@ public class GlampingListItem {
     private String glampPic;
 
     @Schema(example = "4.6", description = "글램핑장의 별점")
-    private int starPoint;
+    private double starPoint;
 
     @Schema(example = "123", description = "글램핑장의 리뷰 개수")
     private int reviewCount;
 
     @Schema(example = "65,000", description = "글램핑장의 예약 가격")
     private int price;
-
 }

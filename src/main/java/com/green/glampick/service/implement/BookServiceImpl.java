@@ -153,6 +153,7 @@ public class BookServiceImpl implements BookService {
                     beforeEntity.getGlampId(),
                     beforeEntity.getRoomId(),
                     beforeEntity.getInputName(),
+                    beforeEntity.getPersonnel(),
                     beforeEntity.getCheckInDate(),
                     beforeEntity.getCheckOutDate(),
                     beforeEntity.getPayAmount(),

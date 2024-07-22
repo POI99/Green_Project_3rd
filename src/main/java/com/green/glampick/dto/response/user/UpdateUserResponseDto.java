@@ -37,4 +37,9 @@ public class UpdateUserResponseDto extends ResponseDto {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
     }
 
+    public static ResponseEntity<ResponseDto> duplicatedNickname() {
+        ResponseDto result = new ResponseDto(ResponseCode.DUPLICATE_NICK_NAME, ResponseMessage.DUPLICATE_NICK_NAME);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+    }
+
 }

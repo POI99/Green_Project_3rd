@@ -15,7 +15,7 @@
         DELETE FROM glamp_favorite WHERE user_id = #{userId} AND glamp_id = #{glampId}
     </delete>
     <select id="getIsFavData">
-        SELECT	A.user_id, A.glamp_id
+        SELECT	A.user_id
         FROM 		glamp_favorite A
         WHERE 	A.user_id = #{userId} AND A.glamp_id = #{glampId}
     </select>
