@@ -36,10 +36,9 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
                         auth -> auth.requestMatchers(
-                                       "api/book"
-                                        , "api/book/**"
-                                        , "api/user**"
+                                        "api/user**"
                                         , "api/user/**"
+
                                         , "/bookingdetail"
                                         , "/myreview"
                                         , "/favorite"
