@@ -229,6 +229,7 @@ public class UserServiceImpl implements UserService {
                 reviewImageRepository.deleteById(list.get(i).getReviewImageId());
             }
             reviewRepository.deleteById(dto.getReviewId());
+            reviewRepository.findStarPointAvg();
 
 
         } catch (Exception e) {
