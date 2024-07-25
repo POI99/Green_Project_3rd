@@ -20,8 +20,8 @@ public class GlampingEntity extends UpdatedAt {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long glampId;  // 글램핑 ID
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @OneToOne
+    @JoinColumn(name = "userId", nullable = false, unique = true)
     private UserEntity user;  // 유저 ID
 
     @Column(length = 50, nullable = false)
@@ -46,7 +46,7 @@ public class GlampingEntity extends UpdatedAt {
     private Point location;  // 좌표 (지도용)
 
     @Column(nullable = false)
-    private int region;  // 글램핑 지역분류
+    private String region;  // 글램핑 지역분류
 
     @ColumnDefault("0")
     private int extraCharge;   // 인원 추가 요금

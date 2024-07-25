@@ -150,8 +150,8 @@ public class LoginServiceImpl implements LoginService {
 
 
             //  Request 유저 권한과, 유저 소셜타입을 지정하여 DTO 값에 넣는다.
-            dto.setUserRole(Role.ROLE_USER.name());
-            dto.setUserSocialType(SignInProviderType.LOCAL.name());
+            dto.setUserRole(Role.ROLE_USER);
+            dto.setUserSocialType(SignInProviderType.LOCAL);
 
             //  가공이 끝난 DTO 를 새로운 userEntity 객체로 생성한다.  //
             UserEntity userEntity = new UserEntity(dto);

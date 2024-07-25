@@ -21,41 +21,52 @@ public class ReservationBeforeEntity extends CreatedAt {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationId;//예약 ID
 
-    @Column(length = 13, nullable = false)
-    private String bookId;
+    @Column(length = 13, nullable = false, unique = true)
+    private String bookId;  //예약 번호
 
-    private long userId;//유저 ID
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;// 유저 ID
 
+    @ManyToOne
+    @JoinColumn(name = "glamp_id", nullable = false)
+    private GlampingEntity glamping; // 글램핑 ID
 
-    private long glampId;
+    @ManyToOne
+    @JoinColumn(name = "room_id", nullable = false)
+    private RoomEntity roomId;  //객실 ID
 
-    private long roomId;  //객실 ID
-
+    @Column(length = 10, nullable = false)
     private String inputName;//예약자 성함
 
+    @Column(length = 11, nullable = false)
     private int personnel;
 
+    @Column(nullable = false)
     LocalDate checkInDate;//체크인 일자
 
+    @Column(nullable = false)
     LocalDate checkOutDate;//체크아웃 일자
 
-    private String pg;
+    @Column(length = 10, nullable = false)
+    private String pg;  //결제수단
 
+    @Column(length = 20, nullable = false)
     private long payAmount;//최종 결제 가격
 
 
-    public ReservationBeforeEntity(PostBookRequestDto dto) {
-
-        this.reservationId = dto.getReservationId();
-        this.userId = dto.getUserId();
-        this.bookId = dto.getBookId();
-        this.glampId = dto.getGlampId();
-        this.roomId = dto.getRoomId();
-        this.inputName = dto.getInputName();
-        this.checkInDate = dto.getCheckInDate();
-        this.checkOutDate = dto.getCheckOutDate();
-        this.personnel = dto.getPersonnel();
-        this.pg = dto.getPg();
-        this.payAmount = dto.getPayAmount();
-    }
+//    public ReservationBeforeEntity(PostBookRequestDto dto) {
+//
+//        this.reservationId = dto.getReservationId();
+//        this.userId = dto.getUserId();
+//        this.bookId = dto.getBookId();
+//        this.glampId = dto.getGlampId();
+//        this.roomId = dto.getRoomId();
+//        this.inputName = dto.getInputName();
+//        this.checkInDate = dto.getCheckInDate();
+//        this.checkOutDate = dto.getCheckOutDate();
+//        this.personnel = dto.getPersonnel();
+//        this.pg = dto.getPg();
+//        this.payAmount = dto.getPayAmount();
+//    }
 }
