@@ -28,7 +28,6 @@ spring:
 
   jpa:
     hibernate:
-      #      ddl-auto: none
       ddl-auto: none
     show-sql: true  # JPA 만든 쿼리문 로그에 출력해줘
     properties:
