@@ -21,7 +21,7 @@ public class GlampingEntity extends UpdatedAt {
     private Long glampId;  // 글램핑 ID
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false, unique = true)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private UserEntity user;  // 유저 ID
 
     @Column(length = 50, nullable = false)

@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "glampService", uniqueConstraints = {
+@Table(name = "glamp_service", uniqueConstraints = {
         @UniqueConstraint(
-                columnNames = {"roomId","serviceId"}
+                columnNames = {"room_id","service_id"}
 )})
 public class RoomServiceEntity extends CreatedAt {
     //룸 서비스시설 테이블
@@ -19,11 +19,11 @@ public class RoomServiceEntity extends CreatedAt {
     private Long roomServiceId; // 룸-서비스 ID
 
     @ManyToOne
-    @JoinColumn(name = "roomId", nullable = false)
+    @JoinColumn(name = "room_id", nullable = false)
     private RoomEntity room;  //객실 ID
 
     @ManyToOne
-    @JoinColumn(name = "serviceId", nullable = false)
+    @JoinColumn(name = "service_id", nullable = false)
     private ServiceEntity service;  //서비스 ID
 
 }
