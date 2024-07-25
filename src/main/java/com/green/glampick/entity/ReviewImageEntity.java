@@ -22,7 +22,7 @@ public class ReviewImageEntity extends CreatedAt{
     private Long reviewImageId; // 객실 이미지 ID
 
     @ManyToOne
-    @JoinColumn(name = "reviewId", nullable = false)
+    @JoinColumn(name = "review_id", nullable = false)
     private ReviewEntity reviewId; // 리뷰 ID
 
     @Column(length = 200,nullable = false)

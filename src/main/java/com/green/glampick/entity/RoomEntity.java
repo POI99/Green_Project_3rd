@@ -16,7 +16,7 @@ public class RoomEntity extends CreatedAt {
     private Long roomId;  //객실 ID
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private GlampingEntity glampId;  //글램핑 ID
 
     @Column(length = 30, nullable = false)

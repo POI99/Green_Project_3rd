@@ -20,15 +20,15 @@ public class ReviewEntity extends CreatedAt{
     private Long reviewId;  // 리뷰 PK
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userId;  // 유저 ID
 
     @ManyToOne
-    @JoinColumn(name = "glampId", nullable = false)
+    @JoinColumn(name = "glamp_id", nullable = false)
     private GlampingEntity glampId;// 글램핑 ID
 
     @ManyToOne
-    @JoinColumn(name = "reservationId", nullable = false)
+    @JoinColumn(name = "reservation_id", nullable = false)
     private ReservationCompleteEntity reservationId; // 객실 ID
 
     @Column(length = 500, nullable = false )
