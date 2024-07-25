@@ -18,7 +18,6 @@ import java.time.LocalDate;
 @Table(name = "user_coupon", uniqueConstraints = {
         @UniqueConstraint(
                 columnNames = {"userId","couponId"} )})
-// 유저 쿠폰 테이블
 public class UserCouponEntity extends CreatedAt {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("유저쿠폰 ID")
