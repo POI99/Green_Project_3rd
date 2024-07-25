@@ -12,31 +12,46 @@ import org.hibernate.annotations.CreationTimestamp;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "review")
+@Entity
 @Table(name = "review")
-public class ReviewEntity {
+public class ReviewEntity extends CreatedAt{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long reviewId;  // 리뷰 PK
-    private long userId;  // 유저 PK
-    private long glampId;
-    private String reviewContent;  // 리뷰내용
+    private Long reviewId;  // 리뷰 PK
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity userId;  // 유저 ID
+
+    @ManyToOne
+    @JoinColumn(name = "glamp_id", nullable = false)
+    private GlampingEntity glampId;// 글램핑 ID
+
+    @ManyToOne
+    @JoinColumn(name = "reservation_id", nullable = false)
+    private ReservationCompleteEntity reservationId; // 객실 ID
+
+    @Column(length = 500, nullable = false )
+    private String reviewContent;  // 리뷰 내용
+
+    @Column(nullable = false )
     private int reviewStarPoint;  // 리뷰 별점
-    private String reviewComment;
-    private long reservationId;
-    @CreationTimestamp
-    @Column(updatable = false)
-    private String createdAt;  // 리뷰작성일자
+
+    @Column(length = 500)
+    private String reviewComment; // 사장님 답변
 
 
-    public ReviewEntity (PostReviewRequestDto dto) {
 
-        this.userId = dto.getUserId();
-        this.reviewContent = dto.getReviewContent();
-        this.reviewStarPoint = dto.getReviewStarPoint();
-        this.reservationId = dto.getReservationId();
-        this.glampId = dto.getGlampId();
-    }
+
+
+//    public ReviewEntity (PostReviewRequestDto dto) {
+//
+//        this.userId = dto.getUserId();
+//        this.reviewContent = dto.getReviewContent();
+//        this.reviewStarPoint = dto.getReviewStarPoint();
+//        this.reservationId = dto.getReservationId();
+//        this.glampId = dto.getGlampId();
+//    }
 
 
 
