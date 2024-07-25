@@ -14,16 +14,20 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "review_image")
+@Entity
 @Table(name = "review_image")
-public class ReviewImageEntity {
-    //객실 이미지 테이블
+public class ReviewImageEntity extends CreatedAt{
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long reviewImageId;  //객실 이미지 ID
-    private long reviewId;  //객실 ID
-    private String reviewImageName;  //객실 이미지명
-    @CreationTimestamp
-    @Column(updatable = false)
-    private String createdAt;  //객실 이미지 등록 일자
+    private Long reviewImageId; // 객실 이미지 ID
+
+    @ManyToOne
+    @JoinColumn(name = "reviewId", nullable = false)
+    private ReviewEntity reviewId; // 리뷰 ID
+
+    @Column(length = 200,nullable = false)
+    private String review_image_name; // 리뷰 이미지명
+
+
 
 }
