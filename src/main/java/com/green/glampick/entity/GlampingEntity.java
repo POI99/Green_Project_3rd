@@ -6,53 +6,61 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.geo.Point;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "glamping")
+@Entity
 @Table(name = "glamping")
-public class GlampingEntity{
+public class GlampingEntity extends UpdatedAt {
 
-    //글램핑 테이블
+    // 글램핑 테이블
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long glampId;  //글램핑 ID
+    private Long glampId;  // 글램핑 ID
 
-    private long userId;  //유저 ID
+    @ManyToOne
+    @JoinColumn(name = "userId", nullable = false, unique = true)
+    private UserEntity user;  // 유저 ID
 
-    private String glampName;  //글램핑명
+    @Column(length = 50, nullable = false)
+    private String glampName;  // 글램핑명
 
+    @ColumnDefault("0")
     private Double recommendScore;
 
+    @Column(length = 200, nullable = false)
     private String glampImage;
 
-    private long starPointAvg;  //평균 별점
+    @Column(nullable = false) @ColumnDefault("0")
+    private Double starPointAvg;  // 평균 별점
 
-    private long reviewCount; // 댓글갯수
+    @Column(nullable = false) @ColumnDefault("0")
+    private int reviewCount; // 댓글갯수
 
-    private String glampLocation;  //글램핑 위치
+    @Column(length = 50, nullable = false, unique = true)
+    private String glampLocation;  // 글램핑 위치
 
-    private String region;  //글램핑 지역분류
+    @Column(unique = true)
+    private Point location;  // 좌표 (지도용)
 
-    private long extraCharge;
+    @Column(nullable = false)
+    private int region;  // 글램핑 지역분류
 
-    private String glampIntro;  //글램핑 소개
+    @ColumnDefault("0")
+    private int extraCharge;   // 인원 추가 요금
 
-    private String infoBasic;  //글램핑 기본정보
+    @Column(columnDefinition = "LONGTEXT", nullable = false)
+    private String glampIntro;  // 글램핑 소개
 
-    private String traffic;  //글램핑 주차정보
+    @Column(columnDefinition = "LONGTEXT", nullable = false)
+    private String infoBasic;  // 글램핑 기본정보
 
-    private String infoNotice;  //글램핑 이용안내
+    @Column(columnDefinition = "LONGTEXT", nullable = false)
+    private String infoNotice;  // 글램핑 이용안내
 
-    private String createdAt;  //글램핑 등록 일자
+    @Column
+    private String traffic;  // 글램핑 주차정보
 
-
-    public GlampingEntity(PostAvgRequest dto) {
-
-        this.userId = dto.getUserId();
-        this.glampId = dto.getGlampId();
-        this.starPointAvg = dto.getStarPointAvg();
-        this.reviewCount = dto.getReviewCount();
-
-    }
 }
