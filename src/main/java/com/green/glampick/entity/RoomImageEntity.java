@@ -8,15 +8,18 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "room_image")
-@Table(name = "room_image")
-public class RoomImageEntity {
+@Entity
+@Table(name = "roomImage")
+public class RoomImageEntity extends CreatedAt {
     //객실 이미지 테이블
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long roomImageId;  //객실 이미지 ID
-    private long roomId;  //객실 ID
-    private String roomImageName;  //객실 이미지명
-    private String createdAt;  //객실 이미지 등록 일자
+    private Long roomImageId;  // 객실 이미지 ID
 
+    @ManyToOne
+    @JoinColumn(name = "roomId", nullable = false)
+    private RoomEntity roomId;  // 객실 ID
+
+    @Column(length = 200, nullable = false)
+    private String roomImageName;  // 객실 이미지명
 
 }
