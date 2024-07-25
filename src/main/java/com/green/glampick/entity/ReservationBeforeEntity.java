@@ -12,19 +12,20 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Entity(name = "reservation_before")
+@Entity
 @Table(name = "reservation_before")
-public class ReservationBeforeEntity {
+public class ReservationBeforeEntity extends CreatedAt {
     //예약 테이블
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long reservationId;//예약 ID
+    private Long reservationId;//예약 ID
+
+    @Column(length = 13, nullable = false)
+    private String bookId;
 
     private long userId;//유저 ID
 
-    @Setter
-    private String bookId;
 
     private long glampId;
 
@@ -40,12 +41,7 @@ public class ReservationBeforeEntity {
 
     private String pg;
 
-    @Setter
     private long payAmount;//최종 결제 가격
-
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
 
 
     public ReservationBeforeEntity(PostBookRequestDto dto) {

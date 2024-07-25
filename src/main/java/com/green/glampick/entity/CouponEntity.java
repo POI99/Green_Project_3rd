@@ -8,14 +8,16 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "coupon")
+@Entity
 @Table(name = "coupon")
-public class CouponEntity {
+public class CouponEntity extends CreatedAt {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long couponId;  // 쿠폰 ID
+    private Long couponId;  // 쿠폰 ID
+
+    @Column(length = 30, nullable = false)
     private String couponName;  //쿠폰명
-    private String discount;  //쿠폰 할인율
-    private String issueDate;  //쿠폰 발급일
-    private String deadLine;  //쿠폰 마감일
+
+    @Column(length = 30, nullable = false)
+    private String discount;  //쿠폰 할인금액
 }

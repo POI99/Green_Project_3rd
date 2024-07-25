@@ -8,13 +8,22 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "glamp_favorite")
-@Table(name = "glamp_favorite")
-public class GlampFavoriteEntity {
+@Entity
+@Table(name = "glamp_favorite", uniqueConstraints = {
+        @UniqueConstraint(
+                columnNames = {"userId","glampId"}
+)})
+public class GlampFavoriteEntity extends CreatedAt {
     //관심 글램핑 테이블
-    @Id
-    private long userId;  //유저 ID
-    private long glampId;  //글램핑 ID
-    private String createdAt;  //관심 설정 일자
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long glampFavoriteId;
+
+    @ManyToOne
+    @JoinColumn(name = "userId", nullable = false)
+    private UserEntity user;  //유저 ID
+
+    @ManyToOne
+    @JoinColumn(name = "glampId", nullable = false)
+    private GlampingEntity glamping;  //글램핑 ID
 
 }
