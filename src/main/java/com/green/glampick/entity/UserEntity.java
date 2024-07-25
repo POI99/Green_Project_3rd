@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
-// 유저 테이블
 public class UserEntity extends UpdatedAt {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("유저 ID")
