@@ -15,29 +15,25 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "reservation_before", uniqueConstraints =  {
-        @UniqueConstraint(
-                columnNames = {"book_id"}
-        )
-})
+@Table(name = "reservation_before")
 public class ReservationBeforeEntity extends CreatedAt {
     //예약 테이블
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationId;//예약 ID
 
-    @Column(length = 13, nullable = false)
+    @Column(length = 13, nullable = false, unique = true)
     private String bookId;  //예약 번호
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;// 유저 ID
 
     @ManyToOne
-    @JoinColumn(name = "glampId", nullable = false)
+    @JoinColumn(name = "glamp_id", nullable = false)
     private GlampingEntity glamping; // 글램핑 ID
 
     @ManyToOne
-    @JoinColumn(name = "roomId", nullable = false)
+    @JoinColumn(name = "room_id", nullable = false)
     private RoomEntity roomId;  //객실 ID
 
     @Column(length = 10, nullable = false)
