@@ -40,19 +40,4 @@ public class ReviewEntity extends CreatedAt{
     @Column(length = 500)
     private String reviewComment; // 사장님 답변
 
-
-
-
-
-//    public ReviewEntity (PostReviewRequestDto dto) {
-//
-//        this.userId = dto.getUserId();
-//        this.reviewContent = dto.getReviewContent();
-//        this.reviewStarPoint = dto.getReviewStarPoint();
-//        this.reservationId = dto.getReservationId();
-//        this.glampId = dto.getGlampId();
-//    }
-
-
-
 }
