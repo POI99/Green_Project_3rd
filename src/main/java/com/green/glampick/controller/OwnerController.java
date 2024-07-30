@@ -146,9 +146,9 @@ public class OwnerController {
     @Operation(summary = "리뷰 답글 작성하기",
             description =
                     "<strong> 변수명 </strong> glampId : 글램프 PK <p>  ex)35 </p>" +
-                            "<strong> 변수명 </strong> reviewId : 리뷰 PK <p>  ex)21 </p>" +
-                            "<strong> 변수명 </strong> userId : 유저 PK <p>  ex)13 </p>" +
-                            "<strong> 변수명 </strong> review_owner_content : 사장님 작성 리뷰 내용 <p>  ex)잘 이용하셨쎄요? </p>",
+                    "<strong> 변수명 </strong> reviewId : 리뷰 PK <p>  ex)21 </p>" +
+                    "<strong> 변수명 </strong> userId : 유저 PK <p>  ex)13 </p>" +
+                    "<strong> 변수명 </strong> review_owner_content : 사장님 작성 리뷰 내용 <p>  ex)잘 이용하셨쎄요? </p>",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
