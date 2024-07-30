@@ -223,7 +223,7 @@ public class UserServiceImpl implements UserService {
             if (dto.getReviewId() == 0) {
                 return DeleteReviewResponseDto.noExistedReview();
             }
-            List<ReviewImageEntity> list = reviewImageRepository.findByReviewId(dto.getReviewId());
+            List<ReviewImageEntity> list = reviewImageRepository.findByReviewId(reviewEntity);
 
             for (int i = 0; i < list.size(); i++ ){
                 reviewImageRepository.deleteById(list.get(i).getReviewImageId());
