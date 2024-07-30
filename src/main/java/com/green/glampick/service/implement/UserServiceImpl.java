@@ -106,20 +106,20 @@ public class UserServiceImpl implements UserService {
             }
 
             ReservationBeforeEntity beforeEntity = optionalBeforeEntity.get();
-            ReservationCancelEntity cancelEntity = new ReservationCancelEntity(
-                    beforeEntity.getReservationId()
-                    , beforeEntity.getUserId()
-                    , beforeEntity.getBookId()
-                    , beforeEntity.getGlampId()
-                    , beforeEntity.getRoomId()
-                    , beforeEntity.getInputName()
-                    , beforeEntity.getPersonnel()
-                    , beforeEntity.getCheckInDate()
-                    , beforeEntity.getCheckOutDate()
-                    , beforeEntity.getPg()
-                    , beforeEntity.getPayAmount()
-                    , dto.getComment()
-                    , beforeEntity.getCreatedAt());
+            ReservationCancelEntity cancelEntity = new ReservationCancelEntity();
+            cancelEntity.setReservationId(beforeEntity.getReservationId());
+            cancelEntity.setBookId(beforeEntity.getBookId());
+            cancelEntity.setUser(beforeEntity.getUser());
+            cancelEntity.setGlamping(beforeEntity.getGlamping());
+            cancelEntity.setRoomId(beforeEntity.getRoomId());
+            cancelEntity.setInputName(beforeEntity.getInputName());
+            cancelEntity.setPersonnel(beforeEntity.getPersonnel());
+            cancelEntity.setCheckInDate(beforeEntity.getCheckInDate());
+            cancelEntity.setCheckOutDate(beforeEntity.getCheckOutDate());
+            cancelEntity.setPg(beforeEntity.getPg());
+            cancelEntity.setPayAmount(beforeEntity.getPayAmount());
+            cancelEntity.setComment(dto.getComment());
+
 
             reservationCancelRepository.save(cancelEntity);
             reservationBeforeRepository.delete(beforeEntity);
@@ -150,17 +150,17 @@ public class UserServiceImpl implements UserService {
         if (dto.getReviewStarPoint() > 5) { return PostReviewResponseDto.validateStarPoint(); }
 
 
-        ReviewEntity reviewEntity = new ReviewEntity(dto);
+        ReviewEntity reviewEntity = new ReviewEntity();
 
         try {
             ReservationCompleteEntity reservationCompleteEntity = reservationCompleteRepository.findByReservationId(dto.getReservationId());
-            reviewEntity.setReservationId(dto.getReservationId());
+            reviewEntity.setReservationId(reservationCompleteEntity);
             reviewEntity.setReviewContent(dto.getReviewContent());
             reviewEntity.setReviewStarPoint(dto.getReviewStarPoint());
-            reviewEntity.setGlampId(reservationCompleteEntity.getGlampId());
+            reviewEntity.setGlampId(reservationCompleteEntity.getGlamping());
             reviewEntity = reviewRepository.save(reviewEntity);
             glampingStarRepository.fin(dto.getReservationId());
-            glampingStarRepository.findStarPointAvg(reservationCompleteEntity.getGlampId());
+            glampingStarRepository.findStarPointAvg(reservationCompleteEntity.getGlamping().getGlampId());
         } catch (Exception e) {
             e.printStackTrace();
             return PostReviewResponseDto.reservationIdError();
@@ -187,7 +187,7 @@ public class UserServiceImpl implements UserService {
                 customFileUtils.transferTo(image, filePath);
 
                 ReviewImageEntity reviewImageEntity = new ReviewImageEntity();
-                reviewImageEntity.setReviewId(reviewEntity.getReviewId());
+                reviewImageEntity.setReviewId(reviewEntity);
                 reviewImageEntity.setReviewImageName(saveDbFileName);
                 reviewImageEntityList.add(reviewImageEntity);
             }
@@ -286,7 +286,7 @@ public class UserServiceImpl implements UserService {
                 reviewListItem.setGlampId(resultSet.getGlampId());
 
                 List<String> imageUrls = imageEntities.stream()
-                        .filter(entity -> entity.getReviewId() == resultSet.getReviewId())
+                        .filter(entity -> entity.getReviewId().getReviewId() == resultSet.getReviewId())
                         .map(ReviewImageEntity::getReviewImageName) // 경로를 파일명으로 구성
                         .collect(Collectors.toList());
                 reviewListItem.setReviewImages(imageUrls);
