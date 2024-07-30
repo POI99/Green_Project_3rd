@@ -7,6 +7,7 @@ import lombok.Data;
 public class ReviewPostRequestDto {
     private long glampId;
     private long reviewId;
+
     @JsonIgnore
     private long userId;
     private String reviewOwnerContent;
