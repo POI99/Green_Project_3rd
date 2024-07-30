@@ -31,7 +31,6 @@ public class BookServiceImpl implements BookService {
     private final ReservationCompleteRepository reservationCompleteRepository;
     private final RoomRepository roomRepository;
     private final GlampingRepository glampingRepository;
-    private final UserRepository userRepository;
     private final AuthenticationFacade authenticationFacade;
 
     //  글램핑 예약하기  //
@@ -138,23 +137,21 @@ public class BookServiceImpl implements BookService {
 
         // 체크아웃 날짜가 지난 모든 데이터를 가져옴
         List<ReservationBeforeEntity> expiredReservations = reservationBeforeRepository.findAllByCheckOutDateBefore(currentDateTime);
-        UserEntity userEntity = userRepository.findBy()
+
 
         for (ReservationBeforeEntity beforeEntity : expiredReservations) {
             // 예약 데이터를 완료 엔티티로 옮김
-            ReservationCompleteEntity completeEntity = new ReservationCompleteEntity(
-                    beforeEntity.getReservationId(),
-                    beforeEntity.getUser(),
-                    beforeEntity.getBookId(),
-                    beforeEntity.getGlamping(),
-                    beforeEntity.getRoomId(),
-                    beforeEntity.getInputName(),
-                    beforeEntity.getPersonnel(),
-                    beforeEntity.getCheckInDate(),
-                    beforeEntity.getCheckOutDate(),
-                    beforeEntity.getPayAmount(),
-                    beforeEntity.getPg(),
-                    beforeEntity.getCreatedAt());
+            ReservationCompleteEntity completeEntity = new ReservationCompleteEntity();
+            completeEntity.setUser(beforeEntity.getUser());
+            completeEntity.setBookId(beforeEntity.getBookId());
+            completeEntity.setGlamping(beforeEntity.getGlamping());
+            completeEntity.setRoomId(beforeEntity.getRoomId());
+            completeEntity.setInputName(beforeEntity.getInputName());
+            completeEntity.setPersonnel(beforeEntity.getPersonnel());
+            completeEntity.setCheckInDate(beforeEntity.getCheckInDate());
+            completeEntity.setCheckOutDate(beforeEntity.getCheckOutDate());
+            completeEntity.setPg(beforeEntity.getPg());
+            completeEntity.setPayAmount(beforeEntity.getPayAmount());
 
             reservationCompleteRepository.save(completeEntity);
             reservationBeforeRepository.delete(beforeEntity);

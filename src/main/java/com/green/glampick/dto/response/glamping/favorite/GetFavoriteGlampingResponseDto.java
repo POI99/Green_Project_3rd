@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 @Setter
 @Getter
 public class GetFavoriteGlampingResponseDto extends ResponseDto {
