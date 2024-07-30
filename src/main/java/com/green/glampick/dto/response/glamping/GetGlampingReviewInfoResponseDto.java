@@ -6,6 +6,7 @@ import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.object.ReviewListItem;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class GetGlampingReviewInfoResponseDto extends ResponseDto {
     private List<ReviewListItem> reviewListItems;
     private List<String> roomNames;

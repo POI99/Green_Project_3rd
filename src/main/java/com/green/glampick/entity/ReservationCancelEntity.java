@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Setter
 @Getter
 @NoArgsConstructor
 @Entity(name = "reservation_cancel")
@@ -55,22 +57,5 @@ public class ReservationCancelEntity extends CreatedAt {
     @Column(length = 500, nullable = true)
     private String comment;  //예약 취소 사유
 
-//    public ReservationCancelEntity(long reservationId, long userId, String bookId, long glampId, long roomId, String inputName,
-//                                   int personnel, LocalDate checkInDate, LocalDate checkOutDate, String pg,
-//                                   long payAmount, String comment, LocalDateTime createdAt)
-//    {
-//        this.reservationId = reservationId;
-//        this.userId = userId;
-//        this.bookId = bookId;
-//        this.glampId = glampId;
-//        this.roomId = roomId;
-//        this.inputName = inputName;
-//        this.personnel = personnel;
-//        this.checkInDate = checkInDate;
-//        this.checkOutDate = checkOutDate;
-//        this.pg = pg;
-//        this.payAmount = payAmount;
-//        this.comment = comment;
-//        this.createdAt = createdAt;
-//    }
+
 }

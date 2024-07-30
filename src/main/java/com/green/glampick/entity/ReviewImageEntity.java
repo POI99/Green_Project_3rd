@@ -26,7 +26,7 @@ public class ReviewImageEntity extends CreatedAt{
     private ReviewEntity reviewId; // 리뷰 ID
 
     @Column(length = 200,nullable = false)
-    private String review_image_name; // 리뷰 이미지명
+    private String reviewImageName; // 리뷰 이미지명
 
 
 

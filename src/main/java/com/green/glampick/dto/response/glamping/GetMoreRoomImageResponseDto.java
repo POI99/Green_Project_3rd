@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -15,7 +16,7 @@ import java.util.List;
 
 @Setter
 @Getter
-@Builder
+@SuperBuilder
 @ToString
 public class GetMoreRoomImageResponseDto extends ResponseDto {
 
