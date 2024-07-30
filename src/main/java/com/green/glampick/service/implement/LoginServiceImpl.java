@@ -5,8 +5,10 @@ import com.green.glampick.common.coolsms.SmsUtils;
 import com.green.glampick.common.security.AppProperties;
 import com.green.glampick.common.security.CookieUtils;
 import com.green.glampick.dto.ResponseDto;
+import com.green.glampick.dto.request.login.OwnerSignUpRequestDto;
 import com.green.glampick.dto.request.login.SignInRequestDto;
 import com.green.glampick.dto.request.login.SignUpRequestDto;
+import com.green.glampick.dto.response.login.PostOwnerSignUpResponseDto;
 import com.green.glampick.dto.response.login.PostSignInResponseDto;
 import com.green.glampick.dto.response.login.PostSignUpResponseDto;
 import com.green.glampick.dto.response.login.mail.PostMailCheckResponseDto;
@@ -14,8 +16,10 @@ import com.green.glampick.dto.response.login.mail.PostMailSendResponseDto;
 import com.green.glampick.dto.response.login.sms.PostSmsCheckResponseDto;
 import com.green.glampick.dto.response.login.sms.PostSmsSendResponseDto;
 import com.green.glampick.dto.response.login.token.GetAccessTokenResponseDto;
+import com.green.glampick.entity.OwnerEntity;
 import com.green.glampick.entity.UserEntity;
 import com.green.glampick.jwt.JwtTokenProvider;
+import com.green.glampick.repository.OwnerRepository;
 import com.green.glampick.repository.UserRepository;
 import com.green.glampick.security.MyUser;
 import com.green.glampick.security.MyUserDetail;
@@ -52,6 +56,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService {
     private final UserRepository userRepository;
+    private final OwnerRepository ownerRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final CookieUtils cookieUtils;
@@ -154,7 +159,14 @@ public class LoginServiceImpl implements LoginService {
             dto.setUserSocialType(SignInProviderType.LOCAL);
 
             //  가공이 끝난 DTO 를 새로운 userEntity 객체로 생성한다.  //
-            UserEntity userEntity = new UserEntity(dto);
+            UserEntity userEntity = new UserEntity();
+            userEntity.setUserEmail(dto.getUserEmail());
+            userEntity.setUserPw(dto.getUserPw());
+            userEntity.setUserName(dto.getUserName());
+            userEntity.setUserNickname(dto.getUserNickname());
+            userEntity.setUserPhone(dto.getUserPhone());
+            userEntity.setUserRole(dto.getUserRole());
+            userEntity.setUserSocialType(dto.getUserSocialType());
             //  바로 위에서 만든 객체를 JPA 를 통해서 DB에 저장한다.  //
             UserEntity savedUser = userRepository.save(userEntity);
 
@@ -164,6 +176,67 @@ public class LoginServiceImpl implements LoginService {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
+
+    }
+
+    //  사장님 회원가입 처리  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostOwnerSignUpResponseDto> signUpOwner(OwnerSignUpRequestDto dto) {
+
+        try {
+            //  입력받은 값이 없다면, 유효성 검사에 대한 응답을 보낸다.  //
+            if (dto.getOwnerEmail() == null || dto.getOwnerEmail().isEmpty()) { return PostSignUpResponseDto.validationFail(); }
+            if (dto.getOwnerPw() == null || dto.getOwnerPw().isEmpty()) { return PostSignUpResponseDto.validationFail(); }
+            if (dto.getOwnerPhone() == null || dto.getOwnerPhone().isEmpty()) { return PostSignUpResponseDto.validationFail(); }
+            if (dto.getOwnerName() == null || dto.getOwnerName().isEmpty()) { return PostSignUpResponseDto.validationFail(); }
+            if (dto.getBusinessNumber() == null || dto.getBusinessNumber().isEmpty()) { return PostSignUpResponseDto.validationFail(); }
+
+            //  입력받은 이메일이 정규표현식을 통하여 이메일 형식에 맞지 않으면, 이메일 형식 오류에 대한 응답을 보낸다.  //
+            String userEmail = dto.getOwnerEmail();
+            String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+            Pattern patternEmail = Pattern.compile(emailRegex);
+            Matcher matcherEmail = patternEmail.matcher(userEmail);
+            if (!matcherEmail.matches()) { return PostSignUpResponseDto.invalidEmail(); }
+
+
+            //  입력받은 전화번호가 정규표현식을 통하여 전화번호 형식에 맞지 않으면, 전화번호 형식 오류에 대한 응답을 보낸다.  //
+            String userPhone = dto.getOwnerPhone();
+            String phoneRegex = "^(01[016789]-?\\d{3,4}-?\\d{4})|(0[2-9][0-9]-?\\d{3,4}-?\\d{4})$";
+            Pattern patternPhone = Pattern.compile(phoneRegex);
+            Matcher matcherPhone = patternPhone.matcher(userPhone);
+            if (!matcherPhone.matches()) { return PostSignUpResponseDto.invalidPhone(); }
+
+
+            //  입력받은 비밀번호가 정규표현식을 통하여 비밀번호 형식에 맞지 않으면, 비밀번호 형식 오류에 대한 응답을 보낸다.  //
+            String userPw = dto.getOwnerPw();
+            String passwordRegex = "^(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+            Pattern patternPw = Pattern.compile(passwordRegex);
+            Matcher matcherPw = patternPw.matcher(userPw);
+            if (!matcherPw.matches()) { return PostSignUpResponseDto.invalidPassword(); }
+            //  입력받은 DTO 에서 패스워드를 암호화 하여 다시 DTO 값에 넣는다.  //
+            String encodingPw = passwordEncoder.encode(userPw);
+            dto.setOwnerPw(encodingPw);
+
+            dto.setUserRole(Role.ROLE_OWNER);
+
+            //  가공이 끝난 DTO 를 새로운 userEntity 객체로 생성한다.  //
+            OwnerEntity ownerEntity = new OwnerEntity();
+            ownerEntity.setBusinessNumber(dto.getBusinessNumber());
+            ownerEntity.setOwnerEmail(dto.getOwnerEmail());
+            ownerEntity.setOwnerPw(dto.getOwnerPw());
+            ownerEntity.setOwnerName(dto.getOwnerName());
+            ownerEntity.setOwnerPhone(dto.getOwnerPhone());
+            ownerEntity.setRole(dto.getUserRole());
+            //  바로 위에서 만든 객체를 JPA 를 통해서 DB에 저장한다.  //
+            OwnerEntity savedUser = ownerRepository.save(ownerEntity);
+
+            return PostOwnerSignUpResponseDto.success(savedUser.getOwnerId());
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseDto.databaseError();
+    }
 
     }
 

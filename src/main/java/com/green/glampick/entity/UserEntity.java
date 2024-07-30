@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -28,58 +29,34 @@ public class UserEntity extends UpdatedAt {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("유저 ID")
     private Long userId;
 
-    @Column(nullable = false, unique = true) @Comment("유저 이메일")
+    @Column(length = 50, nullable = false, unique = true) @Comment("유저 이메일")
     private String userEmail;
 
-    @Column(nullable = false) @Comment("쿠폰 ID")
+    @Column(length = 70, nullable = false) @Comment("쿠폰 ID")
     private String userPw;
 
-    @Column(nullable = false) @Comment("유저 실명")
+    @Column(length = 50, nullable = false) @Comment("유저 실명")
     private String userName;
 
-    @Column(nullable = false, unique = true) @Comment("유저 닉네임")
+    @Column(length = 30, nullable = false, unique = true) @Comment("유저 닉네임")
     private String userNickname;
 
-    @Comment("유저 휴대폰 번호")
+    @Column(length = 11) @Comment("유저 휴대폰 번호")
     private String userPhone;
 
-    @Comment("유저 프로필 이미지")
+    @Column(length = 200) @Comment("유저 프로필 이미지")
     private String userProfileImage;
 
-    @Column(nullable = false) @Enumerated(value = EnumType.STRING) @Comment("유저 권한")
+    @Column(length = 20, nullable = false) @Enumerated(value = EnumType.STRING) @Comment("유저 권한")
     private Role userRole;
 
-    @Comment("소셜 유저 ID")
+    @Column(length = 50) @Comment("소셜 유저 ID")
     private String providerId;
 
-    @Column(nullable = false) @Enumerated(value = EnumType.STRING) @Comment("소셜 로그인 타입")
+    @Column(length = 10, nullable = false) @Enumerated(value = EnumType.STRING) @Comment("소셜 로그인 타입")
     private SignInProviderType userSocialType;
 
-    public UserEntity(SignUpRequestDto dto) {
-        this.userEmail = dto.getUserEmail();
-        this.userPw = dto.getUserPw();
-        this.userPhone = dto.getUserPhone();
-        this.userName = dto.getUserName();
-        this.userNickname = dto.getUserNickname();
-        this.userRole = dto.getUserRole();
-        this.userSocialType = dto.getUserSocialType();
-    }
+    @Column(columnDefinition = "TINYINT") @ColumnDefault("1") @Comment("회원 탈퇴시 -1")
+    private Integer activateStatus;
 
-    public UserEntity(UpdateUserRequestDto dto) {
-        this.userPw = dto.getUserPw();
-        this.userNickname = dto.getUserNickname();
-    }
-
-    public UserEntity(long userId
-            , String providerId
-            , String userPw
-            , String userName
-            , String userProfileImage
-            ) {
-        this.userId = userId;
-        this.providerId = providerId;
-        this.userPw = userPw;
-        this.userName = userName;
-        this.userProfileImage= userProfileImage;
-    }
 }

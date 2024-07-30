@@ -10,17 +10,17 @@ import org.springframework.http.ResponseEntity;
 
 @Getter
 @Setter
-public class PostSignUpResponseDto extends ResponseDto {
+public class PostOwnerSignUpResponseDto extends ResponseDto {
 
     private long userId;
 
-    private PostSignUpResponseDto(long userId) {
+    private PostOwnerSignUpResponseDto(long userId) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
         this.userId = userId;
     }
 
-    public static ResponseEntity<PostSignUpResponseDto> success(long userId) {
-        PostSignUpResponseDto result = new PostSignUpResponseDto(userId);
+    public static ResponseEntity<PostOwnerSignUpResponseDto> success(long userId) {
+        PostOwnerSignUpResponseDto result = new PostOwnerSignUpResponseDto(userId);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 

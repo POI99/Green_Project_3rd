@@ -4,38 +4,39 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "room")
-public class RoomEntity extends CreatedAt {
+public class RoomEntity extends UpdatedAt {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long roomId;  //객실 ID
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("객실 ID")
+    private Long roomId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private GlampingEntity glampId;  //글램핑 ID
+    @JoinColumn(name = "user_id", nullable = false) @Comment("글램핑 ID")
+    private GlampingEntity glampId;
 
-    @Column(length = 30, nullable = false)
-    private String roomName;  //객실명
+    @Column(length = 30, nullable = false) @Comment("객실명")
+    private String roomName;
 
-    @Column(length = 11, nullable = false)
-    private int roomPrice;  //객실 가격
+    @Column(length = 11, nullable = false) @Comment("객실 가격")
+    private Integer roomPrice;
 
-    @Column(length = 11, nullable = false)
-    private int roomNumPeople;  //객실 기준인원
+    @Column(length = 11, nullable = false) @Comment("객실 기준인원")
+    private Integer roomNumPeople;
 
-    @Column(length = 11, nullable = false)
-    private int roomMaxPeople;  //객실 최대인원
+    @Column(length = 11, nullable = false) @Comment("객실 최대인원")
+    private Integer roomMaxPeople;
 
-    @Column(nullable = false)
-    private String checkInTime;  //객실 체크인 시간
+    @Column(nullable = false) @Comment("객실 체크인 시간")
+    private String checkInTime;
 
-    @Column(nullable = false)
-    private String checkOutTime;  //객실 체크아웃 시간
+    @Column(nullable = false) @Comment("객실 체크아웃 시간")
+    private String checkOutTime;
 
 
 
