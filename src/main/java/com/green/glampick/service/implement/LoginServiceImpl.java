@@ -165,7 +165,7 @@ public class LoginServiceImpl implements LoginService {
             userEntity.setUserName(dto.getUserName());
             userEntity.setUserNickname(dto.getUserNickname());
             userEntity.setUserPhone(dto.getUserPhone());
-            userEntity.setUserRole(dto.getUserRole());
+            userEntity.setRole(dto.getUserRole());
             userEntity.setUserSocialType(dto.getUserSocialType());
             //  바로 위에서 만든 객체를 JPA 를 통해서 DB에 저장한다.  //
             UserEntity savedUser = userRepository.save(userEntity);
@@ -268,7 +268,7 @@ public class LoginServiceImpl implements LoginService {
             //  로그인에 성공할 경우, myUser 에 로그인한 userId 값을 넣고, 권한을 넣는다.  //
             MyUser myUser = MyUser.builder()
                     .userId(userEntity.getUserId())
-                    .role(userEntity.getUserRole())
+                    .role(userEntity.getRole())
                     .build();
 
             //  myUser 에 넣은 데이터를 통해, AccessToken, RefreshToken 을 만든다.  //
