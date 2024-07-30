@@ -1,5 +1,6 @@
 package com.green.glampick.controller;
 
+import com.green.glampick.common.swagger.description.owner.PostOwnerReviewSwaggerDescription;
 import com.green.glampick.dto.request.owner.GlampingPostRequestDto;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.ReviewPostRequestDto;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+import static com.green.glampick.common.swagger.description.owner.PostOwnerReviewSwaggerDescription.OWNER_REVIEW_DESCRIPTION;
 
 
 @Slf4j
@@ -142,13 +145,9 @@ public class OwnerController {
     }
 
 
-// 강국 =================================================================================================================
     @Operation(summary = "리뷰 답글 작성하기",
-            description =
-                    "<strong> 변수명 </strong> glampId : 글램프 PK <p>  ex)35 </p>" +
-                    "<strong> 변수명 </strong> reviewId : 리뷰 PK <p>  ex)21 </p>" +
-                    "<strong> 변수명 </strong> userId : 유저 PK <p>  ex)13 </p>" +
-                    "<strong> 변수명 </strong> review_owner_content : 사장님 작성 리뷰 내용 <p>  ex)잘 이용하셨쎄요? </p>",
+            description = OWNER_REVIEW_DESCRIPTION
+            ,
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -159,10 +158,14 @@ public class OwnerController {
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = PostOwnerReviewInfoResponseDto.class)
                             ))})
-    @PostMapping("review")
+    @PatchMapping("review")
     public ResponseEntity<? super PostOwnerReviewInfoResponseDto> postReview(@RequestBody ReviewPostRequestDto p) {
         return service.postReview(p);
     }
+// 강국 =================================================================================================================
+
+
+
 
     @Operation(summary = "예약정보 취소 처리 하기",
             description =
