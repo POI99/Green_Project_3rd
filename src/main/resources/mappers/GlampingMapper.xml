@@ -217,7 +217,7 @@
                 A.region = #{region}
             </if>
             <if test="searchWord != null and searchWord != ''">
-                AND A.glamp_name like '%${searchWord}%'
+                AND (A.glamp_name like '%${searchWord}%' OR A.traffic like '%${searchWord}%')
             </if>
         </where>
         <include refid="sort"/>
@@ -260,7 +260,7 @@
             WHERE A.region = #{region}
         </if>
         <if test="searchWord != null and searchWord != ''">
-            AND A.glamp_name like '%${searchWord}%'
+            AND (A.glamp_name like '%${searchWord}%' OR A.traffic like '%${searchWord}%')
         </if>
     </select>
 
