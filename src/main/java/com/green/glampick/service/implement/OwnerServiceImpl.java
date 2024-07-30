@@ -289,6 +289,7 @@ public class OwnerServiceImpl implements OwnerService {
             e.printStackTrace();
             return PostOwnerReviewInfoResponseDto.validateUserId();
         }
+        //Optional<User> user = userRepository.findById(1L);
         try {
             ReviewEntity reviewEntity = new ReviewEntity();
 
