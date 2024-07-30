@@ -1,7 +1,9 @@
 package com.green.glampick.controller;
 
+import com.green.glampick.dto.request.login.OwnerSignUpRequestDto;
 import com.green.glampick.dto.request.login.SignInRequestDto;
 import com.green.glampick.dto.request.login.SignUpRequestDto;
+import com.green.glampick.dto.response.login.PostOwnerSignUpResponseDto;
 import com.green.glampick.dto.response.login.PostSignInResponseDto;
 import com.green.glampick.dto.response.login.PostSignUpResponseDto;
 import com.green.glampick.dto.response.login.mail.PostMailCheckResponseDto;
@@ -52,6 +54,13 @@ public class LoginController {
                 mediaType = "application/json", schema = @Schema(implementation = PostSignUpResponseDto.class)))
     public ResponseEntity<? super PostSignUpResponseDto> signUpUser(@RequestBody @Valid SignUpRequestDto dto) {
         return service.signUpUser(dto);
+    }
+
+    @PostMapping("/owner/sign-up")
+    @Operation(summary = "사장님 회원가입", description = "")
+    @ApiResponse(responseCode = "200", description = "", content = @Content())
+    public ResponseEntity<? super PostOwnerSignUpResponseDto> signUpOwner(@RequestBody @Valid OwnerSignUpRequestDto dto) {
+        return service.signUpOwner(dto);
     }
 
     @PostMapping("/sign-in")

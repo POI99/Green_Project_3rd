@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Setter
@@ -16,28 +17,28 @@ import org.hibernate.annotations.CreationTimestamp;
 @Table(name = "review")
 public class ReviewEntity extends CreatedAt{
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reviewId;  // 리뷰 PK
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("리뷰 ID")
+    private Long reviewId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity userId;  // 유저 ID
+    @JoinColumn(name = "user_id", nullable = false) @Comment("객실 ID")
+    private UserEntity userId;
 
     @ManyToOne
-    @JoinColumn(name = "glamp_id", nullable = false)
-    private GlampingEntity glampId;// 글램핑 ID
+    @JoinColumn(name = "glamp_id", nullable = false) @Comment("글램핑 ID")
+    private GlampingEntity glampId;
 
     @ManyToOne
-    @JoinColumn(name = "reservation_id", nullable = false)
-    private ReservationCompleteEntity reservationId; // 객실 ID
+    @JoinColumn(name = "reservation_id", nullable = false) @Comment("객실 ID")
+    private ReservationCompleteEntity reservationId;
 
-    @Column(length = 500, nullable = false )
-    private String reviewContent;  // 리뷰 내용
+    @Column(length = 500, nullable = false ) @Comment("리뷰 내용")
+    private String reviewContent;
 
-    @Column(nullable = false )
-    private int reviewStarPoint;  // 리뷰 별점
+    @Column(nullable = false, columnDefinition = "TINYINT") @Comment("리뷰 별점")
+    private Integer reviewStarPoint;
 
-    @Column(length = 500)
-    private String reviewComment; // 사장님 답변
+    @Column(length = 500) @Comment("사장님 답변")
+    private String reviewComment;
 
 }
