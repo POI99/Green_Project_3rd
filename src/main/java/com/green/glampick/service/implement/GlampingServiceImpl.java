@@ -8,6 +8,9 @@ import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.response.glamping.*;
 import com.green.glampick.dto.response.glamping.favorite.GetFavoriteGlampingResponseDto;
 import com.green.glampick.dto.response.owner.post.PostGlampingInfoResponseDto;
+import com.green.glampick.exception.CustomException;
+import com.green.glampick.exception.errorCode.CommonErrorCode;
+import com.green.glampick.exception.errorCode.GlampingErrorCode;
 import com.green.glampick.mapper.GlampingMapper;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.GlampingService;
@@ -32,7 +35,8 @@ import java.util.*;
 public class GlampingServiceImpl implements GlampingService {
     private final GlampingMapper mapper;
     private final AuthenticationFacade facade;
-// 민지 =================================================================================================================
+
+    // 민지 =================================================================================================================
     @Override
     @Transactional
     public ResponseEntity<? super GetSearchGlampingListResponseDto> searchGlamping(GlampingSearchRequestDto req) {
@@ -48,25 +52,25 @@ public class GlampingServiceImpl implements GlampingService {
         }
 
         // 값이 올바르게 들어갔는지
-        if(req.getPeople() < 2 || req.getPeople() > 6) {
-            return GetSearchGlampingListResponseDto.wrongPersonnel();
+        if (req.getPeople() < 2 || req.getPeople() > 6) {
+            throw new CustomException(GlampingErrorCode.WP);
         }
-        if(checkDate(req.getInDate(), req.getOutDate())){
-            return GetSearchGlampingListResponseDto.wrongDate();
+        if (checkDate(req.getInDate(), req.getOutDate())) {
+            throw new CustomException(GlampingErrorCode.WD);
         }
 
 
         List<Integer> filter = req.getFilter();
-        if(filter != null) {
+        if (filter != null) {
             req.setFilterSize(filter.size());
         }
 
-        if(req.getSortType() < 0) {     // default 1
+        if (req.getSortType() < 0) {     // default 1
             req.setSortType(1);
         }
 
         List<GlampingListItem> result = mapper.searchGlampList(req);
-        if(result == null || result.isEmpty()) {
+        if (result == null || result.isEmpty()) {
             return GetSearchGlampingListResponseDto.isNull();
         }
 
@@ -76,18 +80,19 @@ public class GlampingServiceImpl implements GlampingService {
     }
 
 
-
-// 강국 =================================================================================================================
+    // 강국 =================================================================================================================
     @Override
     @Transactional
     public ResponseEntity<? super GetFavoriteGlampingResponseDto> favoriteGlamping(GetFavoriteRequestDto p) {
 
         try {
             p.setUserId(facade.getLoginUserId());
-            if (p.getUserId() <= 0) { throw new RuntimeException(); }
+            if (p.getUserId() <= 0) {
+                throw new RuntimeException();
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return GetFavoriteGlampingResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
         try {
@@ -100,9 +105,11 @@ public class GlampingServiceImpl implements GlampingService {
             } else {
                 return GetFavoriteGlampingResponseDto.success(result);
             }
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.databaseError();
+            throw new CustomException(CommonErrorCode.DBE);
         }
     }
 
@@ -139,7 +146,7 @@ public class GlampingServiceImpl implements GlampingService {
             for (GlampingDateItem dateItem : dateItems) {
                 //검색된 날짜와 예약상태의 객실들 데이터
                 HashMap<String, LocalDate> dateHashMap = parseDate(p.getInDate(), p.getOutDate(), dateItem.getCheckInDate(), dateItem.getCheckOutDate());
-                boolean k = checkOverlap(dateHashMap) ;
+                boolean k = checkOverlap(dateHashMap);
 
                 if (k) {
                     item.setReservationAvailable(false);
@@ -165,8 +172,9 @@ public class GlampingServiceImpl implements GlampingService {
         glampInfoDto.setReviewItems(reviews);
         glampInfoDto.setRoomItems(rooms);
 
-        return new ResponseEntity<>(glampInfoDto,HttpStatus.OK) ;
+        return new ResponseEntity<>(glampInfoDto, HttpStatus.OK);
     }
+
     /*
     @Override
     public ResponseEntity<? super GetMoreRoomItemResponseDto> moreDetailsRoom(GetInfoRequestDto p) {
@@ -212,7 +220,7 @@ public class GlampingServiceImpl implements GlampingService {
         List<String> reviewImage = mapper.thumbnailReviewImage(p);
 
         //리뷰사진 가져오기
-        for(int i = 0; i < reviews.size(); i++) {
+        for (int i = 0; i < reviews.size(); i++) {
             List<String> inputImageList = mapper.selReviewImage(reviews.get(i).getReviewId());
             reviews.get(i).setReviewImages(inputImageList);
         }
@@ -268,14 +276,14 @@ public class GlampingServiceImpl implements GlampingService {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-// 민지 에러체크 =========================================================================================================
-    private void isNull (String text) {
+    // 민지 에러체크 =========================================================================================================
+    private void isNull(String text) {
         if (text == null || text.isEmpty()) {
             throw new RuntimeException();
         }
     }
 
-    private boolean checkDate (String in, String out) {
+    private boolean checkDate(String in, String out) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate inDate = LocalDate.parse(in, formatter);
         LocalDate outDate = LocalDate.parse(out, formatter);
@@ -306,12 +314,12 @@ public class GlampingServiceImpl implements GlampingService {
         LocalDate start1 = dateHashMap.get("inDate");
         LocalDate end1 = dateHashMap.get("outDate");
         System.out.println("start1: " + start1);
-        System.out.println("end1: " +end1);
+        System.out.println("end1: " + end1);
         //get DB in out date
         LocalDate start2 = dateHashMap.get("inDate2");
         LocalDate end2 = dateHashMap.get("outDate2");
         System.out.println("start2: " + start2);
-        System.out.println("end2: " +end2);
+        System.out.println("end2: " + end2);
         System.out.println(!start1.isAfter(end2) && !start2.isAfter(end1));
         return !start1.isAfter(end2) && !start2.isAfter(end1); // 날짜가 겹치면 true
     }
@@ -319,7 +327,7 @@ public class GlampingServiceImpl implements GlampingService {
     private int getIsFavData(GetInfoRequestDto dto, long loginUserId) {
         if (loginUserId != 0) {
             dto.setUserId(loginUserId);
-            if (mapper.getIsFavData(dto) == null){
+            if (mapper.getIsFavData(dto) == null) {
                 return 0;
             } else {
                 return 1;

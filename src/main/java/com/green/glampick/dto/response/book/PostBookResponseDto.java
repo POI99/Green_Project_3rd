@@ -17,24 +17,4 @@ public class PostBookResponseDto extends ResponseDto {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    public static ResponseEntity<ResponseDto> duplicatedBook() {
-        ResponseDto result = new ResponseDto(ResponseCode.DUPLICATE_BOOK, ResponseMessage.DUPLICATE_BOOK);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> noPermission() {
-        ResponseDto result = new ResponseDto(ResponseCode.NOT_PERMISSION, ResponseMessage.NOT_PERMISSION);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> wrongDate() {
-        ResponseDto result = new ResponseDto(ResponseCode.WRONG_DATE, ResponseMessage.WRONG_DATE);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> validateUserId() {
-        ResponseDto result = new ResponseDto(ResponseCode.CANT_FIND_USER, ResponseMessage.CANT_FIND_USER);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
 }

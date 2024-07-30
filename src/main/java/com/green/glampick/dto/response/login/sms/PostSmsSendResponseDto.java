@@ -15,10 +15,6 @@ public class PostSmsSendResponseDto extends ResponseDto{
 
     private int phoneKey;
 
-    private PostSmsSendResponseDto() {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
-    }
-
     private PostSmsSendResponseDto(int phoneKey) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
         this.phoneKey = phoneKey;
@@ -29,9 +25,5 @@ public class PostSmsSendResponseDto extends ResponseDto{
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    public static ResponseEntity<ResponseDto> invalidPhone() {
-        ResponseDto result = new ResponseDto(ResponseCode.INVALID_PHONE, ResponseMessage.INVALID_PHONE);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
 
 }

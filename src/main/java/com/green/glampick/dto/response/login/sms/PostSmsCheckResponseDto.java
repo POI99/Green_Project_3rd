@@ -19,24 +19,9 @@ public class PostSmsCheckResponseDto extends ResponseDto {
         this.phoneCheck = phoneCheck;
     }
 
-    private PostSmsCheckResponseDto(String code, String message, boolean phoneCheck) {
-        super(code, message);
-        this.phoneCheck = phoneCheck;
-    }
-
     public static ResponseEntity<PostSmsCheckResponseDto> success() {
         PostSmsCheckResponseDto result = new PostSmsCheckResponseDto(true);
         return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> expiredCode() {
-        ResponseDto result = new ResponseDto(ResponseCode.EXPIRED_CODE, ResponseMessage.EXPIRED_CODE);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    public static ResponseEntity<PostSmsCheckResponseDto> invalidCode() {
-        PostSmsCheckResponseDto result = new PostSmsCheckResponseDto(ResponseCode.INVALID_CODE, ResponseMessage.INVALID_CODE, false);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
     }
 
 }

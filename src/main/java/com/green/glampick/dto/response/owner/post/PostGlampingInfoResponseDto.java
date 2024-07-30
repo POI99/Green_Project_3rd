@@ -24,12 +24,6 @@ public class PostGlampingInfoResponseDto extends ResponseDto {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    // 유저 정보 불러오기 실패 (authenticationFacade)
-    public static ResponseEntity<ResponseDto> validateUserId() {
-        ResponseDto result = new ResponseDto(ResponseCode.CANT_FIND_USER, ResponseMessage.CANT_FIND_USER);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
     // 정보가 덜 입력됨
     public static ResponseEntity<ResponseDto> validationFailed(String errorMsg) {
         ResponseDto result = new ResponseDto(ResponseCode.VALIDATION_FAILED, errorMsg);

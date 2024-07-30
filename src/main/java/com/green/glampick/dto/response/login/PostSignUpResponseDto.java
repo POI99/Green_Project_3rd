@@ -24,44 +24,4 @@ public class PostSignUpResponseDto extends ResponseDto {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    public static ResponseEntity<ResponseDto> duplicatedEmail() {
-        ResponseDto result = new ResponseDto(ResponseCode.DUPLICATE_EMAIL, ResponseMessage.DUPLICATE_EMAIL);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> duplicatedNickname() {
-        ResponseDto result = new ResponseDto(ResponseCode.DUPLICATE_NICK_NAME, ResponseMessage.DUPLICATE_NICK_NAME);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> duplicatedPhoneNumber() {
-        ResponseDto result = new ResponseDto(ResponseCode.DUPLICATE_TEL_NUMBER, ResponseMessage.DUPLICATE_TEL_NUMBER);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> invalidEmail() {
-        ResponseDto result = new ResponseDto(ResponseCode.INVALID_EMAIL, ResponseMessage.INVALID_EMAIL);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> invalidPassword() {
-        ResponseDto result = new ResponseDto(ResponseCode.INVALID_PASSWORD, ResponseMessage.INVALID_PASSWORD);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> invalidPhone() {
-        ResponseDto result = new ResponseDto(ResponseCode.INVALID_PHONE, ResponseMessage.INVALID_PHONE);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> invalidNickname() {
-        ResponseDto result = new ResponseDto(ResponseCode.INVALID_NICKNAME, ResponseMessage.INVALID_NICKNAME);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> validationFail() {
-        ResponseDto result = new ResponseDto(ResponseCode.VALIDATION_FAILED, ResponseMessage.VALIDATION_FAILED);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
 }

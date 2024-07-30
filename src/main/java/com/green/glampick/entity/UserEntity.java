@@ -48,7 +48,7 @@ public class UserEntity extends UpdatedAt {
     private String userProfileImage;
 
     @Column(length = 20, nullable = false) @Enumerated(value = EnumType.STRING) @Comment("유저 권한")
-    private Role userRole;
+    private Role role;
 
     @Column(length = 50) @Comment("소셜 유저 ID")
     private String providerId;
