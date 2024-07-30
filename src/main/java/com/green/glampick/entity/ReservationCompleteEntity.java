@@ -60,22 +60,4 @@ public class ReservationCompleteEntity extends CreatedAt{
     @ColumnDefault("0")
     private long status;    //리뷰 작성 가능 상태
 
-
-//    public ReservationCompleteEntity(Long reservationId, Long userId, String bookId, long glampId, Long roomId, String inputName,
-//                                     int personnel, LocalDate checkInDate, LocalDate checkOutDate,
-//                                     long payAmount, String pg, LocalDateTime createdAt) {
-//        this.reservationId = reservationId;
-//        this.userId = userId;
-//        this.bookId = bookId;
-//        this.glampId = glampId;
-//        this.roomId = roomId;
-//        this.inputName = inputName;
-//        this.personnel = personnel;
-//        this.checkInDate = checkInDate;
-//        this.checkOutDate = checkOutDate;
-//        this.payAmount = payAmount;
-//        this.pg = pg;
-//        this.createdAt = createdAt;
-//    }
-
 }
