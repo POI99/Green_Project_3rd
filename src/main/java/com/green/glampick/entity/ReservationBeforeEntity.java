@@ -53,20 +53,4 @@ public class ReservationBeforeEntity extends CreatedAt {
 
     @Column(length = 20, nullable = false)
     private long payAmount;//최종 결제 가격
-
-
-//    public ReservationBeforeEntity(PostBookRequestDto dto) {
-//
-//        this.reservationId = dto.getReservationId();
-//        this.userId = dto.getUserId();
-//        this.bookId = dto.getBookId();
-//        this.glampId = dto.getGlampId();
-//        this.roomId = dto.getRoomId();
-//        this.inputName = dto.getInputName();
-//        this.checkInDate = dto.getCheckInDate();
-//        this.checkOutDate = dto.getCheckOutDate();
-//        this.personnel = dto.getPersonnel();
-//        this.pg = dto.getPg();
-//        this.payAmount = dto.getPayAmount();
-//    }
 }

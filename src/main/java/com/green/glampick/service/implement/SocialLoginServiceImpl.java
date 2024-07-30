@@ -1,5 +1,6 @@
 package com.green.glampick.service.implement;
 
+import com.green.glampick.common.Role;
 import com.green.glampick.dto.request.login.SignInRequestDto;
 import com.green.glampick.dto.request.login.SignUpRequestDto;
 import com.green.glampick.entity.UserEntity;
@@ -58,7 +59,7 @@ public class SocialLoginServiceImpl extends DefaultOAuth2UserService {
 
         if(userEntity == null) { //회원가입 처리
             SignUpRequestDto signUpParam = new SignUpRequestDto();
-            signUpParam.setUserSocialType(signInProviderType.name());
+            signUpParam.setUserSocialType(signInProviderType);
             signUpParam.setProviderId(oAuth2UserInfo.getId());
             signUpParam.setUserName(oAuth2UserInfo.getName());
 
@@ -75,7 +76,7 @@ public class SocialLoginServiceImpl extends DefaultOAuth2UserService {
         }
 
         MyUserOAuth2Vo myUserOAuth2Vo
-                = new MyUserOAuth2Vo(userEntity.getUserId(), "ROLE_USER", userEntity.getUserName(), userEntity.getUserProfileImage());
+                = new MyUserOAuth2Vo(userEntity.getUserId(), Role.ROLE_USER, userEntity.getUserName(), userEntity.getUserProfileImage());
 
         MyUserDetail signInUser = new MyUserDetail();
         signInUser.setMyUser(myUserOAuth2Vo);

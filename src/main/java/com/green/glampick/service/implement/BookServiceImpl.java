@@ -5,14 +5,8 @@ import com.green.glampick.dto.request.book.GetBookPayRequestDto;
 import com.green.glampick.dto.request.book.PostBookRequestDto;
 import com.green.glampick.dto.response.book.GetBookPayResponseDto;
 import com.green.glampick.dto.response.book.PostBookResponseDto;
-import com.green.glampick.entity.GlampingEntity;
-import com.green.glampick.entity.ReservationBeforeEntity;
-import com.green.glampick.entity.ReservationCompleteEntity;
-import com.green.glampick.entity.RoomEntity;
-import com.green.glampick.repository.GlampingRepository;
-import com.green.glampick.repository.ReservationBeforeRepository;
-import com.green.glampick.repository.ReservationCompleteRepository;
-import com.green.glampick.repository.RoomRepository;
+import com.green.glampick.entity.*;
+import com.green.glampick.repository.*;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +31,7 @@ public class BookServiceImpl implements BookService {
     private final ReservationCompleteRepository reservationCompleteRepository;
     private final RoomRepository roomRepository;
     private final GlampingRepository glampingRepository;
+    private final UserRepository userRepository;
     private final AuthenticationFacade authenticationFacade;
 
     //  글램핑 예약하기  //
@@ -55,7 +50,7 @@ public class BookServiceImpl implements BookService {
             return PostBookResponseDto.validateUserId();
         }
 
-        ReservationBeforeEntity reservationBeforeEntity = new ReservationBeforeEntity(dto);
+        ReservationBeforeEntity reservationBeforeEntity = new ReservationBeforeEntity();
 
         try {
             //  중복된 예약 내역이 있는지 확인하고 있다면 중복된 예약내역에 대한 응답을 보낸다.  //
@@ -143,14 +138,15 @@ public class BookServiceImpl implements BookService {
 
         // 체크아웃 날짜가 지난 모든 데이터를 가져옴
         List<ReservationBeforeEntity> expiredReservations = reservationBeforeRepository.findAllByCheckOutDateBefore(currentDateTime);
+        UserEntity userEntity = userRepository.findBy()
 
         for (ReservationBeforeEntity beforeEntity : expiredReservations) {
             // 예약 데이터를 완료 엔티티로 옮김
             ReservationCompleteEntity completeEntity = new ReservationCompleteEntity(
                     beforeEntity.getReservationId(),
-                    beforeEntity.getUserId(),
+                    beforeEntity.getUser(),
                     beforeEntity.getBookId(),
-                    beforeEntity.getGlampId(),
+                    beforeEntity.getGlamping(),
                     beforeEntity.getRoomId(),
                     beforeEntity.getInputName(),
                     beforeEntity.getPersonnel(),
