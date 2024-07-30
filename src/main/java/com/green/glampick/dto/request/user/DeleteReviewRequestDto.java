@@ -10,7 +10,7 @@ import lombok.ToString;
 @ToString
 public class DeleteReviewRequestDto {
 
-    private long reviewId;
+    private Long reviewId;
     @JsonIgnore
     private long userId;
 }

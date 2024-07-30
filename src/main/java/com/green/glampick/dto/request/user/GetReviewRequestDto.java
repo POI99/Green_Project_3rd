@@ -11,7 +11,7 @@ import static com.green.glampick.common.GlobalConst.PAGING_SIZE;
 @Getter
 public class GetReviewRequestDto extends Paging {
 
-    @JsonIgnore private long reviewId;
+    @JsonIgnore private Long reviewId;
     @JsonIgnore private long userId;
 
     public GetReviewRequestDto(Integer page) {
