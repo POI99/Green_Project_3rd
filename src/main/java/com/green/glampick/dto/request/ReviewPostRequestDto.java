@@ -10,6 +10,7 @@ public class ReviewPostRequestDto {
 
     @JsonIgnore
     private long userId;
+
     private String reviewOwnerContent;
 
 }

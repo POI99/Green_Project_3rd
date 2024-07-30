@@ -158,7 +158,7 @@ public class OwnerController {
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = PostOwnerReviewInfoResponseDto.class)
                             ))})
-    @PostMapping("review")
+    @PatchMapping("review")
     public ResponseEntity<? super PostOwnerReviewInfoResponseDto> postReview(@RequestBody ReviewPostRequestDto p) {
         return service.postReview(p);
     }

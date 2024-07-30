@@ -18,9 +18,11 @@ import com.green.glampick.dto.response.owner.post.PostGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutRoomInfoResponseDto;
+import com.green.glampick.entity.ReviewEntity;
 import com.green.glampick.mapper.OwnerMapper;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +42,7 @@ public class OwnerServiceImpl implements OwnerService {
     private final OwnerMapper mapper;
     private final AuthenticationFacade authenticationFacade;
     private final CustomFileUtils customFileUtils;
-
+    private final EntityManager em;
 // 민지 =================================================================================================================
 
     @Transactional
@@ -278,7 +280,21 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     @Transactional
     public ResponseEntity<? super PostOwnerReviewInfoResponseDto> postReview(ReviewPostRequestDto p) {
+        try {
+            p.setUserId(authenticationFacade.getLoginUserId());
+            if (p.getUserId() == 0) {
+                throw new RuntimeException();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return PostOwnerReviewInfoResponseDto.validateUserId();
+        }
+        try {
+            ReviewEntity reviewEntity = new ReviewEntity();
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return null;
     }
