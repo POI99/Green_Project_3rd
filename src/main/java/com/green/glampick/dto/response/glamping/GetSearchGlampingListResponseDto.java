@@ -1,6 +1,5 @@
 package com.green.glampick.dto.response.glamping;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.green.glampick.common.response.ResponseCode;
 import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.ResponseDto;

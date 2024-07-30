@@ -5,14 +5,16 @@ import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.object.glamping.GlampingRoomListItem;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+
 @Getter
 @Setter
 @ToString
-@Builder
+@SuperBuilder
 public class GetMoreRoomItemResponseDto extends ResponseDto {
     private List<GlampingRoomListItem> roomItems;
 
