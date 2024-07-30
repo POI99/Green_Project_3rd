@@ -6,6 +6,10 @@ import com.green.glampick.dto.request.book.PostBookRequestDto;
 import com.green.glampick.dto.response.book.GetBookPayResponseDto;
 import com.green.glampick.dto.response.book.PostBookResponseDto;
 import com.green.glampick.entity.*;
+import com.green.glampick.exception.CustomException;
+import com.green.glampick.exception.errorCode.BookErrorCode;
+import com.green.glampick.exception.errorCode.CommonErrorCode;
+import com.green.glampick.exception.errorCode.GlampingErrorCode;
 import com.green.glampick.repository.*;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.BookService;
@@ -46,7 +50,7 @@ public class BookServiceImpl implements BookService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return PostBookResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
         ReservationBeforeEntity reservationBeforeEntity = new ReservationBeforeEntity();
@@ -54,10 +58,14 @@ public class BookServiceImpl implements BookService {
         try {
             //  중복된 예약 내역이 있는지 확인하고 있다면 중복된 예약내역에 대한 응답을 보낸다.  //
             boolean existedReservation = reservationBeforeRepository.existsByReservationId
-                                                                    (reservationBeforeEntity.getReservationId());
-            if (existedReservation) { return PostBookResponseDto.duplicatedBook(); }
+                    (reservationBeforeEntity.getReservationId());
+            if (existedReservation) {
+                throw new CustomException(BookErrorCode.DB);
+            }
 
-            if (checkDate(dto.getCheckInDate(), dto.getCheckOutDate())) { return PostBookResponseDto.wrongDate(); }
+            if (checkDate(dto.getCheckInDate(), dto.getCheckOutDate())) {
+                throw new CustomException(GlampingErrorCode.WD);
+            }
 
             //  현재시간을 기준으로 랜덤 13자리의 수를 생성한다.  //
             long currentTimeMillis = System.currentTimeMillis();
@@ -86,9 +94,11 @@ public class BookServiceImpl implements BookService {
             //  가공이 완료된 Entity 를 DB에 저장한다.  //
             reservationBeforeRepository.save(reservationBeforeEntity);
 
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.databaseError();
+            throw new CustomException(CommonErrorCode.DBE);
         }
 
         return PostBookResponseDto.success();
@@ -116,16 +126,18 @@ public class BookServiceImpl implements BookService {
 
             payAmount = roomPrice + (dto.getPersonnel() - roomPeople) * extraCharge;
 
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.databaseError();
+            throw new CustomException(CommonErrorCode.DBE);
         }
 
         return GetBookPayResponseDto.success(roomPrice, extraChargePrice, payAmount);
 
     }
 
-    private boolean checkDate (LocalDate in, LocalDate out) {
+    private boolean checkDate(LocalDate in, LocalDate out) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return out.isBefore(in); // 틀리면 true
     }

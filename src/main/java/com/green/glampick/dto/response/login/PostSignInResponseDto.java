@@ -24,14 +24,4 @@ public class PostSignInResponseDto extends ResponseDto {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    public static ResponseEntity<ResponseDto> signInFailed() {
-        ResponseDto result = new ResponseDto(ResponseCode.SIGN_IN_FAILED, ResponseMessage.SIGN_IN_FAILED);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> validationFail() {
-        ResponseDto result = new ResponseDto(ResponseCode.VALIDATION_FAILED, ResponseMessage.VALIDATION_FAILED);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
 }

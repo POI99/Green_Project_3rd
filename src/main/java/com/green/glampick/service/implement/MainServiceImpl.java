@@ -6,6 +6,8 @@ import com.green.glampick.dto.object.main.PetFriendlyGlampingItem;
 import com.green.glampick.dto.object.main.PopularGlampingItem;
 import com.green.glampick.dto.response.glamping.GetSearchGlampingListResponseDto;
 import com.green.glampick.dto.response.main.GetMainGlampingListResponseDto;
+import com.green.glampick.exception.CustomException;
+import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.mapper.MainMapper;
 import com.green.glampick.service.MainService;
 import lombok.RequiredArgsConstructor;
@@ -37,9 +39,11 @@ public class MainServiceImpl implements MainService {
 
             return GetMainGlampingListResponseDto.success(popular, petFriendly, mountainView);
 
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.databaseError();
+            throw new CustomException(CommonErrorCode.DBE);
         }
     }
 

@@ -19,6 +19,9 @@ import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutRoomInfoResponseDto;
 import com.green.glampick.entity.ReviewEntity;
+import com.green.glampick.exception.CustomException;
+import com.green.glampick.exception.errorCode.CommonErrorCode;
+import com.green.glampick.exception.errorCode.OwnerErrorCode;
 import com.green.glampick.mapper.OwnerMapper;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
@@ -53,7 +56,7 @@ public class OwnerServiceImpl implements OwnerService {
             req.setUserId(userValidationGlamping());
         } catch (Exception e) {
             e.printStackTrace();
-            return PostGlampingInfoResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
         // GlampingValidate
@@ -79,14 +82,16 @@ public class OwnerServiceImpl implements OwnerService {
         // glamping insert 실행
         try {
             mapper.insertGlamping(req);
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return PostGlampingInfoResponseDto.databaseError();
+            throw new CustomException(CommonErrorCode.DBE);
         }
         long glampId = req.getGlampId();
 
         // 이미지 url로 저장하기
-        String picNameUrl = String.format("/pic/glamping/%d/glamp/%s",glampId, glmapImgName);
+        String picNameUrl = String.format("/pic/glamping/%d/glamp/%s", glampId, glmapImgName);
         mapper.updateGlampingImageNameToUrl(picNameUrl, glampId);
 
         // 글램핑 대표 이미지 넣기
@@ -112,7 +117,7 @@ public class OwnerServiceImpl implements OwnerService {
             userValidationRoom(req.getGlampId());
         } catch (Exception e) {
             e.printStackTrace();
-            return PostGlampingInfoResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
         // RoomValidate
@@ -154,9 +159,11 @@ public class OwnerServiceImpl implements OwnerService {
             if (req.getService() != null) {
                 mapper.insertRoomService(req);
             }
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return PostRoomInfoResponseDto.databaseError();
+            throw new CustomException(CommonErrorCode.DBE);
         }
         return PostRoomInfoResponseDto.success(req.getRoomId());
     }
@@ -169,7 +176,7 @@ public class OwnerServiceImpl implements OwnerService {
             req.setUserId(userValidationGlamping());
         } catch (Exception e) {
             e.printStackTrace();
-            return PostGlampingInfoResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
         // GlampingValidate
@@ -198,7 +205,7 @@ public class OwnerServiceImpl implements OwnerService {
             userValidationRoom(req.getGlampId());
         } catch (Exception e) {
             e.printStackTrace();
-            return PostGlampingInfoResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
         // RoomValidate
@@ -218,10 +225,10 @@ public class OwnerServiceImpl implements OwnerService {
         // 서비스 업데이트
         List<Integer> service = mapper.selService(req.getRoomId());
         if (service != req.getService()) {
-            if(service != null) {
+            if (service != null) {
                 mapper.delService(req.getRoomId());
             }
-            if(req.getService() != null) {
+            if (req.getService() != null) {
                 mapper.insertRoomService(req.getRoomId(), req.getService());
             }
         }
@@ -236,10 +243,12 @@ public class OwnerServiceImpl implements OwnerService {
             userValidationGlamping();
         } catch (Exception e) {
             e.printStackTrace();
-            return PostGlampingInfoResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
-        if (glampId == null || glampId < 0) { return GetOwnerBookListResponseDto.wrongGlampId(); }
+        if (glampId == null || glampId < 0) {
+            throw new CustomException(OwnerErrorCode.WG);
+        }
 
         List<BookBeforeItem> before;
         List<BookCompleteItem> complete;
@@ -248,9 +257,11 @@ public class OwnerServiceImpl implements OwnerService {
             before = mapper.getBookBefore(glampId);
             complete = mapper.getBookComplete(glampId);
             cancel = mapper.getBookCancel(glampId);
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return GetOwnerBookListResponseDto.databaseError();
+            throw new CustomException(CommonErrorCode.DBE);
         }
 
         return GetOwnerBookListResponseDto.success(before, complete, cancel);
@@ -260,7 +271,9 @@ public class OwnerServiceImpl implements OwnerService {
         long userId = 0;
         try {
             userId = authenticationFacade.getLoginUserId();
-            if (userId <= 0) { throw new RuntimeException(); }
+            if (userId <= 0) {
+                throw new RuntimeException();
+            }
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -270,7 +283,7 @@ public class OwnerServiceImpl implements OwnerService {
     private void userValidationRoom(long glampId) {
         long loginUserId = userValidationGlamping();
         Long getUserId = mapper.getUserIdByGlampId(glampId);
-        if(getUserId == null || loginUserId != getUserId || loginUserId <= 0) {
+        if (getUserId == null || loginUserId != getUserId || loginUserId <= 0) {
             throw new RuntimeException();
         }
     }
@@ -287,7 +300,7 @@ public class OwnerServiceImpl implements OwnerService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return PostOwnerReviewInfoResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
         //Optional<User> user = userRepository.findById(1L);
         try {

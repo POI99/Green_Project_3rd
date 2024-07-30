@@ -57,7 +57,7 @@ public class SocialLoginServiceImpl extends DefaultOAuth2UserService {
         String providerId = signInParam.getProviderId();
         UserEntity userEntity = userRepository.findByProviderId(providerId);
 
-        if(userEntity == null) { //회원가입 처리
+        if (userEntity == null) { //회원가입 처리
             SignUpRequestDto signUpParam = new SignUpRequestDto();
             signUpParam.setUserSocialType(signInProviderType);
             signUpParam.setProviderId(oAuth2UserInfo.getId());

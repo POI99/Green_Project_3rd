@@ -8,6 +8,10 @@ import com.green.glampick.dto.response.login.PostSignUpResponseDto;
 import com.green.glampick.dto.response.owner.post.PostGlampingInfoResponseDto;
 import com.green.glampick.dto.response.user.*;
 import com.green.glampick.entity.*;
+import com.green.glampick.exception.CustomException;
+import com.green.glampick.exception.errorCode.CommonErrorCode;
+import com.green.glampick.exception.errorCode.GlampingErrorCode;
+import com.green.glampick.exception.errorCode.UserErrorCode;
 import com.green.glampick.repository.*;
 import com.green.glampick.repository.resultset.*;
 import com.green.glampick.security.AuthenticationFacade;
@@ -55,7 +59,7 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return GetBookResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
 
@@ -69,10 +73,13 @@ public class UserServiceImpl implements UserService {
             reservationCancelResultSetList = reservationCancelRepository.getBook(dto.getUserId());
             reservationCompleteResultSetList = reservationCompleteRepository.getBook(dto.getUserId());
 
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.databaseError();
+            throw new CustomException(CommonErrorCode.DBE);
         }
+
         return GetBookResponseDto.success(reservationBeforeResultSetList
                 , reservationCompleteResultSetList
                 , reservationCancelResultSetList);
@@ -90,7 +97,7 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return CancelBookResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
 
@@ -102,7 +109,7 @@ public class UserServiceImpl implements UserService {
 
             // Entity 로 가져온 데이터가 없다면, 존재하지 않는 예약내역에 대한 응답을 반환한다.
             if (optionalBeforeEntity.isEmpty()) {
-                return CancelBookResponseDto.noExistedBook();
+                throw new CustomException(UserErrorCode.NB);
             }
 
             ReservationBeforeEntity beforeEntity = optionalBeforeEntity.get();
@@ -124,9 +131,11 @@ public class UserServiceImpl implements UserService {
             reservationCancelRepository.save(cancelEntity);
             reservationBeforeRepository.delete(beforeEntity);
 
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.databaseError();
+            throw new CustomException(CommonErrorCode.DBE);
         }
 
         return CancelBookResponseDto.success();
@@ -144,10 +153,12 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return PostReviewResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
-        if (dto.getReviewStarPoint() > 5) { return PostReviewResponseDto.validateStarPoint(); }
+        if (dto.getReviewStarPoint() > 5) {
+            throw new CustomException(UserErrorCode.VSP);
+        }
 
 
         ReviewEntity reviewEntity = new ReviewEntity();
@@ -163,10 +174,10 @@ public class UserServiceImpl implements UserService {
             glampingStarRepository.findStarPointAvg(reservationCompleteEntity.getGlamping().getGlampId());
         } catch (Exception e) {
             e.printStackTrace();
-            return PostReviewResponseDto.reservationIdError();
+            throw new CustomException(UserErrorCode.RIE);
         }
 
-        if (mf == null){
+        if (mf == null) {
             return PostReviewResponseDto.success(reviewEntity.getReviewId());
         }
         PostReviewPicsRequestDto postReviewPicsRequestDto = PostReviewPicsRequestDto.builder().reviewId(reviewEntity.getReviewId()).build();
@@ -178,10 +189,9 @@ public class UserServiceImpl implements UserService {
             List<ReviewImageEntity> reviewImageEntityList = new ArrayList<>();
 
 
-
             for (MultipartFile image : mf) {
                 String saveFileName = customFileUtils.makeRandomFileName(image);
-                String saveDbFileName = String.format("/pic/review/%d/%d/%s", dto.getUserId(), reviewEntity.getReviewId(),saveFileName);
+                String saveDbFileName = String.format("/pic/review/%d/%d/%s", dto.getUserId(), reviewEntity.getReviewId(), saveFileName);
                 postReviewPicsRequestDto.getReviewPicsName().add(saveDbFileName);
                 String filePath = String.format("%s/%s", makefolder, saveFileName);
                 customFileUtils.transferTo(image, filePath);
@@ -194,9 +204,11 @@ public class UserServiceImpl implements UserService {
             this.reviewImageRepository.saveAll(reviewImageEntityList);
             reviewEntity.setReviewStarPoint(dto.getReviewStarPoint());
 
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.databaseError();
+            throw new CustomException(CommonErrorCode.DBE);
         }
 
         return PostReviewResponseDto.success(reviewEntity.getReviewId());
@@ -214,28 +226,29 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return DeleteReviewResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
         ReviewEntity reviewEntity = new ReviewEntity();
         try {
             reviewRepository.findById(dto.getReviewId());
             if (dto.getReviewId() == 0) {
-                return DeleteReviewResponseDto.noExistedReview();
+                throw new CustomException(UserErrorCode.NR);
             }
             List<ReviewImageEntity> list = reviewImageRepository.findByReviewId(reviewEntity);
 
-            for (int i = 0; i < list.size(); i++ ){
+            for (int i = 0; i < list.size(); i++) {
                 reviewImageRepository.deleteById(list.get(i).getReviewImageId());
             }
             reviewRepository.deleteById(dto.getReviewId());
             reviewRepository.findStarPointAvg();
 
 
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.databaseError();
-
+            throw new CustomException(CommonErrorCode.DBE);
         }
         return DeleteReviewResponseDto.success();
     }
@@ -251,7 +264,7 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return GetReviewResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
         List<GetUserReviewResultSet> resultSetList = null;
@@ -296,9 +309,11 @@ public class UserServiceImpl implements UserService {
 
             return GetReviewResponseDto.success(reviewRepository.getTotalReviewsCount(dto.getUserId()), reviewListItems);
 
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.databaseError();
+            throw new CustomException(CommonErrorCode.DBE);
         }
 
     }
@@ -314,7 +329,7 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return GetFavoriteGlampingResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
         List<GetFavoriteGlampingResultSet> resultSets;
@@ -322,11 +337,13 @@ public class UserServiceImpl implements UserService {
         try {
             resultSets = favoriteGlampingRepository.getFavoriteGlamping(dto.getUserId());
             if (resultSets == null) {
-                return GetFavoriteGlampingResponseDto.noExistedGlamp();
+                throw new CustomException(GlampingErrorCode.NG);
             }
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.databaseError();
+            throw new CustomException(CommonErrorCode.DBE);
         }
         return GetFavoriteGlampingResponseDto.success(resultSets);
     }
@@ -343,21 +360,23 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return GetUserResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
         try {
 
             UserEntity userEntity = userRepository.findById(dto.getUserId()).get();
             if (dto.getUserId() == 0) {
-                return GetUserResponseDto.noExistedUser();
+                throw new CustomException(UserErrorCode.NU);
             }
 
             return GetUserResponseDto.success(userEntity);
 
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.databaseError();
+            throw new CustomException(CommonErrorCode.DBE);
         }
 
     }
@@ -375,7 +394,7 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return UpdateUserResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
         // 수정사항이 하나도 입력되지 않은 경우에는 에러
@@ -383,23 +402,24 @@ public class UserServiceImpl implements UserService {
                 (dto.getUserPw() == null || dto.getUserPw().isEmpty()) &&
                 (dto.getUserPhone() == null || dto.getUserPhone().isEmpty()) &&
                 (dto.getUserNickname() == null || dto.getUserNickname().isEmpty()) &&
-                (mf == null || mf.isEmpty()))
-        {
-            return UpdateUserResponseDto.validationFailed();
+                (mf == null || mf.isEmpty())) {
+            throw new CustomException(CommonErrorCode.VF);
         }
-
 
 
         try {
             UserEntity userEntity = userRepository.findById(dto.getUserId()).get();
             if (dto.getUserId() == 0) {
-                return UpdateUserResponseDto.noExistedUser();
+                throw new CustomException(UserErrorCode.NU);
             }
             boolean existedNickname = userRepository.existsByUserNickname(dto.getUserNickname());
-            if (existedNickname) { return PostSignUpResponseDto.duplicatedNickname(); }
+            if (existedNickname) {
+                throw new CustomException(UserErrorCode.DN);
+            }
 
-            if (mf == null || mf.isEmpty()) { dto.setUserProfileImage(null); }
-            else {
+            if (mf == null || mf.isEmpty()) {
+                dto.setUserProfileImage(null);
+            } else {
                 String path = String.format("user/%d", userEntity.getUserId());
                 customFileUtils.deleteFolder(path);
                 customFileUtils.makeFolders(path);
@@ -427,9 +447,11 @@ public class UserServiceImpl implements UserService {
 
             userRepository.save(userEntity);
 
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.databaseError();
+            throw new CustomException(CommonErrorCode.DBE);
         }
 
         return UpdateUserResponseDto.success();
@@ -446,19 +468,22 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return DeleteUserResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
         try {
 
             userRepository.findById(dto.getUserId());
             if (dto.getUserId() == 0) {
-                return DeleteUserResponseDto.noExistedUser();
+                throw new CustomException(UserErrorCode.NU);
             }
             userRepository.deleteById(dto.getUserId());
 
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
         }
 
         return DeleteUserResponseDto.success();
@@ -476,26 +501,28 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return PostUserPasswordResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
         try {
 
             UserEntity userEntity = userRepository.findByUserId(dto.getUserId());
             if (dto.getUserId() == 0) {
-                return PostUserPasswordResponseDto.noExistedUser();
+                throw new CustomException(UserErrorCode.NU);
             }
 
             String userPw = dto.getUserPw();
             String encodingPw = userEntity.getUserPw();
             boolean matches = passwordEncoder.matches(userPw, encodingPw);
             if (!matches) {
-                return PostUserPasswordResponseDto.invalidPassword();
+                throw new CustomException(UserErrorCode.IP);
             }
 
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.databaseError();
+            throw new CustomException(CommonErrorCode.DBE);
         }
 
         return PostUserPasswordResponseDto.success();

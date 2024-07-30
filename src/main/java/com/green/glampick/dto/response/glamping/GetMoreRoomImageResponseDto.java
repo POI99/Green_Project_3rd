@@ -27,11 +27,6 @@ public class GetMoreRoomImageResponseDto extends ResponseDto {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    public static ResponseEntity<ResponseDto> noExistedGlamp() {
-        ResponseDto result = new ResponseDto(ResponseCode.NOT_EXISTED_GLAMP, ResponseMessage.NOT_EXISTED_GLAMP);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
     public GetMoreRoomImageResponseDto(HashMap<String, List<String>> moreRoomImages) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
         this.moreRoomImages = moreRoomImages;

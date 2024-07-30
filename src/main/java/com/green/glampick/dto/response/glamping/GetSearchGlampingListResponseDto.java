@@ -31,11 +31,6 @@ public class GetSearchGlampingListResponseDto extends ResponseDto {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    public static ResponseEntity<ResponseDto> existGlamp(long glamId) {
-        ResponseDto result = new ResponseDto(ResponseCode.SUCCESS, String.valueOf(glamId));
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
-
     public static ResponseEntity<ResponseDto> isNull() {
         ResponseDto result = new ResponseDto(ResponseCode.RESULT_IS_NULL, ResponseMessage.RESULT_IS_NULL);
         return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -46,14 +41,5 @@ public class GetSearchGlampingListResponseDto extends ResponseDto {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
     }
 
-    public static ResponseEntity<ResponseDto> wrongPersonnel() {
-        ResponseDto result = new ResponseDto(ResponseCode.WRONG_PERSONNEL, ResponseMessage.WRONG_PERSONNEL);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> wrongDate() {
-        ResponseDto result = new ResponseDto(ResponseCode.WRONG_DATE, ResponseMessage.WRONG_DATE);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
 
 }

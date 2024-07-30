@@ -29,13 +29,4 @@ public class PostMailCheckResponseDto extends ResponseDto {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    public static ResponseEntity<ResponseDto> expiredCode() {
-        ResponseDto result = new ResponseDto(ResponseCode.EXPIRED_CODE, ResponseMessage.EXPIRED_CODE);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    public static ResponseEntity<PostMailCheckResponseDto> invalidCode() {
-        PostMailCheckResponseDto result = new PostMailCheckResponseDto(ResponseCode.INVALID_CODE, ResponseMessage.INVALID_CODE, false);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
 }

@@ -35,8 +35,4 @@ public class GetOwnerBookListResponseDto extends ResponseDto {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    public static ResponseEntity<ResponseDto> wrongGlampId() {
-        ResponseDto result = new ResponseDto(ResponseCode.VALIDATION_FAILED, "글램핑Id를 올바르게 입력해주세요");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
 }
