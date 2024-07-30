@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Comment;
 import org.springframework.data.geo.Point;
 
 @Getter
@@ -17,50 +18,56 @@ import org.springframework.data.geo.Point;
 public class GlampingEntity extends UpdatedAt {
 
     // 글램핑 테이블
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long glampId;  // 글램핑 ID
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("글램핑 ID")
+    private Long glampId;
 
     @OneToOne
-    @JoinColumn(name = "userId", nullable = false, unique = true)
-    private UserEntity user;  // 유저 ID
+    @JoinColumn(name = "owner_id", nullable = false, unique = true) @Comment("사장님 ID")
+    private OwnerEntity owner;
 
-    @Column(length = 50, nullable = false)
-    private String glampName;  // 글램핑명
+    @Column(length = 50, nullable = false) @Comment("글램핑명")
+    private String glampName;
 
-    @ColumnDefault("0")
+    @Column(length = 11) @Comment("글램핑 전화번호")
+    private String glampCall;
+
+    @ColumnDefault("0") @Comment("정렬용 추천 점수")
     private Double recommendScore;
 
-    @Column(length = 200, nullable = false)
+    @Column(length = 200, nullable = false) @Comment("대표 이미지")
     private String glampImage;
 
-    @Column(nullable = false) @ColumnDefault("0")
-    private Double starPointAvg;  // 평균 별점
+    @Column(nullable = false) @ColumnDefault("0") @Comment("평균 별점")
+    private Double starPointAvg;
 
-    @Column(nullable = false) @ColumnDefault("0")
-    private int reviewCount; // 댓글갯수
+    @Column(nullable = false) @ColumnDefault("0") @Comment("리뷰 수")
+    private Integer reviewCount;
 
-    @Column(length = 50, nullable = false, unique = true)
-    private String glampLocation;  // 글램핑 위치
+    @Column(length = 50, nullable = false, unique = true) @Comment("글램핑 위치")
+    private String glampLocation;
 
-    @Column(unique = true)
-    private Point location;  // 좌표 (지도용)
+    @Column(unique = true) @Comment("글램핑 위치 좌표")
+    private Point location;
 
-    @Column(nullable = false)
-    private String region;  // 글램핑 지역분류
+    @Column(nullable = false) @Comment("글램핑 지역분류")
+    private String region;
 
-    @ColumnDefault("0")
-    private int extraCharge;   // 인원 추가 요금
+    @ColumnDefault("0") @Comment("추가 인원당 요금")
+    private Integer extraCharge;
 
-    @Column(columnDefinition = "LONGTEXT", nullable = false)
-    private String glampIntro;  // 글램핑 소개
+    @Column(columnDefinition = "LONGTEXT", nullable = false) @Comment("글램핑 소개")
+    private String glampIntro;
 
-    @Column(columnDefinition = "LONGTEXT", nullable = false)
-    private String infoBasic;  // 글램핑 기본정보
+    @Column(columnDefinition = "LONGTEXT", nullable = false) @Comment("글램핑 기본정보")
+    private String infoBasic;
 
-    @Column(columnDefinition = "LONGTEXT", nullable = false)
-    private String infoNotice;  // 글램핑 이용안내
+    @Column(columnDefinition = "LONGTEXT", nullable = false) @Comment("글램핑 유의사항")
+    private String infoNotice;
 
-    @Column
-    private String traffic;  // 글램핑 주차정보
+    @Column(columnDefinition = "LONGTEXT", nullable = false) @Comment("글램핑 주차정보")
+    private String traffic;
+
+    @Column(columnDefinition = "TINYINT", nullable = false) @ColumnDefault("1") @Comment("회원탈퇴 시 -1")
+    private Integer activateStatus;
 
 }
