@@ -63,7 +63,10 @@ public class SocialLoginServiceImpl extends DefaultOAuth2UserService {
             signUpParam.setProviderId(oAuth2UserInfo.getId());
             signUpParam.setUserName(oAuth2UserInfo.getName());
 
-            userEntity = new UserEntity(signUpParam);
+            userEntity = new UserEntity();
+            userEntity.setUserSocialType(signUpParam.getUserSocialType());
+            userEntity.setProviderId(signUpParam.getProviderId());
+            userEntity.setUserName(signUpParam.getUserName());
             userRepository.save(userEntity);
 
 //            userEntity = new UserEntity(
