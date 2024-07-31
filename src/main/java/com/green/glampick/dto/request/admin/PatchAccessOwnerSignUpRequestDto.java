@@ -10,6 +10,5 @@ import lombok.Setter;
 public class PatchAccessOwnerSignUpRequestDto {
 
     private Long ownerId;
-    private Role role;
 
 }

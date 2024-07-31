@@ -2,7 +2,12 @@ package com.green.glampick.controller;
 
 import com.green.glampick.dto.request.admin.PatchAccessOwnerSignUpRequestDto;
 import com.green.glampick.dto.response.admin.PatchAccessOwnerSignUpResponseDto;
+import com.green.glampick.dto.response.login.PostSignOutResponseDto;
 import com.green.glampick.service.AdminService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +24,11 @@ public class AdminController {
     private final AdminService service;
 
     @PatchMapping("/access/owner/sign-up")
+    @Operation(summary = "승인 처리하기", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+        content = @Content(
+                mediaType = "application/json", schema = @Schema(implementation = PatchAccessOwnerSignUpResponseDto.class)
+        ))
     public ResponseEntity<? super PatchAccessOwnerSignUpResponseDto> accessSignUp
             (@RequestBody PatchAccessOwnerSignUpRequestDto dto) {
         return service.accessSignUp(dto);

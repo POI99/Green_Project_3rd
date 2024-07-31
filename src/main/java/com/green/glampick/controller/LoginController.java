@@ -54,7 +54,10 @@ public class LoginController {
 
     @PostMapping("/owner/sign-up")
     @Operation(summary = "사장님 회원가입", description = "")
-    @ApiResponse(responseCode = "200", description = "", content = @Content())
+    @ApiResponse(responseCode = "200", description = "",
+        content = @Content(
+                mediaType = "application/json", schema = @Schema(implementation = PostOwnerSignUpResponseDto.class)
+        ))
     public ResponseEntity<? super PostOwnerSignUpResponseDto> signUpOwner(@RequestBody @Valid OwnerSignUpRequestDto dto) {
         return service.signUpOwner(dto);
     }
@@ -70,14 +73,18 @@ public class LoginController {
 
     @PostMapping("/owner/sign-in")
     @Operation(summary = "사장님 로그인", description = "")
-    @ApiResponse(responseCode = "200", description = "", content = @Content())
+    @ApiResponse(responseCode = "200", description = "",
+        content = @Content(
+                mediaType = "application/json", schema = @Schema(implementation = PostOwnerSignInResponseDto.class)))
     public ResponseEntity<? super PostOwnerSignInResponseDto> signInOwner(HttpServletResponse res, @RequestBody @Valid OwnerSignInRequestDto dto) {
         return service.signInOwner(res, dto);
     }
 
     @PostMapping("/admin/sign-in")
     @Operation(summary = "관리자 로그인", description = "")
-    @ApiResponse(responseCode = "200", description = "", content = @Content())
+    @ApiResponse(responseCode = "200", description = "",
+        content = @Content(
+            mediaType = "application/json", schema = @Schema(implementation = PostAdminSignInResponseDto.class)))
     public ResponseEntity<? super PostAdminSignInResponseDto> signInAdmin(HttpServletResponse res, @RequestBody @Valid AdminSignInRequestDto dto) {
         return service.signInAdmin(res, dto);
     }
@@ -93,7 +100,8 @@ public class LoginController {
 
     @PostMapping("/sign-out")
     @Operation(summary = "로그아웃 처리", description = "")
-    @ApiResponse(responseCode = "200", description = "", content = @Content())
+    @ApiResponse(responseCode = "200", description = "",
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostSignOutResponseDto.class)))
     public ResponseEntity<? super PostSignOutResponseDto> signOut(HttpServletResponse res) {
         return service.signOut(res);
     }
