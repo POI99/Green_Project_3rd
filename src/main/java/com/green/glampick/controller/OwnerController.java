@@ -1,18 +1,19 @@
 package com.green.glampick.controller;
 
-import com.green.glampick.common.swagger.description.owner.PostOwnerReviewSwaggerDescription;
 import com.green.glampick.dto.request.owner.GlampingPostRequestDto;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.ReviewPostRequestDto;
 import com.green.glampick.dto.request.owner.GlampingPutRequestDto;
 import com.green.glampick.dto.request.owner.RoomPostRequestDto;
 import com.green.glampick.dto.request.owner.RoomPutRequestDto;
+import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookListResponseDto;
 import com.green.glampick.dto.response.owner.post.PostGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutRoomInfoResponseDto;
+import com.green.glampick.dto.response.user.GetReviewResponseDto;
 import com.green.glampick.service.OwnerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -22,6 +23,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +31,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.green.glampick.common.swagger.description.owner.PostOwnerReviewSwaggerDescription.OWNER_REVIEW_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.PostOwnerReviewSwaggerDescription.POST_OWNER_REVIEW_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.user.GetUserReviewSwaggerDescription.USER_REVIEW_VIEW_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.user.GetUserReviewSwaggerDescription.USER_REVIEW_VIEW_RESPONSE_ERROR_CODE;
 
 
 @Slf4j
@@ -144,10 +148,10 @@ public class OwnerController {
     public ResponseEntity<? super GetOwnerBookListResponseDto> getGlampReservation(@PathVariable("glamp_id") Long glampId) {
         return service.getGlampReservation(glampId);
     }
-
+// 강국 =================================================================================================================
 
     @Operation(summary = "리뷰 답글 작성하기",
-            description = OWNER_REVIEW_DESCRIPTION
+            description = POST_OWNER_REVIEW_DESCRIPTION
             ,
             responses = {
                     @ApiResponse(
@@ -159,15 +163,18 @@ public class OwnerController {
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = PostOwnerReviewInfoResponseDto.class)
                             ))})
-    @PatchMapping("review")
+    @PatchMapping("/review")
     public ResponseEntity<? super PostOwnerReviewInfoResponseDto> postReview(@RequestBody ReviewPostRequestDto p) {
         return service.postReview(p);
     }
-// 강국 =================================================================================================================
-
-
-
-
+    @GetMapping("/review")
+    @Operation(summary = "리뷰 불러오기", description = USER_REVIEW_VIEW_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetReviewResponseDto.class)))
+    public ResponseEntity<?super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto dto) {
+        return service.getReview(dto);
+    }
     @Operation(summary = "예약정보 취소 처리 하기",
             description =
                     "<strong> 변수명 </strong> reservationId : 예약 PK <p>  ex)21 </p>",
@@ -184,5 +191,7 @@ public class OwnerController {
     public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(@RequestBody ReviewPatchRequestDto p) {
         return service.patchReview(p);
     }
+
+
 }
 

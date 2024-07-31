@@ -1,6 +1,7 @@
 package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
+import com.green.glampick.dto.object.UserReviewListItem;
 import com.green.glampick.dto.object.owner.BookBeforeItem;
 import com.green.glampick.dto.object.owner.BookCancelItem;
 import com.green.glampick.dto.object.owner.BookCompleteItem;
@@ -12,16 +13,19 @@ import com.green.glampick.dto.request.owner.RoomPostRequestDto;
 import com.green.glampick.dto.request.owner.RoomPutRequestDto;
 import com.green.glampick.dto.request.owner.module.GlampingModule;
 import com.green.glampick.dto.request.owner.module.RoomValidate;
+import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookListResponseDto;
 import com.green.glampick.dto.response.owner.post.PostGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutRoomInfoResponseDto;
+import com.green.glampick.dto.response.user.GetReviewResponseDto;
 import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.GlampingWaitEntity;
 import com.green.glampick.entity.OwnerEntity;
 import com.green.glampick.entity.ReviewEntity;
+import com.green.glampick.entity.ReviewImageEntity;
 import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.OwnerErrorCode;
@@ -30,17 +34,22 @@ import com.green.glampick.repository.GlampingRepository;
 import com.green.glampick.repository.GlampingWaitRepository;
 import com.green.glampick.repository.OwnerRepository;
 import com.green.glampick.repository.ReviewRepository;
+import com.green.glampick.repository.resultset.GetUserReviewResultSet;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -261,29 +270,31 @@ public class OwnerServiceImpl implements OwnerService {
 
 
 
-    // 강국 =================================================================================================================
+// 강국 =================================================================================================================
     @Override
     @Transactional
     public ResponseEntity<? super PostOwnerReviewInfoResponseDto> postReview(ReviewPostRequestDto p) {
 
         try {   // 로그인
-            p.setUserId(authenticationFacade.getLoginUserId());
-            if (p.getUserId() == 0) {
+            p.setOwnerId(authenticationFacade.getLoginUserId());
+            if (p.getOwnerId() == 0) {
                 throw new RuntimeException();
             }
         } catch (Exception e) {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.MNF);// 유저를 찾을 수 없음
         }
-        //Optional<User> user = userRepository.findById(1L);
+
         try {
-            ReviewEntity reviewEntity = new ReviewEntity();
-//            reviewRepository.findById()
+            ReviewEntity review = reviewRepository.findReviewById(p.getReviewId());
+            review.setReviewComment(p.getReviewOwnerContent());
+            reviewRepository.save(review);
         } catch (Exception e) {
             e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
         }
 
-        return null;
+        return PostOwnerReviewInfoResponseDto.success();
     }
 
     @Override
@@ -292,5 +303,68 @@ public class OwnerServiceImpl implements OwnerService {
         return null;
     }
 
+    @Override
+    public ResponseEntity<?super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto dto) {
+
+        try {
+            dto.setUserId(authenticationFacade.getLoginUserId());
+            if (dto.getUserId() <= 0) {
+                throw new RuntimeException();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.MNF);
+        }
+
+        List<GetUserReviewResultSet> resultSetList = null;  //리뷰 목록
+        List<ReviewImageEntity> imageEntities = new ArrayList<>(); // 이미지 목록
+
+        try {
+            int limit = dto.getLimit();
+            int offset = dto.getOffset();
+
+            resultSetList = reviewRepository.getReview(dto.getUserId(), limit, offset);
+
+            List<Long> reviewIds = resultSetList.stream()
+                    .map(GetUserReviewResultSet::getReviewId)
+                    .collect(Collectors.toList());
+
+//            imageEntities = reviewImageRepository.findByReviewIdIn(reviewIds);
+
+            List<UserReviewListItem> reviewListItems = new ArrayList<>();
+
+            for (GetUserReviewResultSet resultSet : resultSetList) {
+                UserReviewListItem reviewListItem = new UserReviewListItem();
+                reviewListItem.setGlampName(resultSet.getGlampName());
+                reviewListItem.setRoomName(resultSet.getRoomName());
+                reviewListItem.setUserNickName(resultSet.getUserNickname());
+                reviewListItem.setUserProfileImage(resultSet.getUserProfileImage());
+                reviewListItem.setReviewId(resultSet.getReviewId());
+                reviewListItem.setReservationId(resultSet.getReservationId());
+                reviewListItem.setUserReviewContent(resultSet.getReviewContent());
+                reviewListItem.setStarPoint(resultSet.getReviewStarPoint());
+                reviewListItem.setOwnerReviewContent(resultSet.getOwnerReviewComment());
+                reviewListItem.setCreatedAt(resultSet.getCreatedAt().toString());
+                reviewListItem.setBookId(resultSet.getBookId());
+                reviewListItem.setGlampId(resultSet.getGlampId());
+
+                List<String> imageUrls = imageEntities.stream()
+                        .filter(entity -> entity.getReviewId().getReviewId() == resultSet.getReviewId())
+                        .map(ReviewImageEntity::getReviewImageName) // 경로를 파일명으로 구성
+                        .collect(Collectors.toList());
+                reviewListItem.setReviewImages(imageUrls);
+
+                reviewListItems.add(reviewListItem);
+            }
+
+            return GetReviewResponseDto.success(reviewRepository.getTotalReviewsCount(dto.getUserId()), reviewListItems);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+    }
 
 }
