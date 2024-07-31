@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,30 +43,34 @@ import static com.green.glampick.common.swagger.description.owner.PostOwnerRevie
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/jin/owner")
-@Tag(name = "사장님 컨트롤러")
+@RequestMapping("/api/jin")
+@Tag(name = "jin 컨트롤러")
 public class OwnerJinController {
 
     private final OwnerJinService service;
 
 
     // 이용 완료된 객실별 예약수, 매출
-    public ResponseEntity<? super GetOwnerPopularRoomResponseDto> getPopRoom(@RequestPart ReviewGetRoomRequestDto dto) {
+    @GetMapping("/poproom")
+    public ResponseEntity<? super GetOwnerPopularRoomResponseDto> getPopRoom(@ParameterObject ReviewGetRoomRequestDto dto) {
         return service.getPopRoom(dto);
     }
 
     // 별점
-    public ResponseEntity<? super GetOwnerStarResponseDto> getStarRoom(@RequestPart ReviewGetStarRequestDto dto) {
+    @GetMapping("/star")
+    public ResponseEntity<? super GetOwnerStarResponseDto> getStarRoom(@ParameterObject ReviewGetStarRequestDto dto) {
         return service.getStarRoom(dto);
     }
 
     // 관심 수
-    public ResponseEntity<? super GetGlampingHeartResponseDto> getHeartRoom(@RequestBody ReviewGetHeartRequestDto dto) {
+    @GetMapping("/roomheart")
+    public ResponseEntity<? super GetGlampingHeartResponseDto> getHeartRoom(@ParameterObject ReviewGetHeartRequestDto dto) {
         return service.getHeartRoom(dto);
     }
 
     // 예약 취소율
-    public ResponseEntity<? super GetGlampingCancelResponseDto> getGlampingCancelRoom(@RequestBody ReviewGetCancelRequestDto dto) {
+    @GetMapping("/glampingcancel")
+    public ResponseEntity<? super GetGlampingCancelResponseDto> getGlampingCancelRoom(@ParameterObject ReviewGetCancelRequestDto dto) {
         return service.getGlampingCancelRoom(dto);
     }
 

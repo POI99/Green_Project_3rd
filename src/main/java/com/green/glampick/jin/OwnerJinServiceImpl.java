@@ -46,7 +46,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             return GetOwnerPopularRoomResponseDto.validateUserId();
         }
 
-        ownerRepository.findStarPointAv();
+
 
 
         return null;
@@ -63,6 +63,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             e.printStackTrace();
             return GetOwnerStarResponseDto.validateUserId();
         }
+        ownerRepository.findStarPointAv();
         return null;
     }
 
