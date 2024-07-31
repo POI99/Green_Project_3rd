@@ -1,6 +1,5 @@
 package com.green.glampick.dto.request.owner.module;
 
-import com.green.glampick.dto.request.owner.GlampingPostRequestDto;
 import com.green.glampick.dto.request.owner.RoomPostRequestDto;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,17 +19,17 @@ public class RoomValidate {
             throw new RuntimeException("사진을 업로드해주세요.");
         }
     }
-
-    // 필요한 데이터가 모두 입력되었는가?
-    public static void isNull(RoomPostRequestDto req){
-        GlampingValidate.isNull(req.getRoomName());
-        GlampingValidate.isNull(req.getInTime());
-        GlampingValidate.isNull(req.getOutTime());
-        GlampingValidate.isNull(req.getGlampId());
-        GlampingValidate.isNull(req.getPrice());
-        GlampingValidate.isNull(req.getPeopleNum());
-        GlampingValidate.isNull(req.getPeopleMax());
-    }
+//
+//    // 필요한 데이터가 모두 입력되었는가?
+//    public static void isNull(RoomPostRequestDto req){
+//        GlampingModule.isNull(req.getRoomName());
+//        GlampingModule.isNull(req.getInTime());
+//        GlampingModule.isNull(req.getOutTime());
+//        GlampingModule.isNull(req.getGlampId());
+//        GlampingModule.isNull(req.getPrice());
+//        GlampingModule.isNull(req.getPeopleNum());
+//        GlampingModule.isNull(req.getPeopleMax());
+//    }
 
     // 인원 정보가 올바른가?
     public static void personnel(int standard, int max){

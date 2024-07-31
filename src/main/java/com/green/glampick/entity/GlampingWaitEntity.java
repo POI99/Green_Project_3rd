@@ -1,7 +1,5 @@
 package com.green.glampick.entity;
 
-import com.green.glampick.dto.request.user.PostAvgRequest;
-import com.green.glampick.dto.request.user.PostReviewRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,14 +11,12 @@ import org.springframework.data.geo.Point;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Table(name = "glamping")
-public class GlampingEntity extends UpdatedAt {
-
+@Table(name = "glamping_wait")
+public class GlampingWaitEntity extends CreatedAt {
     // 글램핑 테이블
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("글램핑 ID")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("글램핑 ID")
     private Long glampId;
 
     @OneToOne
@@ -33,17 +29,9 @@ public class GlampingEntity extends UpdatedAt {
     @Column(length = 11) @Comment("글램핑 전화번호")
     private String glampCall;
 
-    @ColumnDefault("0") @Comment("정렬용 추천 점수")
-    private Double recommendScore;
-
     @Column(length = 200, nullable = false) @Comment("대표 이미지")
     private String glampImage;
 
-    @Column(nullable = false) @ColumnDefault("0") @Comment("평균 별점")
-    private Double starPointAvg;
-
-    @Column(nullable = false) @ColumnDefault("0") @Comment("리뷰 수")
-    private Integer reviewCount;
 
     @Column(length = 50, nullable = false) @Comment("글램핑 위치")
     private String glampLocation;
@@ -68,8 +56,5 @@ public class GlampingEntity extends UpdatedAt {
 
     @Column(columnDefinition = "LONGTEXT", nullable = false) @Comment("추가 위치 정보")
     private String traffic;
-
-    @Column(columnDefinition = "TINYINT", nullable = false) @ColumnDefault("1") @Comment("회원탈퇴 시 -1")
-    private Integer activateStatus;
 
 }

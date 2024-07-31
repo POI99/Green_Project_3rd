@@ -33,6 +33,7 @@ public interface LoginService {
 
     //  이메일 로그인 처리  //
     ResponseEntity<? super PostSignInResponseDto> signInUser(HttpServletResponse res, SignInRequestDto dto);
+    ResponseEntity<? super PostSignInResponseDto> signInOwner(HttpServletResponse res, SignInRequestDto dto);
 
     //  사장님 로그인 처리  //
     ResponseEntity<? super PostSignInResponseDto> signInOwner(HttpServletResponse res, OwnerSignInRequestDto dto);

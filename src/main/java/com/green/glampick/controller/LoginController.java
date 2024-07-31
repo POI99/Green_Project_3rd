@@ -72,6 +72,15 @@ public class LoginController {
     public ResponseEntity<? super PostSignInResponseDto> signInUser(HttpServletResponse res, @RequestBody @Valid SignInRequestDto dto) {
         return service.signInUser(res, dto);
     }
+    // =========
+    @PostMapping("/sign-in/owner")
+    @Operation(summary = "이메일 로그인", description = SIGN_IN_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = SIGN_IN_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostSignInResponseDto.class)))
+    public ResponseEntity<? super PostSignInResponseDto> signInOwner(HttpServletResponse res, @RequestBody @Valid SignInRequestDto dto) {
+        return service.signInOwner(res, dto);
+    }
 
     @PostMapping("/owner/sign-in")
     @Operation(summary = "사장님 로그인", description = "")
