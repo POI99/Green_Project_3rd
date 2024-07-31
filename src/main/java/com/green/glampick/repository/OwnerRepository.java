@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OwnerRepository extends JpaRepository<OwnerEntity, Long> {
     OwnerEntity findByOwnerEmail(String ownerEmail);
+    OwnerEntity findByOwnerId(Long ownerId);
 }

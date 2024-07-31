@@ -12,7 +12,6 @@ import com.green.glampick.dto.request.owner.GlampingPutRequestDto;
 import com.green.glampick.dto.request.owner.RoomPostRequestDto;
 import com.green.glampick.dto.request.owner.RoomPutRequestDto;
 import com.green.glampick.dto.request.owner.module.GlampingModule;
-import com.green.glampick.dto.request.owner.module.RoomValidate;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookListResponseDto;
@@ -48,7 +47,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -103,36 +101,43 @@ public class OwnerServiceImpl implements OwnerService {
         return PostGlampingInfoResponseDto.success(glampId);
     }
 
-    // 글램핑 사진 수정
-
     // 글램핑 수정
+    @Transactional
+    public ResponseEntity<? super PutGlampingInfoResponseDto> updateGlampingInfo(GlampingPutRequestDto p) {
+
+
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+
+        // 로그인 유저와 글램핑 PK가 매치되는가?
+        GlampingModule.isGlampIdOk(glampingRepository, ownerRepository, p.getGlampId(), ownerId);
+
+        GlampingPostRequestDto dto = p.getRequestDto();
+
+        // 전화번호 형식 맞추기
+        if(dto.getGlampCall() != null && !dto.getGlampCall().isEmpty()) {
+            dto.setGlampCall(GlampingModule.glampingCall(dto.getGlampCall()));
+        }
+
+        // 위치정보 중복되는지 확인하기
+        if(dto.getGlampLocation() != null && !dto.getGlampLocation().isEmpty()) {
+            GlampingModule.locationUpdate(dto.getGlampLocation(), waitRepository, glampingRepository, p.getGlampId());
+        }
+
+        GlampingEntity entity = glampingRepository.findByGlampId(p.getGlampId());
+        dto = GlampingModule.dtoNull(dto, entity);
+
+        glampingRepository.updateGlampingInformation(dto.getGlampName(), dto.getGlampCall()
+                , dto.getGlampLocation(), dto.getRegion(), dto.getExtraCharge()
+                , dto.getIntro(), dto.getBasic(), dto.getNotice(), dto.getTraffic() ,p.getGlampId());
+
+
+        return PutGlampingInfoResponseDto.success();
+    }
+
+//    // 글램핑 사진 수정
 //    @Transactional
-//    public ResponseEntity<? super PutGlampingInfoResponseDto> updateGlampingInfo(GlampingPutRequestDto p) {
-//        GlampingPostRequestDto req = p.getRequestDto();
+//    public ResponseEntity<? super PutGlampingInfoResponseDto> changeGlampingImage (MultipartFile image, ) {
 //
-//        try {
-//            req.setOwnerId(userValidationGlamping());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new CustomException(CommonErrorCode.MNF);
-//        }
-//
-//        // GlampingValidate
-//        try {
-//            // 글램핑 Id가 올바른가?
-//            GlampingModule.isNull(p.getGlampId());
-//            req.setGlampId(p.getGlampId());
-//            // 필요한 데이터가 모두 입력되었는가?
-//            GlampingModule.isNull(req);
-//            // 글램핑 위치가 중복되는가? (existingLocation = 위치가 동일한 글램핑장 PK)
-//            Long existingLocation = mapper.existingLocation(req.getGlampLocation());
-//            GlampingModule.locationUpdate(existingLocation, req.getGlampId());
-//        } catch (Exception e) {
-//            String msg = e.getMessage();
-//            return PutGlampingInfoResponseDto.validationFailed(msg);
-//        }
-//        mapper.updateGlampingInfo(req);
-//        return PutGlampingInfoResponseDto.success();
 //    }
 
     @Transactional

@@ -13,6 +13,7 @@ public enum CommonErrorCode implements ErrorCode {
 
     // 400
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "입력이 잘못되었습니다."), // validation 어노테이션 에러
+    INVALID_ENTITY(HttpStatus.BAD_REQUEST, "entity 정보를 불러올 수 없습니다. 입력된 값이 올바른지 확인 부탁드립니다."),
     MNF(HttpStatus.BAD_REQUEST, "회원을 찾을 수 없습니다."), // MEMBER_NOT_FOUND
     EF(HttpStatus.BAD_REQUEST, "인증코드의 유효시간이 지났습니다."), // EXPIRED_CODE
     IC(HttpStatus.BAD_REQUEST, "인증코드가 올바르지 않습니다."), // INVALID_CODE
