@@ -3,6 +3,7 @@ package com.green.glampick.service;
 import com.green.glampick.dto.request.login.OwnerSignUpRequestDto;
 import com.green.glampick.dto.request.login.SignInRequestDto;
 import com.green.glampick.dto.request.login.SignUpRequestDto;
+import com.green.glampick.dto.request.owner.OwnerSignInRequestDto;
 import com.green.glampick.dto.response.login.PostOwnerSignUpResponseDto;
 import com.green.glampick.dto.response.login.PostSignInResponseDto;
 import com.green.glampick.dto.response.login.PostSignUpResponseDto;
@@ -32,6 +33,9 @@ public interface LoginService {
 
     //  이메일 로그인 처리  //
     ResponseEntity<? super PostSignInResponseDto> signInUser(HttpServletResponse res, SignInRequestDto dto);
+
+    //  사장님 로그인 처리  //
+    ResponseEntity<? super PostSignInResponseDto> signInOwner(HttpServletResponse res, OwnerSignInRequestDto dto);
 
     //  AccessToken 불러오기  //
     ResponseEntity<? super GetAccessTokenResponseDto> getAccessToken(HttpServletRequest req);

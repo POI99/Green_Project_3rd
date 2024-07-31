@@ -58,6 +58,6 @@ public class ReservationCompleteEntity extends CreatedAt{
     private Long payAmount;
 
     @Column(nullable = false) @ColumnDefault("0") @Comment("리뷰 작성 가능 상태")
-    private Long status;
+    private Integer status;
 
 }

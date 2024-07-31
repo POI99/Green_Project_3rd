@@ -3,6 +3,7 @@ package com.green.glampick.controller;
 import com.green.glampick.dto.request.login.OwnerSignUpRequestDto;
 import com.green.glampick.dto.request.login.SignInRequestDto;
 import com.green.glampick.dto.request.login.SignUpRequestDto;
+import com.green.glampick.dto.request.owner.OwnerSignInRequestDto;
 import com.green.glampick.dto.response.login.PostOwnerSignUpResponseDto;
 import com.green.glampick.dto.response.login.PostSignInResponseDto;
 import com.green.glampick.dto.response.login.PostSignUpResponseDto;
@@ -70,6 +71,13 @@ public class LoginController {
                 mediaType = "application/json", schema = @Schema(implementation = PostSignInResponseDto.class)))
     public ResponseEntity<? super PostSignInResponseDto> signInUser(HttpServletResponse res, @RequestBody @Valid SignInRequestDto dto) {
         return service.signInUser(res, dto);
+    }
+
+    @PostMapping("/owner/sign-in")
+    @Operation(summary = "사장님 로그인", description = "")
+    @ApiResponse(responseCode = "200", description = "", content = @Content())
+    public ResponseEntity<? super PostSignInResponseDto> signInOwner(HttpServletResponse res, @RequestBody @Valid OwnerSignInRequestDto dto) {
+        return service.signInOwner(res, dto);
     }
 
     @GetMapping("/access-token")

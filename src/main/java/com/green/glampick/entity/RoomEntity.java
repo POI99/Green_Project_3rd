@@ -16,8 +16,8 @@ public class RoomEntity extends UpdatedAt {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("객실 ID")
     private Long roomId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) @Comment("글램핑 ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "glamp_id", nullable = false) @Comment("글램핑 ID")
     private GlampingEntity glampId;
 
     @Column(length = 30, nullable = false) @Comment("객실명")
@@ -37,8 +37,5 @@ public class RoomEntity extends UpdatedAt {
 
     @Column(nullable = false) @Comment("객실 체크아웃 시간")
     private String checkOutTime;
-
-
-
 
 }
