@@ -161,11 +161,11 @@ public class OwnerController {
                                             " <p> userId : 유저 PK <p>  ex)13 </p>",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = PostOwnerReviewInfoResponseDto.class)
+                                    schema = @Schema(implementation = PatchOwnerReviewInfoResponseDto.class)
                             ))})
     @PatchMapping("/review")
-    public ResponseEntity<? super PostOwnerReviewInfoResponseDto> postReview(@RequestBody ReviewPostRequestDto p) {
-        return service.postReview(p);
+    public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(@RequestBody @Valid ReviewPatchRequestDto p) {
+        return service.patchReview(p);
     }
     @GetMapping("/review")
     @Operation(summary = "리뷰 불러오기", description = USER_REVIEW_VIEW_DESCRIPTION)
@@ -175,22 +175,22 @@ public class OwnerController {
     public ResponseEntity<?super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto dto) {
         return service.getReview(dto);
     }
-    @Operation(summary = "예약정보 취소 처리 하기",
-            description =
-                    "<strong> 변수명 </strong> reservationId : 예약 PK <p>  ex)21 </p>",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description =
-                                    "<p> result: 수정실패 0 수정성공 1 </p>",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = PatchOwnerReviewInfoResponseDto.class)
-                            ))})
-    @PatchMapping("book")
-    public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(@RequestBody ReviewPatchRequestDto p) {
-        return service.patchReview(p);
-    }
+//    @Operation(summary = "예약정보 취소 처리 하기",
+//            description =
+//                    "<strong> 변수명 </strong> reservationId : 예약 PK <p>  ex)21 </p>",
+//            responses = {
+//                    @ApiResponse(
+//                            responseCode = "200",
+//                            description =
+//                                    "<p> result: 수정실패 0 수정성공 1 </p>",
+//                            content = @Content(
+//                                    mediaType = "application/json",
+//                                    schema = @Schema(implementation = PatchOwnerReviewInfoResponseDto.class)
+//                            ))})
+//    @PatchMapping("book")
+//    public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(@RequestBody ReviewPatchRequestDto p) {
+//        return service.patchReview(p);
+//    }
 
 
 }

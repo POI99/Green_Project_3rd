@@ -11,12 +11,12 @@ import org.springframework.http.ResponseEntity;
 
 @Setter
 @Getter
-public class PostOwnerReviewInfoResponseDto extends ResponseDto {
+public class PatchOwnerReviewInfoResponseDto extends ResponseDto {
 
     @Schema(example = "3", description = "유저PK")
     private long userId;
 
-    private PostOwnerReviewInfoResponseDto() {
+    private PatchOwnerReviewInfoResponseDto() {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 

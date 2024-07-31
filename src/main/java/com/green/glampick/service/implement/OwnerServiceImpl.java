@@ -30,10 +30,7 @@ import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.OwnerErrorCode;
 import com.green.glampick.mapper.OwnerMapper;
-import com.green.glampick.repository.GlampingRepository;
-import com.green.glampick.repository.GlampingWaitRepository;
-import com.green.glampick.repository.OwnerRepository;
-import com.green.glampick.repository.ReviewRepository;
+import com.green.glampick.repository.*;
 import com.green.glampick.repository.resultset.GetUserReviewResultSet;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
@@ -62,6 +59,7 @@ public class OwnerServiceImpl implements OwnerService {
     private final GlampingRepository glampingRepository;
     private final OwnerRepository ownerRepository;
     private final ReviewRepository reviewRepository;
+    private final ReviewImageRepository reviewImageRepository;
 
 // 민지 =================================================================================================================
 
@@ -279,7 +277,7 @@ public class OwnerServiceImpl implements OwnerService {
 // 강국 =================================================================================================================
     @Override
     @Transactional
-    public ResponseEntity<? super PostOwnerReviewInfoResponseDto> postReview(ReviewPostRequestDto p) {
+    public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p) {
 
         try {   // 로그인
             p.setOwnerId(authenticationFacade.getLoginUserId());
@@ -300,77 +298,25 @@ public class OwnerServiceImpl implements OwnerService {
             throw new CustomException(CommonErrorCode.DBE);
         }
 
-        return PostOwnerReviewInfoResponseDto.success();
+        return PatchOwnerReviewInfoResponseDto.success();
     }
 
     @Override
-    @Transactional
-    public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p) {
+    public ResponseEntity<?super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto p) {
+
+        try {
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+
         return null;
     }
 
-    @Override
-    public ResponseEntity<?super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto dto) {
 
-        try {
-            dto.setUserId(authenticationFacade.getLoginUserId());
-            if (dto.getUserId() <= 0) {
-                throw new RuntimeException();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException(CommonErrorCode.MNF);
-        }
 
-        List<GetUserReviewResultSet> resultSetList = null;  //리뷰 목록
-        List<ReviewImageEntity> imageEntities = new ArrayList<>(); // 이미지 목록
-
-        try {
-            int limit = dto.getLimit();
-            int offset = dto.getOffset();
-
-            resultSetList = reviewRepository.getReview(dto.getUserId(), limit, offset);
-
-            List<Long> reviewIds = resultSetList.stream()
-                    .map(GetUserReviewResultSet::getReviewId)
-                    .collect(Collectors.toList());
-
-//            imageEntities = reviewImageRepository.findByReviewIdIn(reviewIds);
-
-            List<UserReviewListItem> reviewListItems = new ArrayList<>();
-
-            for (GetUserReviewResultSet resultSet : resultSetList) {
-                UserReviewListItem reviewListItem = new UserReviewListItem();
-                reviewListItem.setGlampName(resultSet.getGlampName());
-                reviewListItem.setRoomName(resultSet.getRoomName());
-                reviewListItem.setUserNickName(resultSet.getUserNickname());
-                reviewListItem.setUserProfileImage(resultSet.getUserProfileImage());
-                reviewListItem.setReviewId(resultSet.getReviewId());
-                reviewListItem.setReservationId(resultSet.getReservationId());
-                reviewListItem.setUserReviewContent(resultSet.getReviewContent());
-                reviewListItem.setStarPoint(resultSet.getReviewStarPoint());
-                reviewListItem.setOwnerReviewContent(resultSet.getOwnerReviewComment());
-                reviewListItem.setCreatedAt(resultSet.getCreatedAt().toString());
-                reviewListItem.setBookId(resultSet.getBookId());
-                reviewListItem.setGlampId(resultSet.getGlampId());
-
-                List<String> imageUrls = imageEntities.stream()
-                        .filter(entity -> entity.getReviewId().getReviewId() == resultSet.getReviewId())
-                        .map(ReviewImageEntity::getReviewImageName) // 경로를 파일명으로 구성
-                        .collect(Collectors.toList());
-                reviewListItem.setReviewImages(imageUrls);
-
-                reviewListItems.add(reviewListItem);
-            }
-
-            return GetReviewResponseDto.success(reviewRepository.getTotalReviewsCount(dto.getUserId()), reviewListItems);
-
-        } catch (CustomException e) {
-            throw new CustomException(e.getErrorCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException(CommonErrorCode.DBE);
-        }
-    }
 
 }
