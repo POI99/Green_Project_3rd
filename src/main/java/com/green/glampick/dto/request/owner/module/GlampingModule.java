@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class GlampingModule {
 
     // 오너 PK 불러오기
-    public static long ownerId(AuthenticationFacade facade){
+    public static long ownerId(AuthenticationFacade facade) {
         long loginedId = 0;
         loginedId = facade.getLoginUserId();
         if (loginedId <= 0) {
@@ -70,7 +70,7 @@ public class GlampingModule {
 
     // 전화번호 형식 변경하기 (053-000-0000 으로 왔을 때 0530000000 으로 바꾸기)
     public static String glampingCall(String call) {
-        if(Pattern.compile("^[0-9]*?").matcher(call).matches()) {
+        if (Pattern.compile("^[0-9]*?").matcher(call).matches()) {
             return call;
         }
         StringBuilder sb = new StringBuilder();
@@ -83,17 +83,17 @@ public class GlampingModule {
     }
 
     // 이미지 업로드
-    public static String imageUpload(CustomFileUtils customFileUtils, MultipartFile img, long glampId) {
+    public static String imageUpload(CustomFileUtils customFileUtils, MultipartFile img, long glampId, String table) {
         // 이미지 파일명 만들기
         String glmapImgName = customFileUtils.makeRandomFileName(img);
 
         // 이미지 url로 저장하기
-        String picNameUrl = String.format("/pic/glamping/%d/glamp/%s", glampId, glmapImgName);
+        String picNameUrl = String.format("/pic/%s/%d/glamp/%s", table, glampId, glmapImgName);
 
         // 글램핑 대표 이미지 넣기
         try {
             // 폴더 : /glamping/{glampId}
-            String glampPath = String.format("glamping/%s/glamp", glampId);
+            String glampPath = String.format("%s/%s/glamp", table, glampId);
             customFileUtils.makeFolders(glampPath);
             // 파일을 저장한다
             String target = String.format("/%s/%s", glampPath, glmapImgName);
@@ -114,54 +114,45 @@ public class GlampingModule {
             GlampingEntity glamp = glampingRepository.findByOwner(owner);
             readGlampId = glamp.getGlampId();
         } finally {
-            if(readGlampId == null || readGlampId != glampId) {
+            if (readGlampId == null || readGlampId != glampId) {
                 throw new CustomException(OwnerErrorCode.NMG);
             }
         }
 
     }
 
-    public static GlampingPostRequestDto dtoNull(GlampingPostRequestDto dto, GlampingEntity entity){
-        if(dto.getGlampName() == null || dto.getGlampName().isEmpty()) {
+    public static GlampingPostRequestDto dtoNull(GlampingPostRequestDto dto, GlampingEntity entity) {
+        if (dto.getGlampName() == null || dto.getGlampName().isEmpty()) {
             dto.setGlampName(entity.getGlampName());
         }
-        if(dto.getGlampCall() == null || dto.getGlampCall().isEmpty()) {
+        if (dto.getGlampCall() == null || dto.getGlampCall().isEmpty()) {
             dto.setGlampCall(entity.getGlampCall());
         }
-        if(dto.getGlampLocation() == null || dto.getGlampLocation().isEmpty()) {
+        if (dto.getGlampLocation() == null || dto.getGlampLocation().isEmpty()) {
             dto.setGlampLocation(entity.getGlampLocation());
         }
-        if(dto.getRegion() == null || dto.getRegion().isEmpty()) {
+        if (dto.getRegion() == null || dto.getRegion().isEmpty()) {
             dto.setRegion(entity.getRegion());
         }
-        if(dto.getExtraCharge() == null || dto.getExtraCharge() < 0) {
+        if (dto.getExtraCharge() == null || dto.getExtraCharge() < 0) {
             dto.setExtraCharge(entity.getExtraCharge());
         }
-        if(dto.getIntro() == null || dto.getIntro().isEmpty()) {
+        if (dto.getIntro() == null || dto.getIntro().isEmpty()) {
             dto.setIntro(entity.getGlampIntro());
         }
-        if(dto.getBasic() == null || dto.getBasic().isEmpty()) {
+        if (dto.getBasic() == null || dto.getBasic().isEmpty()) {
             dto.setBasic(entity.getInfoBasic());
         }
-        if(dto.getNotice() == null || dto.getNotice().isEmpty()) {
+        if (dto.getNotice() == null || dto.getNotice().isEmpty()) {
             dto.setNotice(entity.getInfoNotice());
         }
-        if(dto.getTraffic() == null || dto.getTraffic().isEmpty()) {
+        if (dto.getTraffic() == null || dto.getTraffic().isEmpty()) {
             dto.setTraffic(entity.getTraffic());
         }
         return dto;
 
 
     }
-
-
-
-
-
-
-
-
-
 
 
 }

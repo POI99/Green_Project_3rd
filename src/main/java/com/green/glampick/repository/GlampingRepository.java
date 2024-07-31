@@ -25,5 +25,9 @@ public interface GlampingRepository extends JpaRepository<GlampingEntity, Long> 
     void updateGlampingInformation(String name, String call, String location, String region, int extra,
             String intro, String basic, String notice, String traffic, Long glampId);
 
+    @Modifying
+    @Transactional
+    @Query("update GlampingEntity g set g.glampImage = :glampImg where g.glampId = :glampId")
+    void updateGlampImageByGlampId(String glampImg, Long glampId);
 
 }

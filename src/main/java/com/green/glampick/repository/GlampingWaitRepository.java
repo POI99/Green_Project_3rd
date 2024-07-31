@@ -16,4 +16,5 @@ public interface GlampingWaitRepository extends JpaRepository<GlampingWaitEntity
 
     GlampingWaitEntity findByOwner(OwnerEntity owner);
     GlampingWaitEntity findByGlampLocation(String glampLocation);
+
 }

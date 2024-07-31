@@ -93,7 +93,7 @@ public class OwnerServiceImpl implements OwnerService {
         long glampId = entity.getGlampId();
 
         // 이미지 저장하기
-        String fileName = GlampingModule.imageUpload(customFileUtils, glampImg, glampId);
+        String fileName = GlampingModule.imageUpload(customFileUtils, glampImg, glampId, "glampingWait");
         waitRepository.updateGlampImageByGlampId(fileName, glampId);
 
         return PostGlampingInfoResponseDto.success(glampId);
@@ -103,7 +103,6 @@ public class OwnerServiceImpl implements OwnerService {
     @Transactional
     public ResponseEntity<? super PutGlampingInfoResponseDto> updateGlampingInfo(GlampingPutRequestDto p) {
 
-
         long ownerId = GlampingModule.ownerId(authenticationFacade);
 
         // 로그인 유저와 글램핑 PK가 매치되는가?
@@ -112,12 +111,12 @@ public class OwnerServiceImpl implements OwnerService {
         GlampingPostRequestDto dto = p.getRequestDto();
 
         // 전화번호 형식 맞추기
-        if(dto.getGlampCall() != null && !dto.getGlampCall().isEmpty()) {
+        if (dto.getGlampCall() != null && !dto.getGlampCall().isEmpty()) {
             dto.setGlampCall(GlampingModule.glampingCall(dto.getGlampCall()));
         }
 
         // 위치정보 중복되는지 확인하기
-        if(dto.getGlampLocation() != null && !dto.getGlampLocation().isEmpty()) {
+        if (dto.getGlampLocation() != null && !dto.getGlampLocation().isEmpty()) {
             GlampingModule.locationUpdate(dto.getGlampLocation(), waitRepository, glampingRepository, p.getGlampId());
         }
 
@@ -126,18 +125,27 @@ public class OwnerServiceImpl implements OwnerService {
 
         glampingRepository.updateGlampingInformation(dto.getGlampName(), dto.getGlampCall()
                 , dto.getGlampLocation(), dto.getRegion(), dto.getExtraCharge()
-                , dto.getIntro(), dto.getBasic(), dto.getNotice(), dto.getTraffic() ,p.getGlampId());
+                , dto.getIntro(), dto.getBasic(), dto.getNotice(), dto.getTraffic(), p.getGlampId());
 
 
         return PutGlampingInfoResponseDto.success();
     }
 
-//    // 글램핑 사진 수정
-//    @Transactional
-//    public ResponseEntity<? super PutGlampingInfoResponseDto> changeGlampingImage (MultipartFile image, ) {
-//
-//    }
+    // 글램핑 사진 수정
+    @Transactional
+    public ResponseEntity<? super PutGlampingInfoResponseDto> changeGlampingImage(MultipartFile image, long glampId) {
+        if(image == null || image.isEmpty()) {
+            throw new CustomException(OwnerErrorCode.NF);
+        }
+        GlampingModule.isGlampIdOk(glampingRepository, ownerRepository, glampId, GlampingModule.ownerId(authenticationFacade));
+        String folderPath = String.format("glampingWait/%d/glamp", glampId);
+        customFileUtils.deleteFolder(folderPath);
+        String fileName = GlampingModule.imageUpload(customFileUtils, image, glampId, "glamping");
+        glampingRepository.updateGlampImageByGlampId(fileName, glampId);
+        return PutGlampingInfoResponseDto.success();
+    }
 
+    // 객실 등록
     @Transactional
     public ResponseEntity<? super PostRoomInfoResponseDto> postRoomInfo(RoomPostRequestDto req
             , List<MultipartFile> image) {
@@ -195,7 +203,6 @@ public class OwnerServiceImpl implements OwnerService {
         }
         return PostRoomInfoResponseDto.success(req.getRoomId());
     }
-
 
 
     @Transactional
@@ -278,8 +285,7 @@ public class OwnerServiceImpl implements OwnerService {
 //    }
 
 
-
-// 강국 =================================================================================================================
+    // 강국 =================================================================================================================
     @Override
     @Transactional
     public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p) {
@@ -307,7 +313,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
-    public ResponseEntity<?super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto p) {
+    public ResponseEntity<? super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto p) {
 
         try {
 
@@ -316,12 +322,8 @@ public class OwnerServiceImpl implements OwnerService {
         }
 
 
-
-
         return null;
     }
-
-
 
 
 }
