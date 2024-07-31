@@ -9,4 +9,5 @@ import lombok.Setter;
 public class ReviewGetHeartRequestDto {
     @JsonIgnore
     private long userId;
+    private long glampId;
 }

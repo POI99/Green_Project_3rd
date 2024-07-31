@@ -1,8 +1,8 @@
 package com.green.glampick.jin;
 
 import com.green.glampick.entity.OwnerEntity;
-import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
-import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
+import com.green.glampick.jin.object.GetGlampingHeart;
+import com.green.glampick.jin.object.GetPopularRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,26 +11,29 @@ import java.util.List;
 public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
     @Query(
             value =
-                    "SELECT glamp_id AS '숙소' " +
-                            ", COUNT(glamp_id) AS '예약수' " +
-                            ", sum(pay_amount) AS '매출' " +
-                            ", created_at " +
+                    "SELECT glamp_id AS glampId " +
+                            ", COUNT(glamp_id) AS glampIdCount " +
+                            ", sum(pay_amount) AS payAmount " +
+                            ", DATE(created_at) as createdAt " +
                             "FROM reservation_complete " +
-                            "Group BY glamp_id " +
-                            "HAVING created_at BETWEEN DATE_ADD(NOW(), INTERVAL -30 DAY ) AND NOW() ",
+                            "Group BY glamp_id, created_at  " +
+                            "HAVING created_at BETWEEN DATE_ADD(NOW(), INTERVAL -7 DAY ) AND NOW() " +
+                            "AND glamp_id = :glampId ",
             nativeQuery = true
     )
-    void findStarPointAvg();
+    List<GetPopularRoom> findPopularRoom(long glampId);
 
     @Query(
             value =
                     "SELECT glamp_id " +
-                            ", COUNT(glamp_id) AS '좋아요' " +
-                            ", created_at " +
+                            ", COUNT(glamp_id) AS heart " +
+                            ", DATE(created_at) as createdAt " +
                             "FROM glamp_favorite " +
-                            "Group BY glamp_id " +
-                            "HAVING created_at BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY ) AND NOW() ",
+                            "Group BY glamp_id, created_at " +
+                            "HAVING created_at BETWEEN DATE_ADD(NOW(), INTERVAL -1 week ) AND NOW() " +
+                            "AND glamp_id = :glampId ",
             nativeQuery = true
     )
-    void findStarPointAv();
+    List<GetGlampingHeart> findGlampingHeart(long glampId);
+
 }
