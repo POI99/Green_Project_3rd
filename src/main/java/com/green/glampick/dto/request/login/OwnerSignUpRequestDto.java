@@ -18,6 +18,6 @@ public class OwnerSignUpRequestDto {
     private String ownerName;
     private String ownerPhone;
     @JsonIgnore private Role role;
-    @JsonIgnore private Integer activeStatus;
+    @JsonIgnore private int activateStatus;
 
 }
