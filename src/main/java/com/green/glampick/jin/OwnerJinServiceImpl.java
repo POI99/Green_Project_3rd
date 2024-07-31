@@ -1,10 +1,8 @@
 package com.green.glampick.jin;
 
 import com.green.glampick.common.CustomFileUtils;
-import com.green.glampick.dto.response.user.GetBookResponseDto;
-import com.green.glampick.entity.GlampingEntity;
-import com.green.glampick.entity.ReservationCompleteEntity;
-import com.green.glampick.entity.UserEntity;
+import com.green.glampick.jin.object.GetGlampingHeart;
+import com.green.glampick.jin.object.GetPopularRoom;
 import com.green.glampick.jin.request.ReviewGetCancelRequestDto;
 import com.green.glampick.jin.request.ReviewGetHeartRequestDto;
 import com.green.glampick.jin.request.ReviewGetRoomRequestDto;
@@ -20,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -45,11 +45,15 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             e.printStackTrace();
             return GetOwnerPopularRoomResponseDto.validateUserId();
         }
+        List<GetPopularRoom> popRoom = null;
+        try {
+            popRoom = ownerRepository.findPopularRoom(dto.getGlampId());
+        } catch (Exception e) {
+            e.printStackTrace();
 
+        }
 
-
-
-        return null;
+        return GetOwnerPopularRoomResponseDto.success(popRoom);
     }
 
     @Override// 별점
@@ -63,10 +67,16 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             e.printStackTrace();
             return GetOwnerStarResponseDto.validateUserId();
         }
-        ownerRepository.findStarPointAv();
-        return null;
-    }
+        List<GetPopularRoom> starPointList = null;
+        try {
+            starPointList = ownerRepository.findPopularRoom(dto.getGlampId());
+        } catch (Exception e) {
+            e.printStackTrace();
 
+        }
+
+        return GetOwnerStarResponseDto.success(starPointList);
+    }
     @Override// 관심 수
     public ResponseEntity<? super GetGlampingHeartResponseDto> getHeartRoom(ReviewGetHeartRequestDto dto) {
         try {
@@ -78,7 +88,15 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             e.printStackTrace();
             return GetGlampingHeartResponseDto.validateUserId();
         }
-        return null;
+            List<GetGlampingHeart> getGlampingHearts = null;
+        try {
+            getGlampingHearts = ownerRepository.findGlampingHeart(dto.getGlampId());
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+        return GetGlampingHeartResponseDto.success(getGlampingHearts);
     }
     @Override// 예약 취소율
     public ResponseEntity<? super GetGlampingCancelResponseDto> getGlampingCancelRoom(ReviewGetCancelRequestDto dto) {

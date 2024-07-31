@@ -3,23 +3,28 @@ package com.green.glampick.jin.response;
 import com.green.glampick.common.response.ResponseCode;
 import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.ResponseDto;
+import com.green.glampick.jin.object.GetPopularRoom;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 @Getter
 @Setter
 public class GetOwnerPopularRoomResponseDto extends ResponseDto {
 
 
-    private GetOwnerPopularRoomResponseDto(String accessToken) {
+    List<GetPopularRoom> getStarPointList;
+    private GetOwnerPopularRoomResponseDto(List<GetPopularRoom> getStarPointList) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        this.getStarPointList = getStarPointList;
 
     }
 
-    public static ResponseEntity<GetOwnerPopularRoomResponseDto> success(String accessToken) {
-        GetOwnerPopularRoomResponseDto result = new GetOwnerPopularRoomResponseDto(accessToken);
+    public static ResponseEntity<GetOwnerPopularRoomResponseDto> success(List<GetPopularRoom> getStarPointList) {
+        GetOwnerPopularRoomResponseDto result = new GetOwnerPopularRoomResponseDto(getStarPointList);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 

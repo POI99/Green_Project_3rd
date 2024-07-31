@@ -3,23 +3,26 @@ package com.green.glampick.jin.response;
 import com.green.glampick.common.response.ResponseCode;
 import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.ResponseDto;
+import com.green.glampick.jin.object.GetGlampingHeart;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class GetGlampingHeartResponseDto extends ResponseDto {
 
-
-    private GetGlampingHeartResponseDto(String accessToken) {
+    List<GetGlampingHeart> getGlampingHearts;
+    private GetGlampingHeartResponseDto(List<GetGlampingHeart> getGlampingHearts) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
-
+        this.getGlampingHearts = getGlampingHearts;
     }
 
-    public static ResponseEntity<GetGlampingHeartResponseDto> success(String accessToken) {
-        GetGlampingHeartResponseDto result = new GetGlampingHeartResponseDto(accessToken);
+    public static ResponseEntity<GetGlampingHeartResponseDto> success(List<GetGlampingHeart> getGlampingHearts) {
+        GetGlampingHeartResponseDto result = new GetGlampingHeartResponseDto(getGlampingHearts);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 

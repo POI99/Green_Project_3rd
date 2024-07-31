@@ -8,4 +8,5 @@ import lombok.Setter;
 @Setter
 public class ReviewGetRoomRequestDto {
     @JsonIgnore private long userId;
+    private long glampId;
 }
