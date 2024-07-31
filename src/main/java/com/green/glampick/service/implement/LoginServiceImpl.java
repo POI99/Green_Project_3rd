@@ -260,7 +260,7 @@ public class LoginServiceImpl implements LoginService {
             String encodingPw = passwordEncoder.encode(userPw);
             dto.setOwnerPw(encodingPw);
 
-            dto.setUserRole(Role.ROLE_OWNER);
+            dto.setRole(Role.ROLE_OWNER);
 
             //  가공이 끝난 DTO 를 새로운 userEntity 객체로 생성한다.  //
             OwnerEntity ownerEntity = new OwnerEntity();
@@ -269,7 +269,7 @@ public class LoginServiceImpl implements LoginService {
             ownerEntity.setOwnerPw(dto.getOwnerPw());
             ownerEntity.setOwnerName(dto.getOwnerName());
             ownerEntity.setOwnerPhone(dto.getOwnerPhone());
-            ownerEntity.setRole(dto.getUserRole());
+            ownerEntity.setRole(dto.getRole());
             //  바로 위에서 만든 객체를 JPA 를 통해서 DB에 저장한다.  //
             OwnerEntity savedUser = ownerRepository.save(ownerEntity);
 

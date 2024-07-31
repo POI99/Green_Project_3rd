@@ -34,10 +34,10 @@ public class OwnerEntity extends UpdatedAt {
     @Column(length = 11) @Comment("대표자 전화번호")
     private String ownerPhone;
 
-    @Column(length = 20, nullable = false) @Comment("권한")
+    @Column(length = 20, nullable = false) @Comment("권한") @Enumerated(value = EnumType.STRING)
     private Role role;
 
     @Column(nullable = false, columnDefinition = "TINYINT") @ColumnDefault("1") @Comment("회원 탈퇴 시 -1")
-    private Integer activeStatus;
+    private Integer activateStatus;
 
 }

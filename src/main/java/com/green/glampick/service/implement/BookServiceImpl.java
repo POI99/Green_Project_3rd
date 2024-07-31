@@ -142,33 +142,33 @@ public class BookServiceImpl implements BookService {
         return out.isBefore(in); // 틀리면 true
     }
 
-    @Scheduled(fixedRate = 600000)
-    public void cleanUpExpiredCodes() {
-
-        LocalDate currentDateTime = LocalDate.now();
-
-        // 체크아웃 날짜가 지난 모든 데이터를 가져옴
-        List<ReservationBeforeEntity> expiredReservations = reservationBeforeRepository.findAllByCheckOutDateBefore(currentDateTime);
-
-
-        for (ReservationBeforeEntity beforeEntity : expiredReservations) {
-            // 예약 데이터를 완료 엔티티로 옮김
-            ReservationCompleteEntity completeEntity = new ReservationCompleteEntity();
-            completeEntity.setUser(beforeEntity.getUser());
-            completeEntity.setBookId(beforeEntity.getBookId());
-            completeEntity.setGlamping(beforeEntity.getGlamping());
-            completeEntity.setRoomId(beforeEntity.getRoomId());
-            completeEntity.setInputName(beforeEntity.getInputName());
-            completeEntity.setPersonnel(beforeEntity.getPersonnel());
-            completeEntity.setCheckInDate(beforeEntity.getCheckInDate());
-            completeEntity.setCheckOutDate(beforeEntity.getCheckOutDate());
-            completeEntity.setPg(beforeEntity.getPg());
-            completeEntity.setPayAmount(beforeEntity.getPayAmount());
-
-            reservationCompleteRepository.save(completeEntity);
-            reservationBeforeRepository.delete(beforeEntity);
-        }
-
-    }
+//    @Scheduled(fixedRate = 600000)
+//    public void cleanUpExpiredCodes() {
+//
+//        LocalDate currentDateTime = LocalDate.now();
+//
+//        // 체크아웃 날짜가 지난 모든 데이터를 가져옴
+//        List<ReservationBeforeEntity> expiredReservations = reservationBeforeRepository.findAllByCheckOutDateBefore(currentDateTime);
+//
+//
+//        for (ReservationBeforeEntity beforeEntity : expiredReservations) {
+//            // 예약 데이터를 완료 엔티티로 옮김
+//            ReservationCompleteEntity completeEntity = new ReservationCompleteEntity();
+//            completeEntity.setUser(beforeEntity.getUser());
+//            completeEntity.setBookId(beforeEntity.getBookId());
+//            completeEntity.setGlamping(beforeEntity.getGlamping());
+//            completeEntity.setRoomId(beforeEntity.getRoomId());
+//            completeEntity.setInputName(beforeEntity.getInputName());
+//            completeEntity.setPersonnel(beforeEntity.getPersonnel());
+//            completeEntity.setCheckInDate(beforeEntity.getCheckInDate());
+//            completeEntity.setCheckOutDate(beforeEntity.getCheckOutDate());
+//            completeEntity.setPg(beforeEntity.getPg());
+//            completeEntity.setPayAmount(beforeEntity.getPayAmount());
+//
+//            reservationCompleteRepository.save(completeEntity);
+//            reservationBeforeRepository.delete(beforeEntity);
+//        }
+//
+//    }
 
 }
