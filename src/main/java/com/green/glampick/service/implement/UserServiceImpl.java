@@ -1,11 +1,8 @@
 package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
-import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.object.UserReviewListItem;
 import com.green.glampick.dto.request.user.*;
-import com.green.glampick.dto.response.login.PostSignUpResponseDto;
-import com.green.glampick.dto.response.owner.post.PostGlampingInfoResponseDto;
 import com.green.glampick.dto.response.user.*;
 import com.green.glampick.entity.*;
 import com.green.glampick.exception.CustomException;
@@ -26,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -118,7 +114,7 @@ public class UserServiceImpl implements UserService {
             cancelEntity.setBookId(beforeEntity.getBookId());
             cancelEntity.setUser(beforeEntity.getUser());
             cancelEntity.setGlamping(beforeEntity.getGlamping());
-            cancelEntity.setRoomId(beforeEntity.getRoomId());
+            cancelEntity.setRoomId(beforeEntity.getRoom());
             cancelEntity.setInputName(beforeEntity.getInputName());
             cancelEntity.setPersonnel(beforeEntity.getPersonnel());
             cancelEntity.setCheckInDate(beforeEntity.getCheckInDate());

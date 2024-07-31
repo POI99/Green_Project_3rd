@@ -39,5 +39,6 @@ public interface ReservationBeforeRepository extends JpaRepository<ReservationBe
 
     boolean existsByReservationId(Long reservationId);
 
+    @Query("SELECT r FROM reservation_before r JOIN r.glamping g JOIN r.room rm JOIN r.user u WHERE r.checkOutDate < :dateTime")
     List<ReservationBeforeEntity> findAllByCheckOutDateBefore(LocalDate dateTime);
 }
