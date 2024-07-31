@@ -31,7 +31,6 @@ public interface OwnerService {
 
     ResponseEntity<? super GetOwnerBookListResponseDto> getGlampReservation(Long glampId);
 
-    ResponseEntity<? super PostOwnerReviewInfoResponseDto> postReview(ReviewPostRequestDto p);
     ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p);
 
     ResponseEntity<? super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto dto);

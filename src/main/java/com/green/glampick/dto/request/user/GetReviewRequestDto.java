@@ -13,6 +13,7 @@ public class GetReviewRequestDto extends Paging {
 
     @JsonIgnore private Long reviewId;
     @JsonIgnore private long userId;
+    @JsonIgnore private Long ownerId;
 
     public GetReviewRequestDto(Integer page) {
         super(page, PAGING_SIZE);

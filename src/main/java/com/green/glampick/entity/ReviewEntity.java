@@ -14,6 +14,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Access(AccessType.FIELD)
 @Table(name = "review")
 public class ReviewEntity extends CreatedAt{
 
