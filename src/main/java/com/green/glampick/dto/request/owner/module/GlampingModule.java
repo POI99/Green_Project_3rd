@@ -14,6 +14,9 @@ import com.green.glampick.security.AuthenticationFacade;
 import org.springframework.web.multipart.MultipartFile;
 import retrofit2.http.PUT;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class GlampingModule {
 
     // 오너 PK 불러오기
@@ -58,6 +61,20 @@ public class GlampingModule {
         if (existingGlampId != null && existingGlampId != glampId) {
             throw new CustomException(OwnerErrorCode.DL);
         }
+    }
+
+    // 전화번호 형식 변경하기 (053-000-0000 으로 왔을 때 0530000000 으로 바꾸기)
+    public static String glampingCall(String call) {
+        if(Pattern.compile("^[0-9]*?").matcher(call).matches()) {
+            return call;
+        }
+        StringBuilder sb = new StringBuilder();
+        Matcher matcher = Pattern.compile("[0-9]+").matcher(call);
+
+        while (matcher.find()) {
+            sb.append(matcher.group());
+        }
+        return sb.toString();
     }
 
     // 이미지 업로드

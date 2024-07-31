@@ -65,6 +65,7 @@ public class OwnerServiceImpl implements OwnerService {
 
 // 민지 =================================================================================================================
 
+    // 글램핑 등록
     @Transactional
     public ResponseEntity<? super PostGlampingInfoResponseDto> postGlampingInfo(GlampingPostRequestDto req
             , MultipartFile glampImg) {
@@ -83,7 +84,7 @@ public class OwnerServiceImpl implements OwnerService {
 
         // 글램핑 아이디 받아오기
         entity.setGlampName(req.getGlampName());
-        entity.setGlampCall(req.getGlampCall());
+        entity.setGlampCall(GlampingModule.glampingCall(req.getGlampCall()));
         entity.setGlampImage("img");
         entity.setGlampLocation(req.getGlampLocation());
         entity.setRegion(req.getRegion());
@@ -101,6 +102,38 @@ public class OwnerServiceImpl implements OwnerService {
 
         return PostGlampingInfoResponseDto.success(glampId);
     }
+
+    // 글램핑 사진 수정
+
+    // 글램핑 수정
+//    @Transactional
+//    public ResponseEntity<? super PutGlampingInfoResponseDto> updateGlampingInfo(GlampingPutRequestDto p) {
+//        GlampingPostRequestDto req = p.getRequestDto();
+//
+//        try {
+//            req.setOwnerId(userValidationGlamping());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new CustomException(CommonErrorCode.MNF);
+//        }
+//
+//        // GlampingValidate
+//        try {
+//            // 글램핑 Id가 올바른가?
+//            GlampingModule.isNull(p.getGlampId());
+//            req.setGlampId(p.getGlampId());
+//            // 필요한 데이터가 모두 입력되었는가?
+//            GlampingModule.isNull(req);
+//            // 글램핑 위치가 중복되는가? (existingLocation = 위치가 동일한 글램핑장 PK)
+//            Long existingLocation = mapper.existingLocation(req.getGlampLocation());
+//            GlampingModule.locationUpdate(existingLocation, req.getGlampId());
+//        } catch (Exception e) {
+//            String msg = e.getMessage();
+//            return PutGlampingInfoResponseDto.validationFailed(msg);
+//        }
+//        mapper.updateGlampingInfo(req);
+//        return PutGlampingInfoResponseDto.success();
+//    }
 
     @Transactional
     public ResponseEntity<? super PostRoomInfoResponseDto> postRoomInfo(RoomPostRequestDto req
@@ -160,34 +193,7 @@ public class OwnerServiceImpl implements OwnerService {
         return PostRoomInfoResponseDto.success(req.getRoomId());
     }
 
-//    @Transactional
-//    public ResponseEntity<? super PutGlampingInfoResponseDto> updateGlampingInfo(GlampingPutRequestDto p) {
-//        GlampingPostRequestDto req = p.getRequestDto();
-//
-//        try {
-//            req.setOwnerId(userValidationGlamping());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new CustomException(CommonErrorCode.MNF);
-//        }
-//
-//        // GlampingValidate
-//        try {
-//            // 글램핑 Id가 올바른가?
-//            GlampingModule.isNull(p.getGlampId());
-//            req.setGlampId(p.getGlampId());
-//            // 필요한 데이터가 모두 입력되었는가?
-//            GlampingModule.isNull(req);
-//            // 글램핑 위치가 중복되는가? (existingLocation = 위치가 동일한 글램핑장 PK)
-//            Long existingLocation = mapper.existingLocation(req.getGlampLocation());
-//            GlampingModule.locationUpdate(existingLocation, req.getGlampId());
-//        } catch (Exception e) {
-//            String msg = e.getMessage();
-//            return PutGlampingInfoResponseDto.validationFailed(msg);
-//        }
-//        mapper.updateGlampingInfo(req);
-//        return PutGlampingInfoResponseDto.success();
-//    }
+
 
     @Transactional
     public ResponseEntity<? super PutRoomInfoResponseDto> updateRoomInfo(RoomPutRequestDto p) {
