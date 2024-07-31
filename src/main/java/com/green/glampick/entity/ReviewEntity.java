@@ -20,15 +20,15 @@ public class ReviewEntity extends CreatedAt{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("리뷰 ID")
     private Long reviewId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false) @Comment("객실 ID")
     private UserEntity userId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "glamp_id", nullable = false) @Comment("글램핑 ID")
     private GlampingEntity glampId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false) @Comment("객실 ID")
     private ReservationCompleteEntity reservationId;
 
