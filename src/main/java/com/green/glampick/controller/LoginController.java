@@ -1,12 +1,7 @@
 package com.green.glampick.controller;
 
-import com.green.glampick.dto.request.login.OwnerSignUpRequestDto;
-import com.green.glampick.dto.request.login.SignInRequestDto;
-import com.green.glampick.dto.request.login.SignUpRequestDto;
-import com.green.glampick.dto.request.login.OwnerSignInRequestDto;
-import com.green.glampick.dto.response.login.PostOwnerSignUpResponseDto;
-import com.green.glampick.dto.response.login.PostSignInResponseDto;
-import com.green.glampick.dto.response.login.PostSignUpResponseDto;
+import com.green.glampick.dto.request.login.*;
+import com.green.glampick.dto.response.login.*;
 import com.green.glampick.dto.response.login.mail.PostMailCheckResponseDto;
 import com.green.glampick.dto.response.login.mail.PostMailSendResponseDto;
 import com.green.glampick.dto.response.login.sms.PostSmsCheckResponseDto;
@@ -76,8 +71,15 @@ public class LoginController {
     @PostMapping("/owner/sign-in")
     @Operation(summary = "사장님 로그인", description = "")
     @ApiResponse(responseCode = "200", description = "", content = @Content())
-    public ResponseEntity<? super PostSignInResponseDto> signInOwner(HttpServletResponse res, @RequestBody @Valid OwnerSignInRequestDto dto) {
+    public ResponseEntity<? super PostOwnerSignInResponseDto> signInOwner(HttpServletResponse res, @RequestBody @Valid OwnerSignInRequestDto dto) {
         return service.signInOwner(res, dto);
+    }
+
+    @PostMapping("/admin/sign-in")
+    @Operation(summary = "관리자 로그인", description = "")
+    @ApiResponse(responseCode = "200", description = "", content = @Content())
+    public ResponseEntity<? super PostAdminSignInResponseDto> signInAdmin(HttpServletResponse res, @RequestBody @Valid AdminSignInRequestDto dto) {
+        return service.signInAdmin(res, dto);
     }
 
     @GetMapping("/access-token")
@@ -87,6 +89,13 @@ public class LoginController {
                 mediaType = "application/json", schema = @Schema(implementation = GetAccessTokenResponseDto.class)))
     public ResponseEntity<? super GetAccessTokenResponseDto> getAccessToken(HttpServletRequest req) {
         return service.getAccessToken(req);
+    }
+
+    @PostMapping("/sign-out")
+    @Operation(summary = "로그아웃 처리", description = "")
+    @ApiResponse(responseCode = "200", description = "", content = @Content())
+    public ResponseEntity<? super PostSignOutResponseDto> signOut(HttpServletResponse res) {
+        return service.signOut(res);
     }
 
     @PostMapping("/send-sms")

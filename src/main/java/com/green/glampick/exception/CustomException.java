@@ -1,5 +1,6 @@
 package com.green.glampick.exception;
 
+import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,5 +11,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomException extends RuntimeException {
     private final ErrorCode errorCode;
+
+    public CustomException(CommonErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
+    }
 
 }

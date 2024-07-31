@@ -4,24 +4,21 @@ import com.green.glampick.common.Role;
 import com.green.glampick.common.coolsms.SmsUtils;
 import com.green.glampick.common.security.AppProperties;
 import com.green.glampick.common.security.CookieUtils;
-import com.green.glampick.dto.request.login.OwnerSignUpRequestDto;
-import com.green.glampick.dto.request.login.SignInRequestDto;
-import com.green.glampick.dto.request.login.SignUpRequestDto;
-import com.green.glampick.dto.request.login.OwnerSignInRequestDto;
-import com.green.glampick.dto.response.login.PostOwnerSignUpResponseDto;
-import com.green.glampick.dto.response.login.PostSignInResponseDto;
-import com.green.glampick.dto.response.login.PostSignUpResponseDto;
+import com.green.glampick.dto.request.login.*;
+import com.green.glampick.dto.response.login.*;
 import com.green.glampick.dto.response.login.mail.PostMailCheckResponseDto;
 import com.green.glampick.dto.response.login.mail.PostMailSendResponseDto;
 import com.green.glampick.dto.response.login.sms.PostSmsCheckResponseDto;
 import com.green.glampick.dto.response.login.sms.PostSmsSendResponseDto;
 import com.green.glampick.dto.response.login.token.GetAccessTokenResponseDto;
+import com.green.glampick.entity.AdminEntity;
 import com.green.glampick.entity.OwnerEntity;
 import com.green.glampick.entity.UserEntity;
 import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.UserErrorCode;
 import com.green.glampick.jwt.JwtTokenProvider;
+import com.green.glampick.repository.AdminRepository;
 import com.green.glampick.repository.OwnerRepository;
 import com.green.glampick.repository.UserRepository;
 import com.green.glampick.security.MyUser;
@@ -58,6 +55,7 @@ import java.util.regex.Pattern;
 public class LoginServiceImpl implements LoginService {
     private final UserRepository userRepository;
     private final OwnerRepository ownerRepository;
+    private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final CookieUtils cookieUtils;
@@ -173,7 +171,6 @@ public class LoginServiceImpl implements LoginService {
             //  입력받은 DTO 에서 패스워드를 암호화 하여 다시 DTO 값에 넣는다.  //
             String encodingPw = passwordEncoder.encode(userPw);
             dto.setUserPw(encodingPw);
-
 
             //  Request 유저 권한과, 유저 소셜타입을 지정하여 DTO 값에 넣는다.
             dto.setUserRole(Role.ROLE_USER);
@@ -317,6 +314,10 @@ public class LoginServiceImpl implements LoginService {
                 throw new CustomException(CommonErrorCode.SF);
             }
 
+            if (userEntity.getActivateStatus() != 1) {
+                throw new CustomException(CommonErrorCode.NS);
+            }
+
             //  로그인에 성공할 경우, myUser 에 로그인한 userId 값을 넣고, 권한을 넣는다.  //
             MyUser myUser = MyUser.builder()
                     .userId(userEntity.getUserId())
@@ -346,7 +347,7 @@ public class LoginServiceImpl implements LoginService {
     //  사장님 로그인 처리  //
     @Override
     @Transactional
-    public ResponseEntity<? super PostSignInResponseDto> signInOwner(HttpServletResponse res, OwnerSignInRequestDto dto) {
+    public ResponseEntity<? super PostOwnerSignInResponseDto> signInOwner(HttpServletResponse res, OwnerSignInRequestDto dto) {
 
         String accessToken = null;
         String refreshToken = null;
@@ -376,6 +377,10 @@ public class LoginServiceImpl implements LoginService {
                 throw new CustomException(CommonErrorCode.SF);
             }
 
+            if (ownerEntity.getActivateStatus() != 1) {
+                throw new CustomException(CommonErrorCode.NS);
+            }
+
             //  로그인에 성공할 경우, myUser 에 로그인한 userId 값을 넣고, 권한을 넣는다.  //
             MyUser myUser = MyUser.builder()
                     .userId(ownerEntity.getOwnerId())
@@ -398,7 +403,66 @@ public class LoginServiceImpl implements LoginService {
             throw new CustomException(CommonErrorCode.DBE);
         }
 
-        return PostSignInResponseDto.success(accessToken);
+        return PostOwnerSignInResponseDto.success(accessToken);
+
+    }
+
+    //  관리자 로그인 처리  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostAdminSignInResponseDto> signInAdmin(HttpServletResponse res, AdminSignInRequestDto dto) {
+
+        String accessToken = null;
+        String refreshToken = null;
+
+        try {
+
+            //  입력받은 값이 없다면, 유효성 검사에 대한 응답을 보낸다.  //
+            if (dto.getAdminId() == null || dto.getAdminId().isEmpty()) {
+                throw new CustomException(CommonErrorCode.VF);
+            }
+            if (dto.getAdminPw() == null || dto.getAdminPw().isEmpty()) {
+                throw new CustomException(CommonErrorCode.VF);
+            }
+
+            //  입력받은 이메일이 유저 테이블에 없다면, 로그인 실패에 대한 응답을 보낸다.  //
+            String adminId = dto.getAdminId();
+            AdminEntity adminEntity = adminRepository.findByAdminId(adminId);
+            if (adminEntity == null) {
+                throw new CustomException(CommonErrorCode.SF);
+            }
+
+            //  입력받은 비밀번호와 유저 테이블에 있는 비밀번호가 같은지 확인하고, 다르다면 로그인 실패에 대한 응답을 보낸다.  //
+            String adminPw = dto.getAdminPw();
+            String encodingPw = adminEntity.getAdminPw();
+            boolean matches = passwordEncoder.matches(adminPw, encodingPw);
+            if (!matches) {
+                throw new CustomException(CommonErrorCode.SF);
+            }
+
+            //  로그인에 성공할 경우, myUser 에 로그인한 userId 값을 넣고, 권한을 넣는다.  //
+            MyUser myUser = MyUser.builder()
+                    .userId(adminEntity.getAdminIdx())
+                    .role(adminEntity.getRole())
+                    .build();
+
+            //  myUser 에 넣은 데이터를 통해, AccessToken, RefreshToken 을 만든다.  //
+            accessToken = jwtTokenProvider.generateAccessToken(myUser);
+            refreshToken = jwtTokenProvider.generateRefreshToken(myUser);
+
+            //  RefreshToken 을 갱신한다.  //
+            int refreshTokenMaxAge = appProperties.getJwt().getRefreshTokenCookieMaxAge();
+            cookieUtils.deleteCookie(res, "refresh-token");
+            cookieUtils.setCookie(res, "refresh-token", refreshToken, refreshTokenMaxAge);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return PostAdminSignInResponseDto.success(accessToken);
 
     }
 
@@ -441,6 +505,14 @@ public class LoginServiceImpl implements LoginService {
             throw new CustomException(CommonErrorCode.DBE);
         }
 
+    }
+
+    //  로그아웃 처리하기  //
+    @Override
+    public ResponseEntity<? super PostSignOutResponseDto> signOut(HttpServletResponse res) {
+        cookieUtils.deleteCookie(res, "refresh-token");
+
+        return PostSignOutResponseDto.success();
     }
 
     //  휴대폰 인증 문자 보내기  //

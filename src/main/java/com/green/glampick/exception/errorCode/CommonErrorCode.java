@@ -17,6 +17,7 @@ public enum CommonErrorCode implements ErrorCode {
     EF(HttpStatus.BAD_REQUEST, "인증코드의 유효시간이 지났습니다."), // EXPIRED_CODE
     IC(HttpStatus.BAD_REQUEST, "인증코드가 올바르지 않습니다."), // INVALID_CODE
     VF(HttpStatus.BAD_REQUEST, "모든 정보를 입력해주세요."), // VALIDATION_FAILED
+    NS(HttpStatus.BAD_REQUEST, "탈퇴한 회원 입니다."),
 
     // 401
     SF(HttpStatus.UNAUTHORIZED, "로그인에 실패하였습니다."), // SIGN_IN_FAILED
