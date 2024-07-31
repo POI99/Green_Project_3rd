@@ -23,6 +23,7 @@ import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.OwnerErrorCode;
 import com.green.glampick.mapper.OwnerMapper;
+import com.green.glampick.repository.ReviewRepository;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
 import jakarta.persistence.EntityManager;
@@ -45,7 +46,7 @@ public class OwnerServiceImpl implements OwnerService {
     private final OwnerMapper mapper;
     private final AuthenticationFacade authenticationFacade;
     private final CustomFileUtils customFileUtils;
-    private final EntityManager em;
+    private final ReviewRepository reviewRepository;
 // 민지 =================================================================================================================
 
     @Transactional
@@ -293,19 +294,20 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     @Transactional
     public ResponseEntity<? super PostOwnerReviewInfoResponseDto> postReview(ReviewPostRequestDto p) {
-        try {
+
+        try {   // 로그인
             p.setUserId(authenticationFacade.getLoginUserId());
             if (p.getUserId() == 0) {
                 throw new RuntimeException();
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new CustomException(CommonErrorCode.MNF);
+            throw new CustomException(CommonErrorCode.MNF);// 유저를 찾을 수 없음
         }
         //Optional<User> user = userRepository.findById(1L);
         try {
             ReviewEntity reviewEntity = new ReviewEntity();
-
+//            reviewRepository.findById()
         } catch (Exception e) {
             e.printStackTrace();
         }
