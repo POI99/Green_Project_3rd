@@ -307,7 +307,7 @@ public class OwnerServiceImpl implements OwnerService {
         //Optional<User> user = userRepository.findById(1L);
         try {
             ReviewEntity reviewEntity = new ReviewEntity();
-            reviewRepository.findById()
+//            reviewRepository.findById()
         } catch (Exception e) {
             e.printStackTrace();
         }
