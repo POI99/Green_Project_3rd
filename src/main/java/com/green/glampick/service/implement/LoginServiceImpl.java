@@ -587,4 +587,66 @@ public class LoginServiceImpl implements LoginService {
             throw new CustomException(CommonErrorCode.DBE);
         }
     }
+
+
+    // ==================================
+    //  이메일 로그인 처리  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostSignInResponseDto> signInOwner(HttpServletResponse res, SignInRequestDto dto) {
+
+        String accessToken = null;
+        String refreshToken = null;
+
+        try {
+
+            //  입력받은 값이 없다면, 유효성 검사에 대한 응답을 보낸다.  //
+            if (dto.getUserEmail() == null || dto.getUserEmail().isEmpty()) {
+                throw new CustomException(CommonErrorCode.VF);
+            }
+            if (dto.getUserPw() == null || dto.getUserPw().isEmpty()) {
+                throw new CustomException(CommonErrorCode.VF);
+            }
+
+            //  입력받은 이메일이 유저 테이블에 없다면, 로그인 실패에 대한 응답을 보낸다.  //
+            String userEmail = dto.getUserEmail();
+            OwnerEntity userEntity = ownerRepository.findByOwnerEmail(userEmail);
+            if (userEntity == null) {
+                throw new CustomException(CommonErrorCode.SF);
+            }
+
+            //  입력받은 비밀번호와 유저 테이블에 있는 비밀번호가 같은지 확인하고, 다르다면 로그인 실패에 대한 응답을 보낸다.  //
+            String userPw = dto.getUserPw();
+            String encodingPw = userEntity.getOwnerPw();
+            boolean matches = passwordEncoder.matches(userPw, encodingPw);
+            if (!matches) {
+                throw new CustomException(CommonErrorCode.SF);
+            }
+
+            //  로그인에 성공할 경우, myUser 에 로그인한 userId 값을 넣고, 권한을 넣는다.  //
+            MyUser myUser = MyUser.builder()
+                    .userId(userEntity.getOwnerId())
+                    .role(userEntity.getRole())
+                    .build();
+
+            //  myUser 에 넣은 데이터를 통해, AccessToken, RefreshToken 을 만든다.  //
+            accessToken = jwtTokenProvider.generateAccessToken(myUser);
+            refreshToken = jwtTokenProvider.generateRefreshToken(myUser);
+
+            //  RefreshToken 을 갱신한다.  //
+            int refreshTokenMaxAge = appProperties.getJwt().getRefreshTokenCookieMaxAge();
+            cookieUtils.deleteCookie(res, "refresh-token");
+            cookieUtils.setCookie(res, "refresh-token", refreshToken, refreshTokenMaxAge);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return PostSignInResponseDto.success(accessToken);
+
+    }
+
 }
