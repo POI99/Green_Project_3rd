@@ -67,15 +67,15 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             e.printStackTrace();
             return GetOwnerStarResponseDto.validateUserId();
         }
-        List<GetPopularRoom> starPointList = null;
+
         try {
-            starPointList = ownerRepository.findPopularRoom(dto.getGlampId());
+             ownerRepository.findByIdStarPoint(dto.getOwnerId());
         } catch (Exception e) {
             e.printStackTrace();
 
         }
 
-        return GetOwnerStarResponseDto.success(starPointList);
+        return GetOwnerStarResponseDto.success(ownerRepository.findByIdStarPoint(dto.getOwnerId()));
     }
     @Override// 관심 수
     public ResponseEntity<? super GetGlampingHeartResponseDto> getHeartRoom(ReviewGetHeartRequestDto dto) {
@@ -98,6 +98,9 @@ public class OwnerJinServiceImpl implements OwnerJinService {
 
         return GetGlampingHeartResponseDto.success(getGlampingHearts);
     }
+
+
+
     @Override// 예약 취소율
     public ResponseEntity<? super GetGlampingCancelResponseDto> getGlampingCancelRoom(ReviewGetCancelRequestDto dto) {
         try {
@@ -109,6 +112,42 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             e.printStackTrace();
             return GetGlampingCancelResponseDto.validateUserId();
         }
-        return null;
+        long total = ownerRepository.findTotalCount(dto.getGlampId());
+        long cancel = ownerRepository.findCancelCount(dto.getGlampId());
+
+        double result = (double) cancel / total * 100;
+        String formattedResult = String.format("%.2f", result);
+
+        return GetGlampingCancelResponseDto.success(formattedResult);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -15,15 +15,15 @@ import java.util.List;
 @Setter
 public class GetOwnerStarResponseDto extends ResponseDto {
 
-    List<GetPopularRoom> getStarPointList;
-    private GetOwnerStarResponseDto(List<GetPopularRoom> getStarPointList) {
+    private double  starPointAvg;
+    private GetOwnerStarResponseDto(double  starPointAvg) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
-        this.getStarPointList = getStarPointList;
+        this.starPointAvg = starPointAvg;
 
     }
 
-    public static ResponseEntity<GetOwnerStarResponseDto> success(List<GetPopularRoom> getStarPointList) {
-        GetOwnerStarResponseDto result = new GetOwnerStarResponseDto(getStarPointList);
+    public static ResponseEntity<GetOwnerStarResponseDto> success(double  starPointAvg) {
+        GetOwnerStarResponseDto result = new GetOwnerStarResponseDto(starPointAvg);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 

@@ -36,4 +36,34 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
     )
     List<GetGlampingHeart> findGlampingHeart(long glampId);
 
+    @Query(
+            value =
+                    "SELECT star_point_avg " +
+                            "FROM glamping A " +
+                            "JOIN owner B " +
+                            "ON A.owner_id = B.owner_id " +
+                            "WHERE B.owner_id = :ownerId ",
+            nativeQuery = true
+    )
+    double findByIdStarPoint(long ownerId);
+
+    @Query(
+            value =
+                    "SELECT SUM(glamp_count) AS total_count " +
+                            "FROM (SELECT COUNT(glamp_id) AS glamp_count FROM reservation_before WHERE glamp_id = :glampId " +
+                            "UNION ALL " +
+                            "SELECT COUNT(glamp_id) AS glamp_count FROM reservation_cancel WHERE glamp_id = :glampId " +
+                            "UNION ALL " +
+                            "SELECT COUNT(glamp_id) AS glamp_count FROM reservation_complete WHERE glamp_id = :glampId) AS counts ",
+            nativeQuery = true
+    )
+    long findTotalCount(long glampId);
+
+    @Query(
+            value =
+                    "SELECT COUNT(glamp_id) FROM reservation_cancel WHERE glamp_id = :glampId ",
+            nativeQuery = true
+    )
+    long findCancelCount(long glampId);
+
 }
