@@ -36,7 +36,7 @@ public class GlampingPostRequestDto {
     private String region;
 
     @Schema(example = "10000", description = "추가 인원에 대한 추가 요금")
-    private int extraCharge;
+    private Integer extraCharge;
 
     @NotBlank(message = "글램핑 소개가 입력되지 않았습니다.")
     @Schema(example = "소개소개", description = "글램핑 소개")

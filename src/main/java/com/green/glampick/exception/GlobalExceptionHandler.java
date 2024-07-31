@@ -2,6 +2,7 @@ package com.green.glampick.exception;
 
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.ErrorCode;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -62,6 +63,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             list.add(MyErrorResponse.ValidationError.of(fieldError));
         }
         return list;
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Object> handleEntityExceptions(Exception e) {
+        log.error("Exception - handlerException : {}", e.getMessage());
+        return handleExceptionInternal(CommonErrorCode.INVALID_ENTITY);
     }
 
     @ExceptionHandler(Exception.class)

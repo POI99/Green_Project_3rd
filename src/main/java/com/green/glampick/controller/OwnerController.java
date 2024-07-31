@@ -68,6 +68,25 @@ public class OwnerController {
         return service.postGlampingInfo(req, glampImg);
     }
 
+    // update - 글램핑
+    @PutMapping("glamping")
+    @Operation(summary = "글램핑 정보 수정", description =
+            "<p> <strong> 선택입력 : extraCharge(기준 인원 외 추가 인원당 요금) </strong> </p>" +
+                    "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>")
+    @ApiResponse(description =
+            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
+                    "<p> SU(200) : 정보 수정 성공 </p> " +
+                    "<p> VF(400) : request 데이터 입력 오류 </p> " +
+                    "<p> CU(400) : jwt 오류 </p> " +
+                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = PutGlampingInfoResponseDto.class)))
+    public ResponseEntity<? super PutGlampingInfoResponseDto> updateGlamping(@RequestBody GlampingPutRequestDto req) {
+        return service.updateGlampingInfo(req);
+    }
+
     // create - 객실
     @PostMapping(value = "room", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "객실 정보 등록", description =
@@ -90,24 +109,6 @@ public class OwnerController {
         return service.postRoomInfo(req, roomImg);
     }
 
-//    // update - 글램핑
-//    @PutMapping("glamping")
-//    @Operation(summary = "글램핑 정보 수정", description =
-//            "<p> <strong> 선택입력 : extraCharge(기준 인원 외 추가 인원당 요금) </strong> </p>" +
-//                    "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>")
-//    @ApiResponse(description =
-//            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
-//                    "<p> SU(200) : 정보 수정 성공 </p> " +
-//                    "<p> VF(400) : request 데이터 입력 오류 </p> " +
-//                    "<p> CU(400) : jwt 오류 </p> " +
-//                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
-//            responseCode = "200",
-//            content = @Content(
-//                    mediaType = "application/json",
-//                    schema = @Schema(implementation = PutGlampingInfoResponseDto.class)))
-//    public ResponseEntity<? super PutGlampingInfoResponseDto> updateGlamping(@RequestBody GlampingPutRequestDto req) {
-//        return service.updateGlampingInfo(req);
-//    }
 
     // update - 객실
     @PutMapping("room")
