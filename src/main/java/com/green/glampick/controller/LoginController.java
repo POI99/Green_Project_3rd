@@ -3,7 +3,7 @@ package com.green.glampick.controller;
 import com.green.glampick.dto.request.login.OwnerSignUpRequestDto;
 import com.green.glampick.dto.request.login.SignInRequestDto;
 import com.green.glampick.dto.request.login.SignUpRequestDto;
-import com.green.glampick.dto.request.owner.OwnerSignInRequestDto;
+import com.green.glampick.dto.request.login.OwnerSignInRequestDto;
 import com.green.glampick.dto.response.login.PostOwnerSignUpResponseDto;
 import com.green.glampick.dto.response.login.PostSignInResponseDto;
 import com.green.glampick.dto.response.login.PostSignUpResponseDto;
@@ -71,15 +71,6 @@ public class LoginController {
                 mediaType = "application/json", schema = @Schema(implementation = PostSignInResponseDto.class)))
     public ResponseEntity<? super PostSignInResponseDto> signInUser(HttpServletResponse res, @RequestBody @Valid SignInRequestDto dto) {
         return service.signInUser(res, dto);
-    }
-    // =========
-    @PostMapping("/sign-in/owner")
-    @Operation(summary = "이메일 로그인", description = SIGN_IN_DESCRIPTION)
-    @ApiResponse(responseCode = "200", description = SIGN_IN_RESPONSE_ERROR_CODE,
-            content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = PostSignInResponseDto.class)))
-    public ResponseEntity<? super PostSignInResponseDto> signInOwner(HttpServletResponse res, @RequestBody @Valid SignInRequestDto dto) {
-        return service.signInOwner(res, dto);
     }
 
     @PostMapping("/owner/sign-in")
