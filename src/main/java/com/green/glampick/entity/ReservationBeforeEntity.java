@@ -1,21 +1,17 @@
 package com.green.glampick.entity;
 
-import com.green.glampick.dto.request.book.PostBookRequestDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity
+@Entity(name = "reservation_before")
 @Table(name = "reservation_before")
 public class ReservationBeforeEntity extends CreatedAt {
     //예약 테이블
@@ -25,17 +21,17 @@ public class ReservationBeforeEntity extends CreatedAt {
     @Column(length = 13, nullable = false, unique = true) @Comment("예약 번호")
     private String bookId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false) @Comment("유저 ID")
     private UserEntity user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "glamp_id", nullable = false) @Comment("글램핑 ID")
     private GlampingEntity glamping;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false) @Comment("객실 ID")
-    private RoomEntity roomId;
+    private RoomEntity room;
 
     @Column(length = 10, nullable = false) @Comment("예약자 성함")
     private String inputName;
