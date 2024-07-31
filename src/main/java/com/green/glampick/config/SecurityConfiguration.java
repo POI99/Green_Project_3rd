@@ -1,5 +1,6 @@
 package com.green.glampick.config;
 
+import com.green.glampick.common.Role;
 import com.green.glampick.jwt.JwtAuthenticationAccessDeniedHandler;
 import com.green.glampick.jwt.JwtAuthenticationEntryPoint;
 import com.green.glampick.jwt.JwtAuthenticationFilter;
@@ -35,17 +36,13 @@ public class SecurityConfiguration {
                 .formLogin(form -> form.disable())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
-                        auth -> auth.requestMatchers(
-                                        "api/user**"
-                                        , "api/user/**"
-
-                                ).authenticated()
-                                .anyRequest().permitAll()
-                )
+                        auth -> auth.requestMatchers( "api/user**", "api/user/**" ).authenticated()
+                                .requestMatchers( "api/owner/**" ).hasRole("OWNER")
+                                .requestMatchers( "api/admin/**" ).hasRole("ADMIN")
+                                .anyRequest().permitAll())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(new JwtAuthenticationEntryPoint())
-                        .accessDeniedHandler(new JwtAuthenticationAccessDeniedHandler())
-                )
+                        .accessDeniedHandler(new JwtAuthenticationAccessDeniedHandler()))
 //                .oauth2Login( oauth2 -> oauth2.authorizationEndpoint(
 //                                        auth -> auth.baseUri("/oauth2/authorization")
 //                                                .authorizationRequestRepository(repository))

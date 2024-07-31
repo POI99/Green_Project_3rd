@@ -1,12 +1,7 @@
 package com.green.glampick.service;
 
-import com.green.glampick.dto.request.login.OwnerSignUpRequestDto;
-import com.green.glampick.dto.request.login.SignInRequestDto;
-import com.green.glampick.dto.request.login.SignUpRequestDto;
-import com.green.glampick.dto.request.login.OwnerSignInRequestDto;
-import com.green.glampick.dto.response.login.PostOwnerSignUpResponseDto;
-import com.green.glampick.dto.response.login.PostSignInResponseDto;
-import com.green.glampick.dto.response.login.PostSignUpResponseDto;
+import com.green.glampick.dto.request.login.*;
+import com.green.glampick.dto.response.login.*;
 import com.green.glampick.dto.response.login.mail.PostMailCheckResponseDto;
 import com.green.glampick.dto.response.login.mail.PostMailSendResponseDto;
 import com.green.glampick.dto.response.login.sms.PostSmsCheckResponseDto;
@@ -14,7 +9,9 @@ import com.green.glampick.dto.response.login.sms.PostSmsSendResponseDto;
 import com.green.glampick.dto.response.login.token.GetAccessTokenResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 
 public interface LoginService {
 
@@ -33,10 +30,16 @@ public interface LoginService {
     ResponseEntity<? super PostSignInResponseDto> signInUser(HttpServletResponse res, SignInRequestDto dto);
 
     //  사장님 로그인 처리  //
-    ResponseEntity<? super PostSignInResponseDto> signInOwner(HttpServletResponse res, OwnerSignInRequestDto dto);
+    ResponseEntity<? super PostOwnerSignInResponseDto> signInOwner(HttpServletResponse res, OwnerSignInRequestDto dto);
+
+    //  관리자 로그인 처리  //
+    ResponseEntity<? super PostAdminSignInResponseDto> signInAdmin(HttpServletResponse res, AdminSignInRequestDto dto);
 
     //  AccessToken 불러오기  //
     ResponseEntity<? super GetAccessTokenResponseDto> getAccessToken(HttpServletRequest req);
+
+    //  로그아웃 처리하기  //
+    ResponseEntity<? super PostSignOutResponseDto> signOut(HttpServletResponse res);
 
     //  휴대폰 인증 문자 보내기  //
     ResponseEntity<? super PostSmsSendResponseDto> sendOne(String userPhone);

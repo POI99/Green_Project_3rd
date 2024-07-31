@@ -13,7 +13,7 @@ import org.hibernate.annotations.Comment;
 @Setter
 @Entity
 @Table(name = "admin")
-public class AdminEntity extends UpdatedAt {
+public class AdminEntity extends CreatedAt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("관리자 PK")

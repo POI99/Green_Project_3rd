@@ -6,9 +6,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OwnerSignInRequestDto {
+public class AdminSignInRequestDto {
 
-    private String ownerEmail;
-    private String ownerPw;
+    private String adminId;
+    private String adminPw;
 
 }
