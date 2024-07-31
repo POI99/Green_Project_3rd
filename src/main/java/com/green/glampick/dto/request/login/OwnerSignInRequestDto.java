@@ -1,4 +1,4 @@
-package com.green.glampick.dto.request.owner;
+package com.green.glampick.dto.request.login;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
