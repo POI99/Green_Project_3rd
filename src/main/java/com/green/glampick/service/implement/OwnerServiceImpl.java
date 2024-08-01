@@ -212,7 +212,6 @@ public class OwnerServiceImpl implements OwnerService {
             RoomModule.isValidTime(dto.getOutTime());
         }
 
-
         // null 인 경우 기존값 넣어주기
         RoomEntity room = roomRepository.getReferenceById(p.getRoomId());
         dto = RoomModule.dtoNull(dto, room);
@@ -235,8 +234,12 @@ public class OwnerServiceImpl implements OwnerService {
     public ResponseEntity<? super ResponseDto> deleteRoomImage(Long imgId, Long roomId) {
         long ownerId = GlampingModule.ownerId(authenticationFacade);
 
-
         RoomModule.isRoomIdOk(roomRepository, glampingRepository, ownerRepository, roomId, ownerId);
+
+        List<RoomImageEntity> entityList = roomImageRepository.findByRoomId(roomRepository.getReferenceById(roomId));
+        if(entityList.size() == 1){
+            throw new CustomException(OwnerErrorCode.CDF);
+        }
         RoomModule.deleteFile(imgId, roomImageRepository, customFileUtils);
 
         ResponseDto result = new ResponseDto(SUCCESS_CODE, SUCCESS_MESSAGE);
@@ -244,9 +247,9 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     // 객실 사진 insert
-    public ResponseEntity<? super ResponseDto> insertNewRoomImg(Long imgId, Long roomId) {
-
-    }
+//    public ResponseEntity<? super ResponseDto> insertNewRoomImg(Long imgId, Long roomId) {
+//
+//    }
 
 
     @Transactional

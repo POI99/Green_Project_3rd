@@ -19,7 +19,8 @@ public enum OwnerErrorCode implements ErrorCode {
     IT(HttpStatus.BAD_REQUEST, "시간 형식이 잘못되었습니다. ( 시:분:초 12:00:00 )"),    // INVALID_TIME
     PE(HttpStatus.BAD_REQUEST, "최대 인원은 기준 인원보다 작을 수 없습니다."),    // PERSONNEL_ERROR
     PUE(HttpStatus.BAD_REQUEST, "객실 인원은 2명부터 6명까지 가능합니다."),    // PERSONNEL_UPDATE_ERROR
-    CF(HttpStatus.BAD_REQUEST, "파일을 삭제하지 못했습니다.");    // CANT_DELETE_FILE
+    CF(HttpStatus.BAD_REQUEST, "파일을 삭제하지 못했습니다."),    // CANT_DELETE_FILE
+    CDF(HttpStatus.BAD_REQUEST, "객실 사진은 1개 이상 있어야합니다.");    // CANT_DELETE_FINAL
     private final HttpStatus httpStatus;
     private final String message;
 }
