@@ -123,7 +123,7 @@ public class OwnerController {
             content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = PostRoomInfoResponseDto.class)))
-    public ResponseEntity<? super PostRoomInfoResponseDto> createRoom(@RequestPart RoomPostRequestDto req
+    public ResponseEntity<? super PostRoomInfoResponseDto> createRoom(@RequestPart @Valid RoomPostRequestDto req
             , @RequestPart List<MultipartFile> roomImg) {
         return service.postRoomInfo(req, roomImg);
     }

@@ -12,6 +12,7 @@ import com.green.glampick.dto.request.owner.GlampingPutRequestDto;
 import com.green.glampick.dto.request.owner.RoomPostRequestDto;
 import com.green.glampick.dto.request.owner.RoomPutRequestDto;
 import com.green.glampick.dto.request.owner.module.GlampingModule;
+import com.green.glampick.dto.request.owner.module.RoomModule;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookListResponseDto;
@@ -20,11 +21,7 @@ import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutRoomInfoResponseDto;
 import com.green.glampick.dto.response.user.GetReviewResponseDto;
-import com.green.glampick.entity.GlampingEntity;
-import com.green.glampick.entity.GlampingWaitEntity;
-import com.green.glampick.entity.OwnerEntity;
-import com.green.glampick.entity.ReviewEntity;
-import com.green.glampick.entity.ReviewImageEntity;
+import com.green.glampick.entity.*;
 import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.OwnerErrorCode;
@@ -56,6 +53,10 @@ public class OwnerServiceImpl implements OwnerService {
     private final GlampingWaitRepository waitRepository;
     private final GlampingRepository glampingRepository;
     private final OwnerRepository ownerRepository;
+    private final RoomRepository roomRepository;
+    private final RoomImageRepository roomImageRepository;
+    private final ServiceRepository serviceRepository;
+    private final RoomServiceRepository roomServiceRepository;
     private final ReviewRepository reviewRepository;
     private final ReviewImageRepository reviewImageRepository;
 
@@ -149,59 +150,36 @@ public class OwnerServiceImpl implements OwnerService {
     @Transactional
     public ResponseEntity<? super PostRoomInfoResponseDto> postRoomInfo(RoomPostRequestDto req
             , List<MultipartFile> image) {
-//        try {
-//            userValidationRoom(req.getGlampId());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new CustomException(CommonErrorCode.MNF);
-//        }
 
-//        // RoomValidate
-//        try {
-//            RoomValidate.imgExist(image);   // 이미지가 들어있는가?
-//            RoomValidate.isNull(req);    // 필요한 데이터가 모두 입력되었는가?
-//            RoomValidate.personnel(req.getPeopleNum(), req.getPeopleMax());  // 인원 정보가 올바른가?
-//            RoomValidate.timeValidator(req.getInTime());   // 시간 형식이 올바른가?
-//            RoomValidate.timeValidator(req.getOutTime());
-//        } catch (Exception e) {
-//            String msg = e.getMessage();
-//            return PostRoomInfoResponseDto.validationFailed(msg);
-//        }
+        // 오너 PK 불러오기
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        // 로그인 유저와 글램핑 PK가 매치되는가?
+        GlampingModule.isGlampIdOk(glampingRepository, ownerRepository, req.getGlampId(), ownerId);
 
-        req.setGlampId(req.getGlampId());
-        mapper.insertRoom(req);  // room 테이블 insert
+        // 사진이 들어있나?
+        RoomModule.imgExist(image);
 
-        // 폴더 만들기
-        String roomPath = String.format("glamping/%s/room/%s", req.getGlampId(), req.getRoomId());
-        customFileUtils.makeFolders(roomPath);
-        // room 파일명 생성 및 저장
-        try {
-            List<String> roomImg = new ArrayList<>();
-            for (MultipartFile file : image) {
-                String imgName = customFileUtils.makeRandomFileName(file);
-                String imgUrlName = String.format("/pic/%s/%s", roomPath, imgName);
-                roomImg.add(imgUrlName);
-                String target = String.format("%s/%s", roomPath, imgName);
-                customFileUtils.transferTo(file, target);
-            }
-            req.setRoomImgName(roomImg);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return PostRoomInfoResponseDto.fileUploadError();
+        // 인원 정보가 올바른가?
+        RoomModule.personnel(req.getPeopleNum(), req.getPeopleMax());
+
+        // room 테이블 insert
+        GlampingEntity glamping = glampingRepository.getReferenceById(req.getGlampId());
+        RoomEntity room = new RoomEntity(null, glamping, req.getRoomName(), req.getPrice()
+                , req.getPeopleNum(), req.getPeopleMax(), req.getInTime(), req.getOutTime());
+        roomRepository.save(room);
+
+        // 이미지 저장
+        List<String> roomImgName = RoomModule.imgInsert(image, req.getGlampId(), room.getRoomId(), customFileUtils);
+        List<RoomImageEntity> saveImage = RoomModule.saveImage(roomImgName, roomRepository.findByRoomId(room.getRoomId()));
+        roomImageRepository.saveAll(saveImage);
+
+        // 서비스 저장
+        if(req.getService() != null){
+            List<RoomServiceEntity> service = RoomModule.saveService(req.getService(), roomRepository.findByRoomId(room.getRoomId()), serviceRepository);
+            roomServiceRepository.saveAll(service);
         }
-        // 룸 이미지 / 룸 서비스 insert
-        try {
-            mapper.insertRoomImg(req);
-            if (req.getService() != null) {
-                mapper.insertRoomService(req);
-            }
-        } catch (CustomException e) {
-            throw new CustomException(e.getErrorCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException(CommonErrorCode.DBE);
-        }
-        return PostRoomInfoResponseDto.success(req.getRoomId());
+
+        return PostRoomInfoResponseDto.success(room.getRoomId());
     }
 
 
@@ -227,19 +205,19 @@ public class OwnerServiceImpl implements OwnerService {
 //        } catch (Exception e) {
 //            String msg = e.getMessage();
 //            return PutRoomInfoResponseDto.validationFailed(msg);
+////        }
+//        // 정보 업데이트
+//        mapper.updateRoomInfo(req);
+//        // 서비스 업데이트
+//        List<Integer> service = mapper.selService(req.getRoomId());
+//        if (service != req.getService()) {
+//            if (service != null) {
+//                mapper.delService(req.getRoomId());
+//            }
+//            if (req.getService() != null) {
+//                mapper.insertRoomService(req.getRoomId(), req.getService());
+//            }
 //        }
-        // 정보 업데이트
-        mapper.updateRoomInfo(req);
-        // 서비스 업데이트
-        List<Integer> service = mapper.selService(req.getRoomId());
-        if (service != req.getService()) {
-            if (service != null) {
-                mapper.delService(req.getRoomId());
-            }
-            if (req.getService() != null) {
-                mapper.insertRoomService(req.getRoomId(), req.getService());
-            }
-        }
 
         return PutRoomInfoResponseDto.success();
     }
