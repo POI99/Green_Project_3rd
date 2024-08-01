@@ -8,18 +8,16 @@ import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-
 @Getter
 @Setter
-public class PostBannerResponseDto extends ResponseDto {
+public class DeleteBannerResponseDto extends ResponseDto {
 
-    private PostBannerResponseDto() {
+    private DeleteBannerResponseDto() {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 
-    public static ResponseEntity<PostBannerResponseDto> success() {
-        PostBannerResponseDto result = new PostBannerResponseDto();
+    public static ResponseEntity<DeleteBannerResponseDto> success() {
+        DeleteBannerResponseDto result = new DeleteBannerResponseDto();
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
