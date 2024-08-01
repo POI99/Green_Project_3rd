@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReviewGetRoomRequestDto {
-    @JsonIgnore private long userId;
+    @JsonIgnore private long ownerId;
+    @JsonIgnore
     private long glampId;
 }

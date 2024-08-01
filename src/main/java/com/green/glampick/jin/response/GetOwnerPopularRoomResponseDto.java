@@ -16,15 +16,15 @@ import java.util.List;
 public class GetOwnerPopularRoomResponseDto extends ResponseDto {
 
 
-    List<GetPopularRoom> getStarPointList;
-    private GetOwnerPopularRoomResponseDto(List<GetPopularRoom> getStarPointList) {
+    List<GetPopularRoom> popularRooms;
+    private GetOwnerPopularRoomResponseDto(List<GetPopularRoom> popularRooms) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
-        this.getStarPointList = getStarPointList;
+        this.popularRooms = popularRooms;
 
     }
 
-    public static ResponseEntity<GetOwnerPopularRoomResponseDto> success(List<GetPopularRoom> getStarPointList) {
-        GetOwnerPopularRoomResponseDto result = new GetOwnerPopularRoomResponseDto(getStarPointList);
+    public static ResponseEntity<GetOwnerPopularRoomResponseDto> success(List<GetPopularRoom> popularRooms) {
+        GetOwnerPopularRoomResponseDto result = new GetOwnerPopularRoomResponseDto(popularRooms);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
