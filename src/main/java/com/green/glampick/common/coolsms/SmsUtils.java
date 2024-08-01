@@ -30,6 +30,7 @@ public class SmsUtils {
             message.setTo(to);
             message.setText("[글램픽] 아래의 인증번호를 입력해주세요\n" + "[" +verificationCode + "]");
 
+
             SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
             return response;
         }

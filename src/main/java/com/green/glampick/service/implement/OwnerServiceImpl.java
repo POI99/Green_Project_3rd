@@ -1,13 +1,13 @@
 package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
+import com.green.glampick.common.Role;
 import com.green.glampick.dto.object.UserReviewListItem;
 import com.green.glampick.dto.object.owner.BookBeforeItem;
 import com.green.glampick.dto.object.owner.BookCancelItem;
 import com.green.glampick.dto.object.owner.BookCompleteItem;
 import com.green.glampick.dto.request.owner.GlampingPostRequestDto;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
-import com.green.glampick.dto.request.ReviewPostRequestDto;
 import com.green.glampick.dto.request.owner.GlampingPutRequestDto;
 import com.green.glampick.dto.request.owner.RoomPostRequestDto;
 import com.green.glampick.dto.request.owner.RoomPutRequestDto;
@@ -309,19 +309,85 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     public ResponseEntity<?super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto p) {
 
-        try {
+        log.info("service -1");
 
+        //로그인 비로그인 체크
+        try {
+            p.setOwnerId(authenticationFacade.getLoginUserId());
+            if (p.getOwnerId() == 0) {
+                throw new RuntimeException();
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            throw new CustomException(CommonErrorCode.MNF);
         }
+        Role role = authenticationFacade.getLoginUser().getRole();
+        // 권한체크
+        if (role != Role.ROLE_OWNER) {
+            throw new CustomException(CommonErrorCode.NP);
+        }
+        //리뷰 데이터 추출
+        try {
+            log.info("service -2");
+            Long ownerId = p.getOwnerId();
+            int limit = p.getLimit();
+            int offset = p.getOffset();
+
+            List<GetUserReviewResultSet> reviewInfo = reviewRepository.getReviewForOwner(ownerId, limit, offset);
+            //review PK 추출
+//            List<Long> reviewIds = reviewInfo.stream()
+//                    .map(GetUserReviewResultSet::getReviewId)
+//                    .toList();
+
+            //List<ReviewEntity> reviewEntityList = reviewInfo.stream().map(item -> new ReviewEntity().setReviewId(item.getReviewId())).toList();
+            List<ReviewEntity> reviewEntityList = reviewInfo.stream().map(item -> { // 1)리스트 스트림변환, 2)reviewId 값 들을 세팅해서 ReviewEntity 객체로 추출 3)추출한 값을 List 로 반환
+                ReviewEntity entity = new ReviewEntity();
+                entity.setReviewId(item.getReviewId());
+                return entity;
+            }).toList();
+
+            //review Pk 로 image Entity 추출
+            List<ReviewImageEntity> imageEntities = reviewImageRepository.findByReviewEntityIn(reviewEntityList);
+
+            List<UserReviewListItem> reviewListItem = new ArrayList<>();
+
+            for (GetUserReviewResultSet resultSet : reviewInfo) {
+                UserReviewListItem item = new UserReviewListItem();
+                item.setGlampName(resultSet.getGlampName());
+                item.setRoomName(resultSet.getRoomName());
+                item.setUserNickName(resultSet.getUserNickname());
+                item.setUserProfileImage(resultSet.getUserProfileImage());
+                item.setReviewId(resultSet.getReviewId());
+                item.setReservationId(resultSet.getReservationId());
+                item.setUserReviewContent(resultSet.getReviewContent());
+                item.setStarPoint(resultSet.getReviewStarPoint());
+                item.setOwnerReviewContent(resultSet.getOwnerReviewComment());
+                item.setCreatedAt(resultSet.getCreatedAt().toString());
+                item.setGlampId(resultSet.getGlampId());
+
+                List<String> imageUrls = imageEntities.stream()
+                        .filter(entity -> entity.getReviewEntity().getReviewId() == resultSet.getReviewId())
+                        .map(ReviewImageEntity::getReviewImageName) // 경로를 파일명으로 구성
+                        .collect(Collectors.toList());
+                item.setReviewImages(imageUrls);
+
+                reviewListItem.add(item);
+            }
 
 
 
-
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            throw new CustomException(CommonErrorCode.DBE);
+        }
         return null;
+
+//        return GetReviewResponseDto.success(reviewRepository.getTotalReviewsCount(dto.getUserId()), reviewListItems);
     }
-
-
-
-
 }
+
+
+
+
+

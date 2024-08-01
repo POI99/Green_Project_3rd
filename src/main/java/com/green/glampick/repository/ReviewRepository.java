@@ -48,29 +48,29 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
     List<GetUserReviewResultSet> getReview(long userId, int limit, int offset);
     @Query(
             value =
-                    "SELECT E.glamp_name AS glampName " +
-                            ", D.room_name AS roomName " +
-                            ", E.glamp_id AS glampId " +
-                            ", C.user_nickname AS userNickname " +
-                            ", C.user_profile_image AS userProfileImage " +
-                            ", B.review_id AS reviewId " +
-                            ", B.reservation_id AS reservationId " +
-                            ", B.review_content AS reviewContent " +
-                            ", B.review_star_point AS reviewStarPoint " +
-                            ", B.review_comment AS ownerReviewComment " +
-                            ", B.created_at AS createdAt " +
-                            ", A.book_id AS bookId " +
-                            "FROM reservation_complete A " +
-                            "JOIN review B " +
-                            "ON A.reservation_id = B.reservation_id " +
-                            "JOIN user C " +
-                            "ON C.user_id = B.user_id " +
-                            "JOIN room D " +
-                            "ON A.room_id = D.room_id " +
-                            "JOIN glamping E " +
+                    "SELECT   D.room_name AS roomName, " +
+                            " E.glamp_id AS glampId, " +
+                            " B.user_nickname AS userNickname," +
+                            " B.user_profile_image AS userProfileImage, " +
+                            " A.review_id AS reviewId, " +
+                            " A.reservation_id AS reservationId, " +
+                            " A.review_content AS reviewContent, " +
+                            " A.review_star_point AS reviewStarPoint, " +
+                            " A.review_comment AS ownerReviewComment, " +
+                            " A.created_at AS createdAt " +
+                            "FROM review A " +
+                            "INNER JOIN user B " +
+                            "ON A.user_id = B.user_id " +
+                            "INNER JOIN reservation_complete C " +
+                            "ON A.reservation_id = C.reservation_id " +
+                            "INNER JOIN room D " +
+                            "ON D.room_id = C.room_id " +
+                            "INNER JOIN glamping E " +
                             "ON A.glamp_id = E.glamp_id " +
-                            "WHERE E.owner_id = ?1 " +
-                            "ORDER BY B.review_id DESC " +
+                            "INNER JOIN owner F " +
+                            "ON	F.owner_id = E.owner_id " +
+                            "WHERE F.owner_id = ?1 " +
+                            "ORDER BY A.review_id DESC " +
                             "LIMIT ?2 OFFSET ?3",
             nativeQuery = true
     )

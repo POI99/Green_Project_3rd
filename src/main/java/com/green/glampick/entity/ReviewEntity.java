@@ -1,20 +1,17 @@
 package com.green.glampick.entity;
 
-import com.green.glampick.dto.request.user.PostReviewRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.CreationTimestamp;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Access(AccessType.FIELD)
 @Table(name = "review")
 public class ReviewEntity extends CreatedAt{
 
