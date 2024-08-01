@@ -31,9 +31,17 @@ public class GetReviewResponseDto extends ResponseDto {
         this.reviewListItems = reviewListItems;
     }
 
+    public GetReviewResponseDto(List<UserReviewListItem> reviewListItems) {
+        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        this.reviewListItems = reviewListItems;
+    }
+
     public static ResponseEntity<GetReviewResponseDto> success(long totalReviewsCount, List<UserReviewListItem> reviewListItems) {
         GetReviewResponseDto result = new GetReviewResponseDto(totalReviewsCount, reviewListItems);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
-
+    public static ResponseEntity<GetReviewResponseDto> success(List<UserReviewListItem> reviewListItems) {
+        GetReviewResponseDto result = new GetReviewResponseDto(reviewListItems);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 }
