@@ -25,7 +25,7 @@ public class BookController {
     private final BookService service;
 
     @PostMapping
-    @Operation(summary = "글램핑 예약하기", description = "<strong>글램핑 예약을 할 수 있습니다.</strong>",
+    @Operation(summary = "글램핑 예약하기 (김수찬)", description = "<strong>글램핑 예약을 할 수 있습니다.</strong>",
             responses = {@ApiResponse(
                     responseCode = "200",
                     description = "성공에 대한 반환 값 입니다.",
@@ -38,7 +38,7 @@ public class BookController {
     }
 
     @GetMapping("reservation")
-    @Operation(summary = "최종 결제가격 정보", description = "<strong>최종 결제가격을 계산하여 응답합니다.</strong>",
+    @Operation(summary = "최종 결제가격 정보 (김수찬)", description = "<strong>최종 결제가격을 계산하여 응답합니다.</strong>",
             responses = {@ApiResponse(
                     responseCode = "200",
                     description = "성공에 대한 반환 값 입니다.",

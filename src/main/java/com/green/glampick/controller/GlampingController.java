@@ -35,7 +35,7 @@ public class GlampingController {
 
     //  글램핑 검색 결과 불러오기  //
     @GetMapping("search")
-    @Operation(summary = "글램핑 검색 결과 가져오기", description = SEARCH_GLAMPING_DESCRIPTION)
+    @Operation(summary = "글램핑 검색 결과 가져오기 (김민지)", description = SEARCH_GLAMPING_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = SEARCH_GLAMPING_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetSearchGlampingListResponseDto.class)))
@@ -48,7 +48,7 @@ public class GlampingController {
 
     //  글램핑 상세 페이지 불러오기  //
     @GetMapping("info")
-    @Operation(summary = "글램핑 상세 페이지 불러오기", description = GLAMPING_INFO_DESCRIPTION)
+    @Operation(summary = "글램핑 상세 페이지 불러오기 (배강국)", description = GLAMPING_INFO_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = GLAMPING_INFO_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetGlampingInformationResponseDto.class)))
@@ -85,7 +85,7 @@ public class GlampingController {
     }
      */
     @Operation(
-            summary = "관심 글램핑 등록" ,
+            summary = "관심 글램핑 등록 (배강국)" ,
             description = "<strong> 변수명 glampId :  글램프 PK </strong> <p>  ex)23 </p>",
             responses = {
                     @ApiResponse(
@@ -102,7 +102,7 @@ public class GlampingController {
     public ResponseEntity<? super GetFavoriteGlampingResponseDto> favoriteGlamping(@ParameterObject @ModelAttribute GetFavoriteRequestDto p) {
         return service.favoriteGlamping(p);
     }
-    @Operation(summary = "글램핑 리뷰 페이지",
+    @Operation(summary = "글램핑 리뷰 페이지 (배강국)",
             description = "<strong> 변수명 glampId : 글램프 PK </strong> <p>  ex)35 </p>" +
                           "<strong> 변수명 page : 페이지 값 </strong> <p> ex) 1 </p>",
             responses = {
@@ -128,7 +128,7 @@ public class GlampingController {
     public ResponseEntity<? super GetGlampingReviewInfoResponseDto> infoReviewList(@ParameterObject @ModelAttribute ReviewInfoRequestDto p) {
         return service.infoReviewList(p);
     }
-    @Operation(summary = "리뷰이미지 더보기",
+    @Operation(summary = "리뷰이미지 더보기 (배강국)",
             description =
                     "<strong> 변수명 glampId : 글램프 PK </strong> <p>  ex)35 </p>" +
                     "<strong> 변수명 page : 페이지 값 </strong> <p> ex) 1 </p>",
@@ -146,7 +146,7 @@ public class GlampingController {
         return service.moreReviewImage(p);
     }
 
-    @Operation(summary = "객실 사진 더보기",
+    @Operation(summary = "객실 사진 더보기 (배강국)",
             description =
                     "<strong> 변수명 glampId : 글램프 PK </strong> <p>  ex)3 </p>" +
                     "<strong> 변수명 page : 페이지 값 </strong> <p> ex) 1 </p>",

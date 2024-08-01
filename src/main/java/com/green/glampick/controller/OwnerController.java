@@ -48,7 +48,7 @@ public class OwnerController {
 // 민지 =================================================================================================================
     // create - 글램핑
     @PostMapping(value = "glamping", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "글램핑 정보 등록", description =
+    @Operation(summary = "글램핑 정보 등록 (김민지)", description =
             "<p> <strong> 선택입력 : extraCharge(기준 인원 외 추가 인원당 요금) </strong> </p>" +
                     "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
                     "<p> 사진 업로드를 위해 테스트는 포스트맨에서 해주세요 ~ </p>")
@@ -70,7 +70,7 @@ public class OwnerController {
 
     // update - 글램핑
     @PutMapping("glamping")
-    @Operation(summary = "글램핑 정보 수정", description =
+    @Operation(summary = "글램핑 정보 수정 (김민지)", description =
             "<p> <strong> 선택입력 : extraCharge(기준 인원 외 추가 인원당 요금) </strong> </p>" +
                     "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>")
     @ApiResponse(description =
@@ -89,7 +89,7 @@ public class OwnerController {
 
     // create - 객실
     @PostMapping(value = "room", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "객실 정보 등록", description =
+    @Operation(summary = "객실 정보 등록 (김민지)", description =
             "<p> <strong> 선택입력 : service[] </strong> </p>" +
                     "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
                     "<p> 사진 업로드를 위해 테스트는 포스트맨에서 해주세요 ~ </p>" +
@@ -112,7 +112,7 @@ public class OwnerController {
 
     // update - 객실
     @PutMapping("room")
-    @Operation(summary = "객실 정보 수정", description =
+    @Operation(summary = "객실 정보 수정 (김민지)", description =
             "<p> <strong> 선택입력 : service[] </strong> </p>" +
                     "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
                     "<p> <strong> 시간 입력 형식 = 시:분:초  ex) 12:00:00 </strong> </p>")
@@ -131,7 +131,7 @@ public class OwnerController {
 
     // read - 예약
     @GetMapping("book/{glamp_id}")
-    @Operation(summary = "글램핑 예약 내역 불러오기", description =
+    @Operation(summary = "글램핑 예약 내역 불러오기 (김민지)", description =
             "<strong> <p> glamp_id (글램핑 PK) 는 필수입력입니다 </p> </strong>" +
                     "<p> before : 이용 예정  </p>" +
                     "<p> complete : 이용 완료 </p>" +
@@ -151,7 +151,7 @@ public class OwnerController {
     }
 // 강국 =================================================================================================================
 
-    @Operation(summary = "리뷰 답글 작성하기",
+    @Operation(summary = "리뷰 답글 작성하기 (배강국)",
             description = POST_OWNER_REVIEW_DESCRIPTION
             ,
             responses = {
@@ -169,7 +169,7 @@ public class OwnerController {
         return service.patchReview(p);
     }
     @GetMapping("/review")
-    @Operation(summary = "리뷰 불러오기", description = USER_REVIEW_VIEW_DESCRIPTION)
+    @Operation(summary = "리뷰 불러오기 (배강국)", description = USER_REVIEW_VIEW_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetReviewResponseDto.class)))

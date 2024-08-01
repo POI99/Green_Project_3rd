@@ -52,7 +52,7 @@ public class UserController {
 
     //  유저 페이지 - 예약 내역 불러오기  //
     @GetMapping("/book")
-    @Operation(summary = "예약내역 불러오기", description = USER_BOOK_DESCRIPTION)
+    @Operation(summary = "예약내역 불러오기 (이진현, 김수찬)", description = USER_BOOK_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_BOOK_RESPONSE_ERROR_CODE,
         content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = GetBookResponseDto.class)))
@@ -62,7 +62,7 @@ public class UserController {
 
     //  유저 페이지 - 예약 내역 취소하기  //
     @PostMapping("/book-cancel")
-    @Operation(summary = "예약내역 취소하기", description = USER_BOOK_CANCEL_DESCRIPTION)
+    @Operation(summary = "예약내역 취소하기 (이진현, 김수찬)", description = USER_BOOK_CANCEL_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_BOOK_CANCEL_RESPONSE_ERROR_CODE,
         content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = CancelBookResponseDto.class)))
@@ -72,7 +72,7 @@ public class UserController {
 
     //  유저 페이지 - 리뷰 작성하기  //
     @PostMapping(value = "/review", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "리뷰 작성하기", description = USER_REVIEW_DESCRIPTION)
+    @Operation(summary = "리뷰 작성하기 (이진현)", description = USER_REVIEW_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_REVIEW_RESPONSE_ERROR_CODE,
         content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = PostReviewResponseDto.class)))
@@ -82,7 +82,7 @@ public class UserController {
 
     //  유저 페이지 - 리뷰 삭제하기  //
     @DeleteMapping("/delete")
-    @Operation(summary = "리뷰 삭제하기", description = USER_REVIEW_REMOVE_DESCRIPTION)
+    @Operation(summary = "리뷰 삭제하기 (이진현)", description = USER_REVIEW_REMOVE_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_REVIEW_REMOVE_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = DeleteReviewResponseDto.class)))
@@ -93,7 +93,7 @@ public class UserController {
 
     //  유저 페이지 - 리뷰 불러오기  //
     @GetMapping("/review")
-    @Operation(summary = "리뷰 불러오기", description = USER_REVIEW_VIEW_DESCRIPTION)
+    @Operation(summary = "리뷰 불러오기 (김수찬)", description = USER_REVIEW_VIEW_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetReviewResponseDto.class)))
@@ -103,7 +103,7 @@ public class UserController {
 
     //  유저 페이지 - 관심 글램핑 리스트 불러오기  //
     @GetMapping("/favorite-glamping")
-    @Operation(summary = "관심 글램핑 리스트 불러오기", description = USER_FAVORITE_LIST_DESCRIPTION)
+    @Operation(summary = "관심 글램핑 리스트 불러오기 (이진현)", description = USER_FAVORITE_LIST_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_FAVORITE_LIST_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetFavoriteGlampingResponseDto.class)))
@@ -119,7 +119,7 @@ public class UserController {
 
     // 유저 페이지 - 유저 정보 불러오기  //
     @GetMapping
-    @Operation(summary = "유저 정보 불러오기", description = USER_INFO_DESCRIPTION)
+    @Operation(summary = "유저 정보 불러오기 (이진현, 김수찬)", description = USER_INFO_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_INFO_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetUserResponseDto.class)))
@@ -129,7 +129,7 @@ public class UserController {
 
     //  유저 페이지 - 유저 정보 수정하기  //
     @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})// 유저 정보 수정하기
-    @Operation(summary = "유저 정보 수정하기", description = USER_INFO_UPDATE_DESCRIPTION)
+    @Operation(summary = "유저 정보 수정하기 (이진현 김수찬)", description = USER_INFO_UPDATE_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_INFO_UPDATE_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = UpdateUserResponseDto.class)))
@@ -141,7 +141,7 @@ public class UserController {
 
     //  유저 페이지 - 회원 탈퇴  //
     @DeleteMapping// 회원탈퇴
-    @Operation(summary = "회원 탈퇴", description = USER_LEAVE_DESCRIPTION)
+    @Operation(summary = "회원 탈퇴 (이진현)", description = USER_LEAVE_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_LEAVE_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = DeleteUserResponseDto.class)))
@@ -151,7 +151,7 @@ public class UserController {
 
     //  유저 페이지 - 비밀번호 재확인  //
     @PostMapping("password-check")
-    @Operation(summary = "비밀번호 확인", description = USER_PASSWORD_CHECK_DESCRIPTION)
+    @Operation(summary = "비밀번호 확인 (김수찬)", description = USER_PASSWORD_CHECK_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_PASSWORD_CHECK_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = PostUserPasswordResponseDto.class)))

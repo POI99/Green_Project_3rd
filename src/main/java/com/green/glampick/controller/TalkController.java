@@ -25,7 +25,7 @@ public class TalkController {
     private final TalkService service;
 
     @PostMapping
-    @Operation(summary = "카카오 알림톡 보내기", description = "<strong>입력한 전화번호로 카카오 알림톡이 발송됩니다.",
+    @Operation(summary = "카카오 알림톡 보내기 (김수찬, 김민지)", description = "<strong>입력한 전화번호로 카카오 알림톡이 발송됩니다.",
                 responses = {@ApiResponse(
                     responseCode = "200",
                     description = "성공에 대한 반환 값 입니다.",

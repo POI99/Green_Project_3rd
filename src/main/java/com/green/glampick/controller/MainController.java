@@ -25,7 +25,7 @@ public class MainController {
     private final MainService service;
 
     @GetMapping
-    @Operation(summary = "인기 글램핑 리스트", description = MAIN_GLAMPING_DESCRIPTION)
+    @Operation(summary = "인기 글램핑 리스트 (김민지)", description = MAIN_GLAMPING_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = MAIN_GLAMPING_RESPONSE_ERROR_CODE,
         content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = GetMainGlampingListResponseDto.class)))
