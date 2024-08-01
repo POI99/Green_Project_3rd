@@ -366,21 +366,17 @@ public class UserServiceImpl implements UserService {
         }
 
         try {
-
             UserEntity userEntity = userRepository.findById(dto.getUserId()).get();
             if (dto.getUserId() == 0) {
                 throw new CustomException(UserErrorCode.NU);
             }
-
             return GetUserResponseDto.success(userEntity);
-
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.DBE);
         }
-
     }
 
     //  마이페이지 - 내 정보 수정하기  //
@@ -398,7 +394,6 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.MNF);
         }
-
         // 수정사항이 하나도 입력되지 않은 경우에는 에러
         if (dto.getUserId() == 0 &&
                 (dto.getUserPw() == null || dto.getUserPw().isEmpty()) &&
@@ -407,8 +402,6 @@ public class UserServiceImpl implements UserService {
                 (mf == null || mf.isEmpty())) {
             throw new CustomException(CommonErrorCode.VF);
         }
-
-
         try {
             UserEntity userEntity = userRepository.findById(dto.getUserId()).get();
             if (dto.getUserId() == 0) {
