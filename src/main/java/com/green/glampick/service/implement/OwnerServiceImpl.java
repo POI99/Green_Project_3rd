@@ -42,6 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -281,8 +282,6 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     public ResponseEntity<? super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto p) {
 
-        log.info("service -1");
-
         //로그인 비로그인 체크
         try {
             p.setOwnerId(authenticationFacade.getLoginUserId());
@@ -300,18 +299,14 @@ public class OwnerServiceImpl implements OwnerService {
         }
         //리뷰 데이터 추출
         try {
-            log.info("service -2");
+
             Long ownerId = p.getOwnerId();
             int limit = p.getLimit();
             int offset = p.getOffset();
 
             List<GetUserReviewResultSet> reviewInfo = reviewRepository.getReviewForOwner(ownerId, limit, offset);
             //review PK 추출
-//            List<Long> reviewIds = reviewInfo.stream()
-//                    .map(GetUserReviewResultSet::getReviewId)
-//                    .toList();
 
-            //List<ReviewEntity> reviewEntityList = reviewInfo.stream().map(item -> new ReviewEntity().setReviewId(item.getReviewId())).toList();
             List<ReviewEntity> reviewEntityList = reviewInfo.stream().map(item -> { // 1)리스트 스트림변환, 2)reviewId 값 들을 세팅해서 ReviewEntity 객체로 추출 3)추출한 값을 List 로 반환
                 ReviewEntity entity = new ReviewEntity();
                 entity.setReviewId(item.getReviewId());
@@ -323,7 +318,7 @@ public class OwnerServiceImpl implements OwnerService {
 
             List<UserReviewListItem> reviewListItem = new ArrayList<>();
 
-            for (GetUserReviewResultSet resultSet : reviewInfo) {
+                for (GetUserReviewResultSet resultSet : reviewInfo) {
                 UserReviewListItem item = new UserReviewListItem();
                 item.setGlampName(resultSet.getGlampName());
                 item.setRoomName(resultSet.getRoomName());
@@ -338,22 +333,22 @@ public class OwnerServiceImpl implements OwnerService {
                 item.setGlampId(resultSet.getGlampId());
 
                 List<String> imageUrls = imageEntities.stream()
-                        .filter(entity -> entity.getReviewEntity().getReviewId() == resultSet.getReviewId())
+                        .filter(entity -> Objects.equals(entity.getReviewEntity().getReviewId(), resultSet.getReviewId()))
                         .map(ReviewImageEntity::getReviewImageName) // 경로를 파일명으로 구성
                         .collect(Collectors.toList());
+
                 item.setReviewImages(imageUrls);
 
                 reviewListItem.add(item);
-            }
+
+                }
+
+            return GetReviewResponseDto.success(reviewListItem);
 
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             throw new CustomException(CommonErrorCode.DBE);
         }
-      
-        return null;
-
-//        return GetReviewResponseDto.success(reviewRepository.getTotalReviewsCount(dto.getUserId()), reviewListItems);
     }
 }
