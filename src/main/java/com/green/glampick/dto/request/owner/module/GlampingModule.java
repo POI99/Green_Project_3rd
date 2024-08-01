@@ -1,6 +1,7 @@
 package com.green.glampick.dto.request.owner.module;
 
 import com.green.glampick.common.CustomFileUtils;
+import com.green.glampick.common.Role;
 import com.green.glampick.dto.request.owner.GlampingPostRequestDto;
 import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.GlampingWaitEntity;
@@ -27,6 +28,12 @@ public class GlampingModule {
             throw new CustomException(CommonErrorCode.MNF);
         }
         return loginedId;
+    }
+    //사장 권한 체크
+    public static void roleCheck(Role role) {
+        if (role != Role.ROLE_OWNER) {
+            throw new CustomException(CommonErrorCode.NP);
+        }
     }
 
     // 글램핑을 이미 가지고 있는가?

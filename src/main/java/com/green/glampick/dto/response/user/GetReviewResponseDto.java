@@ -30,7 +30,6 @@ public class GetReviewResponseDto extends ResponseDto {
         this.TotalReviewsCount = totalReviewsCount;
         this.reviewListItems = reviewListItems;
     }
-
     public GetReviewResponseDto(List<UserReviewListItem> reviewListItems) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
         this.reviewListItems = reviewListItems;

@@ -74,6 +74,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleExceptions(Exception e) {
         log.error("Exception - handlerException : {}", e.getMessage());
+        e.printStackTrace();
         return handleExceptionInternal(CommonErrorCode.DBE);
     }
 }
