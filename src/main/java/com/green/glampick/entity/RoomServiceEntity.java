@@ -4,13 +4,15 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Comment;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "glamp_service", uniqueConstraints = {
+@Setter
+@Table(name = "room_service", uniqueConstraints = {
         @UniqueConstraint(
                 columnNames = {"room_id","service_id"}
 )})
