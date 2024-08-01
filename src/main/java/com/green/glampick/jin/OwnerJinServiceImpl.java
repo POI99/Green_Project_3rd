@@ -94,7 +94,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
         }
             List<GetGlampingHeart> getGlampingHearts = null;
         try {
-            getGlampingHearts = ownerRepository.findGlampingHeart(dto.getGlampId());
+            getGlampingHearts = ownerRepository.findGlampingHeart(dto.getOwnerId());
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -116,8 +116,8 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             e.printStackTrace();
             return GetGlampingCancelResponseDto.validateUserId();
         }
-        long total = ownerRepository.findTotalCount(dto.getGlampId());
-        long cancel = ownerRepository.findCancelCount(dto.getGlampId());
+        long total = ownerRepository.findTotalCount(dto.getOwnerId());
+        long cancel = ownerRepository.findCancelCount(dto.getOwnerId());
 
         double result = (double) cancel / total * 100;
         String formattedResult = String.format("%.2f", result);
