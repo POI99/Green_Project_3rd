@@ -1,4 +1,4 @@
-<div align=center> <img src="src/images/readme_logo.png" /> </div>
+<div align=center> <img src="src/main/resources/icon/readme_logo.png" /> </div>
 <br>
 
 <p align=center>자연의 소리와 별빛 아래서 소중한 사람들과 특별한 시간을 보내세요</p>
