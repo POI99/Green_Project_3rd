@@ -14,8 +14,11 @@ public enum OwnerErrorCode implements ErrorCode {
     NF(HttpStatus.BAD_REQUEST, "사진을 찾지 못했습니다."), // NOT_FOUND_FILE
     DL(HttpStatus.BAD_REQUEST, "이미 같은 위치에 등록된 글램핑장이 존재합니다."), // DUPLICATED_LOCATION
     FE(HttpStatus.BAD_REQUEST, "파일을 업로드하는 과정에서 에러가 생겼습니다."),    // FILE_UPLOAD_ERROR
-    NMG(HttpStatus.BAD_REQUEST, "사용자가 가진 글램핑과 입력된 글램핑이 일치하지 않습니다."),    // NOT_MATCH_GLAMP
-    PE(HttpStatus.BAD_REQUEST, "최대 인원은 기준 인원보다 작을 수 없습니다.");    // PERSONNEL_ERROR
+    NMG(HttpStatus.BAD_REQUEST, "등록된 글램핑 정보를 찾지 못했습니다. 글램핑 ID를 확인해주세요."),    // NOT_MATCH_GLAMP
+    NMR(HttpStatus.BAD_REQUEST, "등록된 객실 정보를 찾지 못했습니다. 룸 ID를 확인해주세요."),    // NOT_MATCH_ROOM
+    IT(HttpStatus.BAD_REQUEST, "시간 형식이 잘못되었습니다. ( 시:분:초 12:00:00 )"),    // INVALID_TIME
+    PE(HttpStatus.BAD_REQUEST, "최대 인원은 기준 인원보다 작을 수 없습니다."),    // PERSONNEL_ERROR
+    PUE(HttpStatus.BAD_REQUEST, "객실 인원은 2명부터 6명까지 가능합니다.");    // PERSONNEL_UPDATE_ERROR
     private final HttpStatus httpStatus;
     private final String message;
 }

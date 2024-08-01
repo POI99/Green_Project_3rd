@@ -27,17 +27,17 @@ public class RoomPostRequestDto {
 
     @NotNull(message = "객실의 가격을 입력해주세요.")
     @Schema(example = "65500", description = "객실 가격")
-    private int price;
+    private Integer price;
 
     @NotNull(message = "기준 인원을 입력해주세요.")
     @Min(value = 2, message = "객실의 인원은 2명부터 6명까지 가능합니다.")
     @Schema(example = "2", description = "기준 인원")
-    private int peopleNum;
+    private Integer peopleNum;
 
     @NotNull(message = "최대 인원을 입력해주세요.")
     @Max(value = 6, message = "객실의 인원은 2명부터 6명까지 가능합니다.")
     @Schema(example = "6", description = "최대 인원")
-    private int peopleMax;
+    private Integer peopleMax;
 
     @NotBlank(message = "입실 시간을 입력해주세요.")
     @Pattern(regexp = "^(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d$",message = "시간 형식을 맞춰서 입력해주세요. ex)12:00:00")

@@ -149,8 +149,6 @@ public class GlampingModule {
             dto.setTraffic(entity.getTraffic());
         }
         return dto;
-
-
     }
 
 

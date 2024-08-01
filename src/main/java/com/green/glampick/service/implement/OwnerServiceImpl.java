@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -121,6 +122,7 @@ public class OwnerServiceImpl implements OwnerService {
             GlampingModule.locationUpdate(dto.getGlampLocation(), waitRepository, glampingRepository, p.getGlampId());
         }
 
+        // 입력되지 않은 데이터에는 기존 값 넣어주기
         GlampingEntity entity = glampingRepository.findByGlampId(p.getGlampId());
         dto = GlampingModule.dtoNull(dto, entity);
 
@@ -182,42 +184,42 @@ public class OwnerServiceImpl implements OwnerService {
         return PostRoomInfoResponseDto.success(room.getRoomId());
     }
 
-
+    // 객실 수정
     @Transactional
     public ResponseEntity<? super PutRoomInfoResponseDto> updateRoomInfo(RoomPutRequestDto p) {
-        RoomPostRequestDto req = p.getRequestDto();
+        RoomPostRequestDto dto = p.getRequestDto();
 
-//        try {
-//            userValidationRoom(req.getGlampId());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new CustomException(CommonErrorCode.MNF);
-//        }
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
 
-//        // RoomValidate
-//        try {
-//            GlampingModule.isNull(p.getRoomId()); // 룸 Id가 올바른가?
-//            req.setRoomId(p.getRoomId());
-//            RoomValidate.isNull(req);    // 필요한 데이터가 모두 입력되었는가?
-//            RoomValidate.personnel(req.getPeopleNum(), req.getPeopleMax());  // 인원 정보가 올바른가?
-//            RoomValidate.timeValidator(req.getInTime());   // 시간 형식이 올바른가?
-//            RoomValidate.timeValidator(req.getOutTime());
-//        } catch (Exception e) {
-//            String msg = e.getMessage();
-//            return PutRoomInfoResponseDto.validationFailed(msg);
-////        }
-//        // 정보 업데이트
-//        mapper.updateRoomInfo(req);
-//        // 서비스 업데이트
-//        List<Integer> service = mapper.selService(req.getRoomId());
-//        if (service != req.getService()) {
-//            if (service != null) {
-//                mapper.delService(req.getRoomId());
-//            }
-//            if (req.getService() != null) {
-//                mapper.insertRoomService(req.getRoomId(), req.getService());
-//            }
-//        }
+        // 로그인 유저와 룸 Id가 매치되는가?
+        RoomModule.isRoomIdOk(roomRepository, glampingRepository, ownerRepository, p.getRoomId(), ownerId);
+
+        // 입력된 인원 정보가 올바른지 확인
+        RoomModule.personnelUpdate(dto.getPeopleNum(), dto.getPeopleMax());
+
+        // 시간이 올바른지 확인
+        if(dto.getInTime() != null && !dto.getInTime().isEmpty()){
+            RoomModule.isValidTime(dto.getInTime());
+        }
+        if(dto.getOutTime() != null && !dto.getOutTime().isEmpty()){
+            RoomModule.isValidTime(dto.getOutTime());
+        }
+
+
+        // null 인 경우 기존값 넣어주기
+        RoomEntity room = roomRepository.getReferenceById(p.getRoomId());
+        dto = RoomModule.dtoNull(dto, room);
+
+        RoomEntity roomUpdate = new RoomEntity(p.getRoomId()
+                , glampingRepository.getReferenceById(dto.getGlampId())
+                , dto.getRoomName(), dto.getPrice(), dto.getPeopleNum()
+                , dto.getPeopleMax(), dto.getInTime(), dto.getOutTime());
+        roomRepository.save(roomUpdate);
+
+        // 서비스 수정
+        List<Long> roomService = serviceRepository.findRoomServiceIdByRoom(room);
+        List<Long> inputService = dto.getService();
+        RoomModule.updateService(roomService, inputService, room, roomServiceRepository, serviceRepository);
 
         return PutRoomInfoResponseDto.success();
     }
@@ -225,12 +227,6 @@ public class OwnerServiceImpl implements OwnerService {
     @Transactional
     public ResponseEntity<? super GetOwnerBookListResponseDto> getGlampReservation(Long glampId) {
 
-//        try {
-//            userValidationGlamping();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new CustomException(CommonErrorCode.MNF);
-//        }
 
         if (glampId == null || glampId < 0) {
             throw new CustomException(OwnerErrorCode.WG);
@@ -253,14 +249,6 @@ public class OwnerServiceImpl implements OwnerService {
         return GetOwnerBookListResponseDto.success(before, complete, cancel);
     }
 
-
-//    private void userValidationRoom(long glampId) {
-//        long loginUserId = userValidationGlamping();
-//        Long getUserId = mapper.getUserIdByGlampId(glampId);
-//        if (getUserId == null || loginUserId != getUserId || loginUserId <= 0) {
-//            throw new RuntimeException();
-//        }
-//    }
 
 
     // 강국 =================================================================================================================
