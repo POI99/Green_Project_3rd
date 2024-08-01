@@ -26,7 +26,7 @@
 <br>
 <div>
     <a href="https://github.com/POI99/Green_Project_2th" target="_blank">
-        <img src="src/main/resources/icon/logos_gi.png" /> BE 2차 Git 바로가기
+        <img src="src/main/resources/icon/logos_git.png" /> BE 2차 Git 바로가기
     </a>
 </div>
 <br>
