@@ -1,5 +1,6 @@
 package com.green.glampick.controller;
 
+import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.request.owner.GlampingPostRequestDto;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.ReviewPostRequestDto;
@@ -91,7 +92,7 @@ public class OwnerController {
 
     // update - 글램핑 사진
     @PutMapping("glamping/image")
-    @Operation(summary = "글램핑 대표 이미지 변경", description =
+    @Operation(summary = "글램핑 대표 이미지 변경 (김민지)", description =
             "<p> <strong> 선택입력 : extraCharge(기준 인원 외 추가 인원당 요금) </strong> </p>" +
                     "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>")
     @ApiResponse(description =
@@ -130,7 +131,6 @@ public class OwnerController {
         return service.postRoomInfo(req, roomImg);
     }
 
-
     // update - 객실
     @PutMapping("room")
     @Operation(summary = "객실 정보 수정 (김민지)", description =
@@ -148,6 +148,25 @@ public class OwnerController {
                     schema = @Schema(implementation = PutRoomInfoResponseDto.class)))
     public ResponseEntity<? super PutRoomInfoResponseDto> updateRoom(@RequestBody RoomPutRequestDto req) {
         return service.updateRoomInfo(req);
+    }
+
+    // delete - 객실 사진
+    @DeleteMapping("room_image/{img_id}/{room_id}")
+    @Operation(summary = "객실 사진 삭제 (김민지)", description =
+            "<p> <strong> 선택입력 : service[] </strong> </p>" +
+                    "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
+                    "<p> <strong> 시간 입력 형식 = 시:분:초  ex) 12:00:00 </strong> </p>")
+    @ApiResponse(description =
+            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
+                    "<p> SU(200) : 정보 수정 성공 </p> " +
+                    "<p> VF(400) : request 데이터 입력 오류 </p> " +
+                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ResponseDto.class)))
+    public ResponseEntity<? super ResponseDto> updateRoom(@PathVariable("img_id") Long imgId, @PathVariable("room_id") Long roomId) {
+        return service.deleteRoomImage(imgId, roomId);
     }
 
     // read - 예약
