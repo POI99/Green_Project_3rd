@@ -10,5 +10,7 @@ import lombok.Setter;
 public class ReviewGetStarRequestDto {
     @JsonIgnore
     private long userId;
-    private long glampId;
+    @JsonIgnore
+    private long ownerId;
+
 }

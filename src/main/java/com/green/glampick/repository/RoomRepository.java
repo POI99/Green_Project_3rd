@@ -7,4 +7,5 @@ public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
 
     RoomEntity findByRoomId(long roomId);
 
+
 }

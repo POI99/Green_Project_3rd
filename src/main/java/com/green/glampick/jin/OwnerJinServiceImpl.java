@@ -1,6 +1,8 @@
 package com.green.glampick.jin;
 
 import com.green.glampick.common.CustomFileUtils;
+import com.green.glampick.exception.CustomException;
+import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.jin.object.GetGlampingHeart;
 import com.green.glampick.jin.object.GetPopularRoom;
 import com.green.glampick.jin.request.ReviewGetCancelRequestDto;
@@ -37,8 +39,8 @@ public class OwnerJinServiceImpl implements OwnerJinService {
     @Override// 이용 완료된 객실별 예약수, 매출
     public ResponseEntity<? super GetOwnerPopularRoomResponseDto> getPopRoom(ReviewGetRoomRequestDto dto) {
         try {
-            dto.setUserId(authenticationFacade.getLoginUserId());
-            if (dto.getUserId() <= 0) {
+            dto.setOwnerId(authenticationFacade.getLoginUserId());
+            if (dto.getOwnerId() <= 0) {
                 throw new RuntimeException();
             }
         } catch (Exception e) {
@@ -47,7 +49,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
         }
         List<GetPopularRoom> popRoom = null;
         try {
-            popRoom = ownerRepository.findPopularRoom(dto.getGlampId());
+            popRoom = ownerRepository.findPopularRoom(dto.getOwnerId());
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -59,29 +61,31 @@ public class OwnerJinServiceImpl implements OwnerJinService {
     @Override// 별점
     public ResponseEntity<? super GetOwnerStarResponseDto> getStarRoom(ReviewGetStarRequestDto dto) {
         try {
-            dto.setUserId(authenticationFacade.getLoginUserId());
-            if (dto.getUserId() <= 0) {
+            dto.setOwnerId(authenticationFacade.getLoginUserId());
+            if (dto.getOwnerId() <= 0) {
                 throw new RuntimeException();
             }
         } catch (Exception e) {
             e.printStackTrace();
             return GetOwnerStarResponseDto.validateUserId();
         }
-        List<GetPopularRoom> starPointList = null;
+
         try {
-            starPointList = ownerRepository.findPopularRoom(dto.getGlampId());
+             ownerRepository.findByIdStarPoint(dto.getOwnerId());
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
-
+            throw new CustomException(CommonErrorCode.DBE);
         }
 
-        return GetOwnerStarResponseDto.success(starPointList);
+        return GetOwnerStarResponseDto.success(ownerRepository.findByIdStarPoint(dto.getOwnerId()));
     }
     @Override// 관심 수
     public ResponseEntity<? super GetGlampingHeartResponseDto> getHeartRoom(ReviewGetHeartRequestDto dto) {
         try {
-            dto.setUserId(authenticationFacade.getLoginUserId());
-            if (dto.getUserId() <= 0) {
+            dto.setOwnerId(authenticationFacade.getLoginUserId());
+            if (dto.getOwnerId() <= 0) {
                 throw new RuntimeException();
             }
         } catch (Exception e) {
@@ -98,17 +102,56 @@ public class OwnerJinServiceImpl implements OwnerJinService {
 
         return GetGlampingHeartResponseDto.success(getGlampingHearts);
     }
+
+
+
     @Override// 예약 취소율
     public ResponseEntity<? super GetGlampingCancelResponseDto> getGlampingCancelRoom(ReviewGetCancelRequestDto dto) {
         try {
-            dto.setUserId(authenticationFacade.getLoginUserId());
-            if (dto.getUserId() <= 0) {
+            dto.setOwnerId(authenticationFacade.getLoginUserId());
+            if (dto.getOwnerId() <= 0) {
                 throw new RuntimeException();
             }
         } catch (Exception e) {
             e.printStackTrace();
             return GetGlampingCancelResponseDto.validateUserId();
         }
-        return null;
+        long total = ownerRepository.findTotalCount(dto.getGlampId());
+        long cancel = ownerRepository.findCancelCount(dto.getGlampId());
+
+        double result = (double) cancel / total * 100;
+        String formattedResult = String.format("%.2f", result);
+
+        return GetGlampingCancelResponseDto.success(formattedResult);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

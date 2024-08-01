@@ -12,15 +12,16 @@ import org.springframework.http.ResponseEntity;
 @Setter
 public class GetGlampingCancelResponseDto extends ResponseDto {
 
+    private String result;
 
-    private GetGlampingCancelResponseDto(String accessToken) {
+    private GetGlampingCancelResponseDto(String result) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
-
+        this.result = result;
     }
 
-    public static ResponseEntity<GetGlampingCancelResponseDto> success(String accessToken) {
-        GetGlampingCancelResponseDto result = new GetGlampingCancelResponseDto(accessToken);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    public static ResponseEntity<GetGlampingCancelResponseDto> success(String result) {
+        GetGlampingCancelResponseDto results = new GetGlampingCancelResponseDto(result);
+        return ResponseEntity.status(HttpStatus.OK).body(results);
     }
 
     public static ResponseEntity<ResponseDto> signInFailed() {

@@ -4,11 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Comment;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "service")
 public class ServiceEntity extends CreatedAt {

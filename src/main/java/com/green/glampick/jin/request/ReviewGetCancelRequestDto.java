@@ -8,5 +8,7 @@ import lombok.Setter;
 @Setter
 public class ReviewGetCancelRequestDto {
     @JsonIgnore
-    private long userId;
+    private long ownerId;
+    @JsonIgnore
+    private long glampId;
 }
