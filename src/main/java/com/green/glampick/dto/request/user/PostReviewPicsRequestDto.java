@@ -11,10 +11,10 @@ import java.util.List;
 @Getter
 @Builder
 public class PostReviewPicsRequestDto {
+
     private long reviewId;
+
     @Builder.Default
     private List<String> reviewPicsName = new ArrayList<>();
+
 }
-
-// 모르겟다
-
