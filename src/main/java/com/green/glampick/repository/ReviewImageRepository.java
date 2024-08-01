@@ -10,8 +10,8 @@ import java.util.List;
 @Repository
 public interface ReviewImageRepository extends JpaRepository<ReviewImageEntity, Long> {
 
-    List<ReviewImageEntity> findByReviewId(ReviewEntity reviewId);
-    List<ReviewImageEntity> findByReviewIdIn(List<Long> reviewIds);
+    List<ReviewImageEntity> findByReviewEntity(ReviewEntity reviewId);
+    List<ReviewImageEntity> findByReviewEntityIn(List<ReviewEntity> reviewIds);
 
     ReviewImageEntity findByReviewImageId(Long reviewId);
 }

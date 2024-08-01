@@ -193,6 +193,7 @@ public class OwnerController {
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetReviewResponseDto.class)))
     public ResponseEntity<?super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto dto) {
+        log.info("controller");
         return service.getReview(dto);
     }
 //    @Operation(summary = "예약정보 취소 처리 하기",

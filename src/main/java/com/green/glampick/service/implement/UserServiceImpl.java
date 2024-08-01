@@ -193,7 +193,7 @@ public class UserServiceImpl implements UserService {
                 customFileUtils.transferTo(image, filePath);
 
                 ReviewImageEntity reviewImageEntity = new ReviewImageEntity();
-                reviewImageEntity.setReviewId(reviewEntity);
+                reviewImageEntity.setReviewEntity(reviewEntity);
                 reviewImageEntity.setReviewImageName(saveDbFileName);
                 reviewImageEntityList.add(reviewImageEntity);
             }
@@ -231,7 +231,7 @@ public class UserServiceImpl implements UserService {
             if (dto.getReviewId() == 0) {
                 throw new CustomException(UserErrorCode.NR);
             }
-            List<ReviewImageEntity> list = reviewImageRepository.findByReviewId(reviewEntity);
+            List<ReviewImageEntity> list = reviewImageRepository.findByReviewEntity(reviewEntity);
 
             for (int i = 0; i < list.size(); i++) {
                 reviewImageRepository.deleteById(list.get(i).getReviewImageId());
@@ -271,11 +271,17 @@ public class UserServiceImpl implements UserService {
             int offset = dto.getOffset();
 
             resultSetList = reviewRepository.getReview(dto.getUserId(), limit, offset);
-            List<Long> reviewIds = resultSetList.stream()
-                    .map(GetUserReviewResultSet::getReviewId)
-                    .collect(Collectors.toList());
 
-            imageEntities = reviewImageRepository.findByReviewIdIn(reviewIds);
+//            List<Long> reviewIds = resultSetList.stream()
+//                    .map(GetUserReviewResultSet::getReviewId)
+//                    .collect(Collectors.toList());
+            List<ReviewEntity> reviewEntityList = resultSetList.stream().map(item -> {
+                ReviewEntity entity = new ReviewEntity();
+                entity.setReviewId(item.getReviewId());
+                return entity;
+            }).toList();
+
+            imageEntities = reviewImageRepository.findByReviewEntityIn(reviewEntityList);
 
             List<UserReviewListItem> reviewListItems = new ArrayList<>();
 
@@ -295,7 +301,7 @@ public class UserServiceImpl implements UserService {
                 reviewListItem.setGlampId(resultSet.getGlampId());
 
                 List<String> imageUrls = imageEntities.stream()
-                        .filter(entity -> entity.getReviewId().getReviewId() == resultSet.getReviewId())
+                        .filter(entity -> entity.getReviewEntity().getReviewId() == resultSet.getReviewId())
                         .map(ReviewImageEntity::getReviewImageName) // 경로를 파일명으로 구성
                         .collect(Collectors.toList());
                 reviewListItem.setReviewImages(imageUrls);
