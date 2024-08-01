@@ -70,3 +70,14 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
     long findCancelCount(long glampId);
 
 }
+
+/*
+@Query(value = "SELECT A.glamp_id, COUNT(A.glamp_id) AS heart, DATE(A.created_at) as createdAt, B.owner_id " +
+                   "FROM glamp_favorite A " +
+                   "JOIN glamping B ON A.glamp_id = B.glamp_id " +
+                   "WHERE B.owner_id = :ownerId " +
+                   "AND A.created_at BETWEEN DATE_ADD(NOW(), INTERVAL -:interval DAY) AND NOW() " +
+                   "GROUP BY DATE(A.created_at), A.glamp_id, B.owner_id",
+           nativeQuery = true)
+    List<Object[]> findPopularRooms(@Param("ownerId") long ownerId, @Param("interval") int interval);
+ */

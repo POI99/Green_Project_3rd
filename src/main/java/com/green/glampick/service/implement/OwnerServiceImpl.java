@@ -3,7 +3,7 @@ package com.green.glampick.service.implement;
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.common.Role;
 import com.green.glampick.common.response.ResponseCode;
-import com.green.glampick.dto.ResponseDto;
+import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.object.UserReviewListItem;
 import com.green.glampick.dto.object.owner.BookBeforeItem;
 import com.green.glampick.dto.object.owner.BookCancelItem;
@@ -34,6 +34,7 @@ import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -284,16 +284,6 @@ public class OwnerServiceImpl implements OwnerService {
     @Transactional
     public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p) {
 
-        try {   // 로그인
-            p.setOwnerId(authenticationFacade.getLoginUserId());
-            if (p.getOwnerId() == 0) {
-                throw new RuntimeException();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException(CommonErrorCode.MNF);// 유저를 찾을 수 없음
-        }
-
         try {
             ReviewEntity review = reviewRepository.findReviewById(p.getReviewId());
             review.setReviewComment(p.getReviewOwnerContent());
@@ -309,66 +299,34 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     public ResponseEntity<? super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto p) {
 
-        //로그인 비로그인 체크
-        try {
-            p.setOwnerId(authenticationFacade.getLoginUserId());
-            if (p.getOwnerId() == 0) {
-                throw new RuntimeException();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException(CommonErrorCode.MNF);
-        }
-        Role role = authenticationFacade.getLoginUser().getRole();
-        // 권한체크
-        if (role != Role.ROLE_OWNER) {
-            throw new CustomException(CommonErrorCode.NP);
-        }
         //리뷰 데이터 추출
         try {
+            log.info("service p: {}", p);
 
             Long ownerId = p.getOwnerId();
             int limit = p.getLimit();
             int offset = p.getOffset();
+            long typeNum = p.getTypeNum();
+            log.info("sssssss ow{},li{},off{},type{}", ownerId,limit,offset,typeNum);
+            List<GetUserReviewResultSet> reviewInfo = new ArrayList<>();
 
-            List<GetUserReviewResultSet> reviewInfo = reviewRepository.getReviewForOwner(ownerId, limit, offset);
-            //review PK 추출
+            if (typeNum == 0) {
+                reviewInfo = reviewRepository.getReviewForOwner(ownerId, limit, offset);
+            } else if (typeNum == 1) {
+                reviewInfo = reviewRepository.getReviewForOwnerExcludeComment(ownerId, limit, offset);
+            }
 
-            List<ReviewEntity> reviewEntityList = reviewInfo.stream().map(item -> { // 1)리스트 스트림변환, 2)reviewId 값 들을 세팅해서 ReviewEntity 객체로 추출 3)추출한 값을 List 로 반환
-                ReviewEntity entity = new ReviewEntity();
-                entity.setReviewId(item.getReviewId());
-                return entity;
-            }).toList();
+            //review PK 세팅
+            List<ReviewEntity> reviewEntityList = getReviewEntities(reviewInfo);
 
-            //review Pk 로 image Entity 추출
+            //image Entity 추출
             List<ReviewImageEntity> imageEntities = reviewImageRepository.findByReviewEntityIn(reviewEntityList);
 
+            //dto 생성
             List<UserReviewListItem> reviewListItem = new ArrayList<>();
 
-                for (GetUserReviewResultSet resultSet : reviewInfo) {
-                UserReviewListItem item = new UserReviewListItem();
-                item.setGlampName(resultSet.getGlampName());
-                item.setRoomName(resultSet.getRoomName());
-                item.setUserNickName(resultSet.getUserNickname());
-                item.setUserProfileImage(resultSet.getUserProfileImage());
-                item.setReviewId(resultSet.getReviewId());
-                item.setReservationId(resultSet.getReservationId());
-                item.setUserReviewContent(resultSet.getReviewContent());
-                item.setStarPoint(resultSet.getReviewStarPoint());
-                item.setOwnerReviewContent(resultSet.getOwnerReviewComment());
-                item.setCreatedAt(resultSet.getCreatedAt().toString());
-                item.setGlampId(resultSet.getGlampId());
-
-                List<String> imageUrls = imageEntities.stream()
-                        .filter(entity -> Objects.equals(entity.getReviewEntity().getReviewId(), resultSet.getReviewId()))
-                        .map(ReviewImageEntity::getReviewImageName) // 경로를 파일명으로 구성
-                        .collect(Collectors.toList());
-
-                item.setReviewImages(imageUrls);
-
-                reviewListItem.add(item);
-
-                }
+            //reviewItem List Setting
+            setReviewItem(reviewInfo, imageEntities, reviewListItem);
 
             return GetReviewResponseDto.success(reviewListItem);
 
@@ -377,5 +335,42 @@ public class OwnerServiceImpl implements OwnerService {
         } catch (Exception e) {
             throw new CustomException(CommonErrorCode.DBE);
         }
+    }
+
+    private static void setReviewItem(List<GetUserReviewResultSet> reviewInfo, List<ReviewImageEntity> imageEntities, List<UserReviewListItem> reviewListItem) {
+        for (GetUserReviewResultSet resultSet : reviewInfo) {
+        UserReviewListItem item = new UserReviewListItem();
+        item.setGlampName(resultSet.getGlampName());
+        item.setRoomName(resultSet.getRoomName());
+        item.setUserNickName(resultSet.getUserNickname());
+        item.setUserProfileImage(resultSet.getUserProfileImage());
+        item.setReviewId(resultSet.getReviewId());
+        item.setReservationId(resultSet.getReservationId());
+        item.setUserReviewContent(resultSet.getReviewContent());
+        item.setStarPoint(resultSet.getReviewStarPoint());
+        item.setOwnerReviewContent(resultSet.getOwnerReviewComment());
+        item.setCreatedAt(resultSet.getCreatedAt().toString());
+        item.setGlampId(resultSet.getGlampId());
+
+        List<String> imageUrls = imageEntities.stream()
+                .filter(entity -> Objects.equals(entity.getReviewEntity().getReviewId(), resultSet.getReviewId()))
+                .map(ReviewImageEntity::getReviewImageName) // 경로를 파일명으로 구성
+                .collect(Collectors.toList());
+
+        item.setReviewImages(imageUrls);
+
+        reviewListItem.add(item);
+
+        }
+    }
+
+    @NotNull
+    private static List<ReviewEntity> getReviewEntities(List<GetUserReviewResultSet> reviewInfo) {
+        List<ReviewEntity> reviewEntityList = reviewInfo.stream().map(item -> { // 1)리스트 스트림변환, 2)reviewId 값 들을 세팅해서 ReviewEntity 객체로 추출 3)추출한 값을 List 로 반환
+            ReviewEntity entity = new ReviewEntity();
+            entity.setReviewId(item.getReviewId());
+            return entity;
+        }).toList();
+        return reviewEntityList;
     }
 }

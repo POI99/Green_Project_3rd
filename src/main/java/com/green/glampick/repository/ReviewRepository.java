@@ -2,9 +2,7 @@ package com.green.glampick.repository;
 
 import com.green.glampick.entity.ReviewEntity;
 import com.green.glampick.repository.resultset.GetUserReviewResultSet;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -76,6 +74,35 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
     )
     List<GetUserReviewResultSet> getReviewForOwner(Long ownerId, int limit, int offset);
 
+    @Query(
+            value =
+                    "SELECT   D.room_name AS roomName, " +
+                            " E.glamp_id AS glampId, " +
+                            " B.user_nickname AS userNickname," +
+                            " B.user_profile_image AS userProfileImage, " +
+                            " A.review_id AS reviewId, " +
+                            " A.reservation_id AS reservationId, " +
+                            " A.review_content AS reviewContent, " +
+                            " A.review_star_point AS reviewStarPoint, " +
+                            " A.review_comment AS ownerReviewComment, " +
+                            " A.created_at AS createdAt " +
+                            "FROM review A " +
+                            "INNER JOIN user B " +
+                            "ON A.user_id = B.user_id " +
+                            "INNER JOIN reservation_complete C " +
+                            "ON A.reservation_id = C.reservation_id " +
+                            "INNER JOIN room D " +
+                            "ON D.room_id = C.room_id " +
+                            "INNER JOIN glamping E " +
+                            "ON A.glamp_id = E.glamp_id " +
+                            "INNER JOIN owner F " +
+                            "ON	F.owner_id = E.owner_id " +
+                            "WHERE F.owner_id = ?1 AND A.review_comment IS NULL " +
+                            "ORDER BY A.review_id DESC " +
+                            "LIMIT ?2 OFFSET ?3",
+            nativeQuery = true
+    )
+    List<GetUserReviewResultSet> getReviewForOwnerExcludeComment(Long ownerId, int limit, int offset);
 
     @Query(
             value = "SELECT COUNT(*) FROM reservation_complete A " +

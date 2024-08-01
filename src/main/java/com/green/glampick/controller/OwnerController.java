@@ -7,6 +7,7 @@ import com.green.glampick.dto.request.ReviewPostRequestDto;
 import com.green.glampick.dto.request.owner.GlampingPutRequestDto;
 import com.green.glampick.dto.request.owner.RoomPostRequestDto;
 import com.green.glampick.dto.request.owner.RoomPutRequestDto;
+import com.green.glampick.dto.request.owner.module.GlampingModule;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookListResponseDto;
@@ -15,6 +16,7 @@ import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutRoomInfoResponseDto;
 import com.green.glampick.dto.response.user.GetReviewResponseDto;
+import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -45,7 +47,7 @@ import static com.green.glampick.common.swagger.description.user.GetUserReviewSw
 public class OwnerController {
 
     private final OwnerService service;
-
+    private final AuthenticationFacade authenticationFacade;
 // 민지 =================================================================================================================
     // create - 글램핑
     @PostMapping(value = "glamping", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -204,6 +206,9 @@ public class OwnerController {
                             ))})
     @PatchMapping("/review")
     public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(@RequestBody @Valid ReviewPatchRequestDto p) {
+        log.info("controller {}", p);
+        GlampingModule.ownerId(authenticationFacade);
+        GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
         return service.patchReview(p);
     }
     @GetMapping("/review")
@@ -212,7 +217,11 @@ public class OwnerController {
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetReviewResponseDto.class)))
     public ResponseEntity<?super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto dto) {
-        log.info("controller");
+        log.info("controller p: {}", dto);
+
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
+        dto.setOwnerId(ownerId);
         return service.getReview(dto);
     }
 //    @Operation(summary = "예약정보 취소 처리 하기",

@@ -54,6 +54,7 @@ springdoc:
 file:
   directory: ${DEFAULT.FILE_DIRECTORY}
 
+
 # custom 속성 지정
 app:
   jwt:
