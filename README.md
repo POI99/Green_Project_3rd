@@ -20,7 +20,7 @@
 
 <div>
     <a href="https://www.figma.com/design/K6EFAkf02fxCtULowqFS5o/Layout?node-id=164-329&t=o7Jby7RWwhW8lphA-1" target="_blank" >
-        <img src="src/images/icon/logos_figma.png" /> FIGMA
+        <img src="src/main/resources/icon/logos_figma.png" /> FIGMA
     </a>
 </div>
 <br>
@@ -32,7 +32,7 @@
 <br>
 <div>
     <a href="https://lively-gladiolus-389.notion.site/4f83507008e448abbdbfd4194fcb5391" target="_blank">
-        <img src="src/images/icon/logos_notion.png" /> NOTION
+        <img src="src/main/resources/icon/logos_notion.png" /> NOTION
     </a>
 
 </div>
