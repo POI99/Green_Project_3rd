@@ -282,8 +282,6 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     public ResponseEntity<? super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto p) {
 
-        log.info("service -1");
-
         //로그인 비로그인 체크
         try {
             p.setOwnerId(authenticationFacade.getLoginUserId());
@@ -301,18 +299,14 @@ public class OwnerServiceImpl implements OwnerService {
         }
         //리뷰 데이터 추출
         try {
-            log.info("service -2");
+
             Long ownerId = p.getOwnerId();
             int limit = p.getLimit();
             int offset = p.getOffset();
 
             List<GetUserReviewResultSet> reviewInfo = reviewRepository.getReviewForOwner(ownerId, limit, offset);
             //review PK 추출
-//            List<Long> reviewIds = reviewInfo.stream()
-//                    .map(GetUserReviewResultSet::getReviewId)
-//                    .toList();
 
-            //List<ReviewEntity> reviewEntityList = reviewInfo.stream().map(item -> new ReviewEntity().setReviewId(item.getReviewId())).toList();
             List<ReviewEntity> reviewEntityList = reviewInfo.stream().map(item -> { // 1)리스트 스트림변환, 2)reviewId 값 들을 세팅해서 ReviewEntity 객체로 추출 3)추출한 값을 List 로 반환
                 ReviewEntity entity = new ReviewEntity();
                 entity.setReviewId(item.getReviewId());
@@ -356,8 +350,5 @@ public class OwnerServiceImpl implements OwnerService {
         } catch (Exception e) {
             throw new CustomException(CommonErrorCode.DBE);
         }
-
-
-
     }
 }
