@@ -9,6 +9,7 @@ import com.green.glampick.exception.errorCode.OwnerErrorCode;
 import com.green.glampick.repository.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -20,7 +21,6 @@ import java.util.stream.Collectors;
 
 
 public class RoomModule {
-
 
     // 이미지가 들어있는가?
     public static void imgExist(List<MultipartFile> image) {
@@ -159,14 +159,25 @@ public class RoomModule {
             roomServiceRepository.deleteAllByRoom(room);
             return;
         }
-        Collections.sort(roomService);
-        Collections.sort(inputService);
-
-    }
-    private static void insertService(List<Long> roomService, List<Long> inputService){
         List<Long> matchList = roomService.stream().filter(o -> inputService.stream()
                 .anyMatch(Predicate.isEqual(o))).toList();
-
+        for(Long service : matchList) {
+            roomService.remove(service);
+            inputService.remove(service);
+        }
+        for(Long service : roomService) {
+            RoomServiceEntity deleteEntity =
+                    roomServiceRepository.findByServiceAndRoom(serviceRepository.getReferenceById(service), room);
+            roomServiceRepository.delete(deleteEntity);
+        }
+        List<RoomServiceEntity> saveEntity = new ArrayList<>();
+        for (Long service : inputService) {
+            RoomServiceEntity entity = new RoomServiceEntity();
+            entity.setService(serviceRepository.getReferenceById(service));
+            entity.setRoom(room);
+            saveEntity.add(entity);
+        }
+        roomServiceRepository.saveAll(saveEntity);
     }
 
     // 시간 형식 확인
@@ -179,6 +190,18 @@ public class RoomModule {
         }
     }
 
-
+    // 파일 삭제
+    public static void deleteFile(Long imgId, RoomImageRepository roomImageRepository, CustomFileUtils customFileUtils) {
+        RoomImageEntity entity = roomImageRepository.getReferenceById(imgId);
+        String dbName = entity.getRoomImageName();
+        try {
+            String filePath = dbName.substring(5);
+            File file = new File(String.format("%s%s", customFileUtils.uploadPath, filePath));
+            file.delete();
+        } catch (Exception e) {
+            throw new CustomException(OwnerErrorCode.CF);
+        }
+        roomImageRepository.delete(entity);
+    }
 
 }

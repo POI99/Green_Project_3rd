@@ -1,5 +1,6 @@
 package com.green.glampick.service;
 
+import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.request.owner.GlampingPostRequestDto;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.ReviewPostRequestDto;
@@ -28,6 +29,7 @@ public interface OwnerService {
     public ResponseEntity<? super PutGlampingInfoResponseDto> changeGlampingImage (MultipartFile image, long glampId);
     ResponseEntity<? super PutGlampingInfoResponseDto> updateGlampingInfo(GlampingPutRequestDto req);
     ResponseEntity<? super PutRoomInfoResponseDto> updateRoomInfo(RoomPutRequestDto p);
+    ResponseEntity<? super ResponseDto> deleteRoomImage(Long imgId, Long roomId);
 
     ResponseEntity<? super GetOwnerBookListResponseDto> getGlampReservation(Long glampId);
 

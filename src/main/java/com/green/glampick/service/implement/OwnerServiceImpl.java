@@ -2,6 +2,8 @@ package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.common.Role;
+import com.green.glampick.common.response.ResponseCode;
+import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.object.UserReviewListItem;
 import com.green.glampick.dto.object.owner.BookBeforeItem;
 import com.green.glampick.dto.object.owner.BookCancelItem;
@@ -33,6 +35,7 @@ import com.green.glampick.service.OwnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +47,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 
 @Slf4j
 @Service
@@ -224,6 +230,24 @@ public class OwnerServiceImpl implements OwnerService {
 
         return PutRoomInfoResponseDto.success();
     }
+
+    // 객실 사진 delete
+    public ResponseEntity<? super ResponseDto> deleteRoomImage(Long imgId, Long roomId) {
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+
+
+        RoomModule.isRoomIdOk(roomRepository, glampingRepository, ownerRepository, roomId, ownerId);
+        RoomModule.deleteFile(imgId, roomImageRepository, customFileUtils);
+
+        ResponseDto result = new ResponseDto(SUCCESS_CODE, SUCCESS_MESSAGE);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    // 객실 사진 insert
+    public ResponseEntity<? super ResponseDto> insertNewRoomImg(Long imgId, Long roomId) {
+
+    }
+
 
     @Transactional
     public ResponseEntity<? super GetOwnerBookListResponseDto> getGlampReservation(Long glampId) {
