@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 public class ReviewGetHeartRequestDto {
     @JsonIgnore
-    private long userId;
+    private long ownerId;
+    @JsonIgnore
     private long glampId;
 }

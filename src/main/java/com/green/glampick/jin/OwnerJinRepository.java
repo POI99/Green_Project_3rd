@@ -18,10 +18,10 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
                             "FROM reservation_complete " +
                             "Group BY glamp_id, created_at  " +
                             "HAVING created_at BETWEEN DATE_ADD(NOW(), INTERVAL -7 DAY ) AND NOW() " +
-                            "AND glamp_id = :glampId ",
+                            "AND glamp_id = :ownerId ",
             nativeQuery = true
     )
-    List<GetPopularRoom> findPopularRoom(long glampId);
+    List<GetPopularRoom> findPopularRoom(long ownerId);
 
     @Query(
             value =
@@ -31,10 +31,10 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
                             "FROM glamp_favorite " +
                             "Group BY glamp_id, created_at " +
                             "HAVING created_at BETWEEN DATE_ADD(NOW(), INTERVAL -1 week ) AND NOW() " +
-                            "AND glamp_id = :glampId ",
+                            "AND glamp_id = :ownerId ",
             nativeQuery = true
     )
-    List<GetGlampingHeart> findGlampingHeart(long glampId);
+    List<GetGlampingHeart> findGlampingHeart(long ownerId);
 
     @Query(
             value =
@@ -50,20 +50,20 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
     @Query(
             value =
                     "SELECT SUM(glamp_count) AS total_count " +
-                            "FROM (SELECT COUNT(glamp_id) AS glamp_count FROM reservation_before WHERE glamp_id = :glampId " +
+                            "FROM (SELECT COUNT(glamp_id) AS glamp_count FROM reservation_before WHERE glamp_id = :ownerId " +
                             "UNION ALL " +
-                            "SELECT COUNT(glamp_id) AS glamp_count FROM reservation_cancel WHERE glamp_id = :glampId " +
+                            "SELECT COUNT(glamp_id) AS glamp_count FROM reservation_cancel WHERE glamp_id = :ownerId " +
                             "UNION ALL " +
-                            "SELECT COUNT(glamp_id) AS glamp_count FROM reservation_complete WHERE glamp_id = :glampId) AS counts ",
+                            "SELECT COUNT(glamp_id) AS glamp_count FROM reservation_complete WHERE glamp_id = :ownerId) AS counts ",
             nativeQuery = true
     )
-    long findTotalCount(long glampId);
+    long findTotalCount(long ownerId);
 
     @Query(
             value =
-                    "SELECT COUNT(glamp_id) FROM reservation_cancel WHERE glamp_id = :glampId ",
+                    "SELECT COUNT(glamp_id) FROM reservation_cancel WHERE glamp_id = :ownerId ",
             nativeQuery = true
     )
-    long findCancelCount(long glampId);
+    long findCancelCount(long ownerId);
 
 }
