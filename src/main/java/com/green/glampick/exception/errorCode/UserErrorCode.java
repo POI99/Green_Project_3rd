@@ -22,7 +22,9 @@ public enum UserErrorCode implements ErrorCode {
     NU(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다."), // NOT_EXISTED_USER
     VSP(HttpStatus.BAD_REQUEST, "별점 입력이 잘못되었습니다."), // VALIDATION_STAR_POINT
     RIE(HttpStatus.BAD_REQUEST, "이용 완료한 예약 정보를 불러오지 못했습니다."), // RESERVATION_ID_ERROR
-    NMP(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."); // NOT_MATCH_PASSWORD
+    NMP(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."), // NOT_MATCH_PASSWORD
+
+    NEP(HttpStatus.BAD_REQUEST, "승인된 유저는 처리할 수 없습니다.");
 
 
 

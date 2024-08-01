@@ -10,14 +10,14 @@ import org.springframework.http.ResponseEntity;
 
 @Getter
 @Setter
-public class PatchAccessOwnerSignUpResponseDto extends ResponseDto {
+public class DeleteExclutionOwnerSignUpResponseDto extends ResponseDto {
 
-    private PatchAccessOwnerSignUpResponseDto() {
+    private DeleteExclutionOwnerSignUpResponseDto() {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 
-    public static ResponseEntity<PatchAccessOwnerSignUpResponseDto> success() {
-        PatchAccessOwnerSignUpResponseDto result = new PatchAccessOwnerSignUpResponseDto();
+    public static ResponseEntity<DeleteExclutionOwnerSignUpResponseDto> success() {
+        DeleteExclutionOwnerSignUpResponseDto result = new DeleteExclutionOwnerSignUpResponseDto();
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 

@@ -44,7 +44,7 @@ public class LoginController {
     private final LoginService service;
 
     @PostMapping("/sign-up")
-    @Operation(summary = "이메일 회원가입", description = SIGN_UP_DESCRIPTION)
+    @Operation(summary = "이메일 회원가입 (김수찬)", description = SIGN_UP_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = SIGN_UP_RESPONSE_ERROR_CODE,
         content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = PostSignUpResponseDto.class)))
@@ -53,14 +53,17 @@ public class LoginController {
     }
 
     @PostMapping("/owner/sign-up")
-    @Operation(summary = "사장님 회원가입", description = "")
-    @ApiResponse(responseCode = "200", description = "", content = @Content())
+    @Operation(summary = "사장님 회원가입 (김수찬)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+        content = @Content(
+                mediaType = "application/json", schema = @Schema(implementation = PostOwnerSignUpResponseDto.class)
+        ))
     public ResponseEntity<? super PostOwnerSignUpResponseDto> signUpOwner(@RequestBody @Valid OwnerSignUpRequestDto dto) {
         return service.signUpOwner(dto);
     }
 
     @PostMapping("/sign-in")
-    @Operation(summary = "이메일 로그인", description = SIGN_IN_DESCRIPTION)
+    @Operation(summary = "이메일 로그인 (김수찬)", description = SIGN_IN_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = SIGN_IN_RESPONSE_ERROR_CODE,
        content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = PostSignInResponseDto.class)))
@@ -69,21 +72,25 @@ public class LoginController {
     }
 
     @PostMapping("/owner/sign-in")
-    @Operation(summary = "사장님 로그인", description = "")
-    @ApiResponse(responseCode = "200", description = "", content = @Content())
+    @Operation(summary = "사장님 로그인 (김수찬)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+        content = @Content(
+                mediaType = "application/json", schema = @Schema(implementation = PostOwnerSignInResponseDto.class)))
     public ResponseEntity<? super PostOwnerSignInResponseDto> signInOwner(HttpServletResponse res, @RequestBody @Valid OwnerSignInRequestDto dto) {
         return service.signInOwner(res, dto);
     }
 
     @PostMapping("/admin/sign-in")
-    @Operation(summary = "관리자 로그인", description = "")
-    @ApiResponse(responseCode = "200", description = "", content = @Content())
+    @Operation(summary = "관리자 로그인 (김수찬)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+        content = @Content(
+            mediaType = "application/json", schema = @Schema(implementation = PostAdminSignInResponseDto.class)))
     public ResponseEntity<? super PostAdminSignInResponseDto> signInAdmin(HttpServletResponse res, @RequestBody @Valid AdminSignInRequestDto dto) {
         return service.signInAdmin(res, dto);
     }
 
     @GetMapping("/access-token")
-    @Operation(summary = "Access Token 불러오기", description = ACCESS_TOKEN_DESCRIPTION)
+    @Operation(summary = "Access Token 불러오기 (김수찬)", description = ACCESS_TOKEN_DESCRIPTION)
     @ApiResponse(responseCode = "200",
         content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = GetAccessTokenResponseDto.class)))
@@ -92,14 +99,15 @@ public class LoginController {
     }
 
     @PostMapping("/sign-out")
-    @Operation(summary = "로그아웃 처리", description = "")
-    @ApiResponse(responseCode = "200", description = "", content = @Content())
+    @Operation(summary = "로그아웃 처리 (김수찬)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostSignOutResponseDto.class)))
     public ResponseEntity<? super PostSignOutResponseDto> signOut(HttpServletResponse res) {
         return service.signOut(res);
     }
 
     @PostMapping("/send-sms")
-    @Operation(summary = "휴대폰 인증 문자 보내기", description = SEND_SMS_DESCRIPTION)
+    @Operation(summary = "휴대폰 인증 문자 보내기 (김수찬)", description = SEND_SMS_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = SEND_SMS_RESPONSE_ERROR_CODE,
         content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = PostSmsSendResponseDto.class)))
@@ -108,7 +116,7 @@ public class LoginController {
     }
 
     @PostMapping("/check-sms")
-    @Operation(summary = "휴대폰 인증코드 체크", description = CHECK_SMS_DESCRIPTION)
+    @Operation(summary = "휴대폰 인증코드 체크 (김수찬)", description = CHECK_SMS_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = CHECK_SMS_RESPONSE_ERROR_CODE,
         content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = PostSmsCheckResponseDto.class)))
@@ -119,7 +127,7 @@ public class LoginController {
     }
 
     @PostMapping("/mail-send")
-    @Operation(summary = "이메일 인증 보내기", description = SEND_MAIL_DESCRIPTION)
+    @Operation(summary = "이메일 인증 보내기 (김수찬)", description = SEND_MAIL_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = SEND_MAIL_RESPONSE_ERROR_CODE,
         content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = PostMailSendResponseDto.class)))
@@ -128,7 +136,7 @@ public class LoginController {
     }
 
     @PostMapping("/mail-check")
-    @Operation(summary = "이메일 인증확인", description = CHECK_MAIL_DESCRIPTION)
+    @Operation(summary = "이메일 인증확인 (김수찬)", description = CHECK_MAIL_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = CHECK_MAIL_RESPONSE_ERROR_CODE,
         content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = PostMailCheckResponseDto.class)))

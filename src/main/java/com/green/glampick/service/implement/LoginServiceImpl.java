@@ -255,7 +255,7 @@ public class LoginServiceImpl implements LoginService {
             String encodingPw = passwordEncoder.encode(userPw);
             dto.setOwnerPw(encodingPw);
 
-            dto.setRole(null);
+            dto.setRole(Role.ROLE_RESERVE_OWNER);
 
             //  가공이 끝난 DTO 를 새로운 userEntity 객체로 생성한다.  //
             OwnerEntity ownerEntity = new OwnerEntity();
