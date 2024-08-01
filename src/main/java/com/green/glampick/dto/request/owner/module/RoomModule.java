@@ -159,11 +159,14 @@ public class RoomModule {
             roomServiceRepository.deleteAllByRoom(room);
             return;
         }
-        if(!new HashSet<>(roomService).containsAll(inputService) || !new HashSet<>(inputService).containsAll(roomService)){
-            List<RoomServiceEntity> saveService = saveService(inputService, room, serviceRepository);
-            roomServiceRepository.deleteAllByRoom(room);
-            roomServiceRepository.saveAll(saveService);
-        }
+        Collections.sort(roomService);
+        Collections.sort(inputService);
+
+    }
+    private static void insertService(List<Long> roomService, List<Long> inputService){
+        List<Long> matchList = roomService.stream().filter(o -> inputService.stream()
+                .anyMatch(Predicate.isEqual(o))).toList();
+
     }
 
     // 시간 형식 확인
