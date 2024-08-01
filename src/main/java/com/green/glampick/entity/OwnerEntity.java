@@ -1,6 +1,7 @@
 package com.green.glampick.entity;
 
 import com.green.glampick.common.Role;
+import com.green.glampick.common.RoleConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,7 +38,7 @@ public class OwnerEntity extends UpdatedAt {
     @Column(length = 11) @Comment("대표자 전화번호")
     private String ownerPhone;
 
-    @Column(length = 20, nullable = false) @Comment("권한") @Enumerated(value = EnumType.STRING)
+    @Column(length = 20, nullable = false) @Comment("권한") @Convert(converter = RoleConverter.class)
     private Role role;
 
     @Column(nullable = false) @ColumnDefault("1") @Comment("회원 탈퇴 시 -1")

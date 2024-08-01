@@ -1,6 +1,7 @@
 package com.green.glampick.entity;
 
 import com.green.glampick.common.Role;
+import com.green.glampick.common.RoleConverter;
 import com.green.glampick.dto.request.login.SignUpRequestDto;
 import com.green.glampick.dto.request.user.GetBookRequestDto;
 import com.green.glampick.dto.request.user.UpdateUserRequestDto;
@@ -47,7 +48,7 @@ public class UserEntity extends UpdatedAt {
     @Column(length = 200) @Comment("유저 프로필 이미지")
     private String userProfileImage;
 
-    @Column(length = 20, nullable = false) @Enumerated(value = EnumType.STRING) @Comment("유저 권한")
+    @Column(length = 20, nullable = false) @Convert(converter = RoleConverter.class) @Comment("유저 권한")
     private Role role;
 
     @Column(length = 50) @Comment("소셜 유저 ID")

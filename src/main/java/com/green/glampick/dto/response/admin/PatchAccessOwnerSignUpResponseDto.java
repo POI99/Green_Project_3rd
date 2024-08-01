@@ -16,8 +16,8 @@ public class PatchAccessOwnerSignUpResponseDto extends ResponseDto {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 
-    public static ResponseEntity<ResponseDto> success() {
-        ResponseDto result = new ResponseDto();
+    public static ResponseEntity<PatchAccessOwnerSignUpResponseDto> success() {
+        PatchAccessOwnerSignUpResponseDto result = new PatchAccessOwnerSignUpResponseDto();
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 

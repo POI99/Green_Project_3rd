@@ -1,6 +1,7 @@
 package com.green.glampick.entity;
 
 import com.green.glampick.common.Role;
+import com.green.glampick.common.RoleConverter;
 import com.green.glampick.dto.request.login.SignUpRequestDto;
 import com.green.glampick.dto.request.user.UpdateUserRequestDto;
 import com.green.glampick.security.SignInProviderType;
@@ -31,7 +32,7 @@ public class AdminEntity extends CreatedAt {
     @Column(length = 22) @Comment("휴대폰 번호")
     private String adminPhone;
 
-    @Column(nullable = false) @Enumerated(value = EnumType.STRING) @Comment("유저 권한")
+    @Column(nullable = false) @Enumerated(value = EnumType.STRING) @Comment("유저 권한") @Convert(converter = RoleConverter.class)
     private Role role;
 
 
