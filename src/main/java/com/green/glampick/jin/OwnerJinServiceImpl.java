@@ -6,14 +6,8 @@ import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.OwnerErrorCode;
 import com.green.glampick.jin.object.GetGlampingHeart;
 import com.green.glampick.jin.object.GetPopularRoom;
-import com.green.glampick.jin.request.ReviewGetCancelRequestDto;
-import com.green.glampick.jin.request.ReviewGetHeartRequestDto;
-import com.green.glampick.jin.request.ReviewGetRoomRequestDto;
-import com.green.glampick.jin.request.ReviewGetStarRequestDto;
-import com.green.glampick.jin.response.GetGlampingCancelResponseDto;
-import com.green.glampick.jin.response.GetGlampingHeartResponseDto;
-import com.green.glampick.jin.response.GetOwnerPopularRoomResponseDto;
-import com.green.glampick.jin.response.GetOwnerStarResponseDto;
+import com.green.glampick.jin.request.*;
+import com.green.glampick.jin.response.*;
 import com.green.glampick.mapper.OwnerMapper;
 import com.green.glampick.security.AuthenticationFacade;
 import jakarta.persistence.EntityManager;
@@ -146,6 +140,34 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             throw new CustomException(CommonErrorCode.DBE);
         }
         return GetGlampingCancelResponseDto.success(formattedResult);
+    }
+
+    @Override// 이용 완료된 객실별 예약수, 매출
+    @Transactional
+    public ResponseEntity<? super GetOwnerRevenueResponseDto> getPopRoom(ReviewGetRevenueRequestDto dto) {
+        try {
+            dto.setOwnerId(authenticationFacade.getLoginUserId());
+            if (dto.getOwnerId() <= 0) {
+                throw new RuntimeException();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.MNF);
+        }
+        List<GetPopularRoom> popRoom = null;
+        try {
+            popRoom = ownerRepository.findPopularRoom(dto.getOwnerId());
+            if (dto.getOwnerId() == 0) {
+                throw new CustomException(OwnerErrorCode.NMG);
+            }
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return GetOwnerRevenueResponseDto.success();
     }
 }
 

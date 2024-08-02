@@ -69,6 +69,20 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
     )
     long findCancelCount(long glampId);
 
+    @Query(
+            value =
+                    "SELECT SUM(sub.pay) AS total_count " +
+                            "FROM (SELECT A.glamp_id, SUM(A.pay_amount) AS pay " +
+                            "FROM reservation_complete A " +
+                            "JOIN glamping B " +
+                            "ON A.glamp_id = B.glamp_id " +
+                            "WHERE B.owner_id = :ownerId AND A.created_at BETWEEN DATE_ADD(NOW(), INTERVAL -7 DAY) AND NOW() " +
+                            "GROUP BY A.glamp_id) AS sub ",
+            nativeQuery = true
+    )
+    long findRevenue(long ownerId);
+
+
 }
 
 /*
