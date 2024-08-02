@@ -1,7 +1,5 @@
 package com.green.glampick.dto.response.glamping;
 
-import com.green.glampick.common.response.ResponseCode;
-import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.object.glamping.GlampingListItem;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+
 @Getter
 @Setter
 public class GetSearchGlampingListResponseDto extends ResponseDto {
@@ -21,7 +22,7 @@ public class GetSearchGlampingListResponseDto extends ResponseDto {
     private List<GlampingListItem> glampingListItems;
 
     private GetSearchGlampingListResponseDto(int searchCount, List<GlampingListItem> glampingListItems) {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.searchCount = searchCount;
         this.glampingListItems = glampingListItems;
     }
@@ -32,14 +33,10 @@ public class GetSearchGlampingListResponseDto extends ResponseDto {
     }
 
     public static ResponseEntity<ResponseDto> isNull() {
-        ResponseDto result = new ResponseDto(ResponseCode.RESULT_IS_NULL, ResponseMessage.RESULT_IS_NULL);
+        ResponseDto result = new ResponseDto("RN", "검색 결과가 없습니다.");
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    public static ResponseEntity<ResponseDto> validationFailed(String errorMsg) {
-        ResponseDto result = new ResponseDto(ResponseCode.VALIDATION_FAILED, errorMsg);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
 
 
 }

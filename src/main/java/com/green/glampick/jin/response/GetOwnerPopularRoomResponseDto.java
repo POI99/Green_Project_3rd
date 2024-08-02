@@ -1,7 +1,5 @@
 package com.green.glampick.jin.response;
 
-import com.green.glampick.common.response.ResponseCode;
-import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.jin.object.GetPopularRoom;
 import lombok.Getter;
@@ -11,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+
 @Getter
 @Setter
 public class GetOwnerPopularRoomResponseDto extends ResponseDto {
@@ -18,7 +19,7 @@ public class GetOwnerPopularRoomResponseDto extends ResponseDto {
 
     List<GetPopularRoom> popularRooms;
     private GetOwnerPopularRoomResponseDto(List<GetPopularRoom> popularRooms) {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.popularRooms = popularRooms;
 
     }
@@ -28,19 +29,5 @@ public class GetOwnerPopularRoomResponseDto extends ResponseDto {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    public static ResponseEntity<ResponseDto> signInFailed() {
-        ResponseDto result = new ResponseDto(ResponseCode.SIGN_IN_FAILED, ResponseMessage.SIGN_IN_FAILED);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> validationFail() {
-        ResponseDto result = new ResponseDto(ResponseCode.VALIDATION_FAILED, ResponseMessage.VALIDATION_FAILED);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-
-    }
-    public static ResponseEntity<ResponseDto> validateUserId() {
-        ResponseDto result = new ResponseDto(ResponseCode.CANT_FIND_USER, ResponseMessage.CANT_FIND_USER);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
 
 }

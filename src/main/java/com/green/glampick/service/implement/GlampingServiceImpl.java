@@ -48,7 +48,7 @@ public class GlampingServiceImpl implements GlampingService {
         } catch (Exception e) {
             e.printStackTrace();
             String msg = e.getMessage();
-            return GetSearchGlampingListResponseDto.validationFailed(msg);
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
         // 값이 올바르게 들어갔는지
