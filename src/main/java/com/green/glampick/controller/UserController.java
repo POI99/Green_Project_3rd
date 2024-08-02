@@ -122,7 +122,7 @@ public class UserController {
     }
 
     //  유저 페이지 - 유저 정보 수정하기  //
-    @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})// 유저 정보 수정하기
+    @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "유저 정보 수정하기 (이진현 김수찬)", description = USER_INFO_UPDATE_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_INFO_UPDATE_RESPONSE_ERROR_CODE,
             content = @Content(
