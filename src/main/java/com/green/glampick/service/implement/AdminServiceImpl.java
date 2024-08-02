@@ -4,13 +4,17 @@ import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.common.Role;
 import com.green.glampick.dto.response.admin.*;
 import com.green.glampick.entity.BannerEntity;
+import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.OwnerEntity;
 import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.AdminErrorCode;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.UserErrorCode;
+import com.green.glampick.repository.AdminRepository;
 import com.green.glampick.repository.BannerRepository;
+import com.green.glampick.repository.GlampingRepository;
 import com.green.glampick.repository.OwnerRepository;
+import com.green.glampick.repository.resultset.GetAccessGlampingListResultSet;
 import com.green.glampick.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +33,8 @@ import static com.green.glampick.common.GlobalConst.MAX_BANNER_SIZE;
 public class AdminServiceImpl implements AdminService {
     private final OwnerRepository ownerRepository;
     private final BannerRepository bannerRepository;
+    private final GlampingRepository glampingRepository;
+    private final AdminRepository adminRepository;
     private final CustomFileUtils customFileUtils;
 
     //  관리자 페이지 - 사장님 회원가입 정보 확인하기  //
@@ -148,6 +154,35 @@ public class AdminServiceImpl implements AdminService {
 
         return DeleteBannerResponseDto.success();
 
+
+    }
+
+    @Override
+    public ResponseEntity<? super GetAccessGlampingListResponseDto> getAccessGlampingList() {
+
+        List<GetAccessGlampingListResultSet> list = adminRepository.getAccessGlampingList();
+
+        return GetAccessGlampingListResponseDto.success(list);
+
+    }
+
+    //  관리자 페이지 - 사장님 글램핑 등록 상세 정보 불러오기  //
+    @Override
+    public ResponseEntity<? super GetAccessGlampingInfoResponseDto> getAccessGlamping(Long glampId) {
+        GlampingEntity glampingEntity = new GlampingEntity();
+
+        try {
+
+            glampingEntity = glampingRepository.findByGlampId(glampId);
+
+        } catch (CustomException e) {
+          throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return GetAccessGlampingInfoResponseDto.success(glampingEntity);
 
     }
 

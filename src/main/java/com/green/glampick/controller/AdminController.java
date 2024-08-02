@@ -89,6 +89,28 @@ public class AdminController {
         return service.deleteBanner(bannerId);
     }
 
+    //  관리자 페이지 - 승인 대기중인 글램핑장 리스트 불러오기  //
+    @GetMapping("/glamping-list/owner")
+    @Operation(summary = "승인 대기중인 글램핑장 리스트 불러오기 (김수찬)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetAccessGlampingListResponseDto.class)
+            ))
+    public ResponseEntity<? super GetAccessGlampingListResponseDto> getAccessGlampingList() {
+        return service.getAccessGlampingList();
+    }
+
+    //  관리자 페이지 - 사장님 글램핑 등록 상세 정보 불러오기  //
+    @GetMapping("/glamping/owner")
+    @Operation(summary = "사장님 글램핑 등록 정보 불러오기 (김수찬)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetAccessGlampingInfoResponseDto.class)
+            ))
+    public ResponseEntity<? super GetAccessGlampingInfoResponseDto> getAccessGlamping(@RequestParam Long glampId) {
+        return service.getAccessGlamping(glampId);
+    }
+
     //  관리자 페이지 - 글램핑 등록 승인 처리하기  //
     @PatchMapping("/access/owner/glamping")
     @Operation(summary = "글램핑 등록 승인 처리하기 (김수찬)", description = "")
