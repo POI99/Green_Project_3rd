@@ -134,7 +134,7 @@ public class UserController {
     }
 
     //  유저 페이지 - 회원 탈퇴  //
-    @DeleteMapping// 회원탈퇴
+    @DeleteMapping
     @Operation(summary = "회원 탈퇴 (이진현)", description = USER_LEAVE_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_LEAVE_RESPONSE_ERROR_CODE,
             content = @Content(
