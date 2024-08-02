@@ -27,7 +27,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
     private final OwnerJinRepository ownerRepository;
 
 
-    @Override// 이용 완료된 객실별 예약수, 매출
+    @Override// 이용 완료된 객실별 예약수
     @Transactional
     public ResponseEntity<? super GetOwnerPopularRoomResponseDto> getPopRoom(ReviewGetRoomRequestDto dto) {
         try {
@@ -41,7 +41,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
         }
         List<GetPopularRoom> popRoom = null;
         try {
-            popRoom = ownerRepository.findPopularRoom(dto.getOwnerId());
+            popRoom = ownerRepository.findPopularRoom(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
             if (dto.getOwnerId() == 0) {
                 throw new CustomException(OwnerErrorCode.NMG);
             }
@@ -154,8 +154,9 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.MNF);
         }
+        long revenue = ownerRepository.findRevenue(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
         try {
-            ownerRepository.findRevenue(dto.getOwnerId());
+            ownerRepository.findRevenue(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
             if (dto.getOwnerId() == 0) {
                 throw new CustomException(OwnerErrorCode.NMG);
             }
@@ -166,7 +167,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             throw new CustomException(CommonErrorCode.DBE);
         }
 
-        return GetOwnerRevenueResponseDto.success(ownerRepository.findRevenue(dto.getOwnerId()));
+        return GetOwnerRevenueResponseDto.success(revenue);
     }
 }
 

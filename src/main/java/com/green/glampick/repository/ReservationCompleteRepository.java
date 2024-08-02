@@ -64,6 +64,6 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
     List<GetReservationCompleteResultSet> getReservationCompleteByOwnerId(Long userId, int limit, int offset);
 
     @Transactional
-    ReservationCompleteEntity findByReservationId(long reservationId);
+    ReservationCompleteEntity findByReservationId(Long reservationId);
 
 }
