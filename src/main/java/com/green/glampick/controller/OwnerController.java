@@ -3,11 +3,11 @@ package com.green.glampick.controller;
 import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
-import com.green.glampick.dto.request.ReviewPostRequestDto;
 import com.green.glampick.dto.request.owner.module.GlampingModule;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookListResponseDto;
+import com.green.glampick.dto.response.owner.post.PostBusinessPaperResponseDto;
 import com.green.glampick.dto.response.owner.post.PostGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutGlampingInfoResponseDto;
@@ -20,7 +20,6 @@ import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,8 +52,6 @@ import static com.green.glampick.common.swagger.description.owner.PutGlampingSwa
 import static com.green.glampick.common.swagger.description.owner.PutGlampingSwaggerDescription.UPDATE_GLAMPING_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.PutRoomSwaggerDescription.PUT_ROOM_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.PutRoomSwaggerDescription.PUT_ROOM_RESPONSE_ERROR_CODE;
-import static com.green.glampick.common.swagger.description.user.GetUserReviewSwaggerDescription.USER_REVIEW_VIEW_DESCRIPTION;
-import static com.green.glampick.common.swagger.description.user.GetUserReviewSwaggerDescription.USER_REVIEW_VIEW_RESPONSE_ERROR_CODE;
 
 
 @Slf4j
@@ -66,6 +63,19 @@ public class OwnerController {
 
     private final OwnerService service;
     private final AuthenticationFacade authenticationFacade;
+
+// 수찬 =================================================================================================================
+
+    @PutMapping(value = "/businessInfo", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @Operation(summary = "사업자등록증 첨부 하기 (김수찬)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostBusinessPaperResponseDto.class)))
+    public ResponseEntity<? super PostBusinessPaperResponseDto> postBusinessInfo
+            (@RequestPart MultipartFile file)
+    { return service.postBusinessInfo(file); }
+
+
 // 민지 =================================================================================================================
 
     //  사장님 페이지 - 글램핑 정보 등록하기  //

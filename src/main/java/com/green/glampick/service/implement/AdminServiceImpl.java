@@ -4,20 +4,29 @@ import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.common.Role;
 import com.green.glampick.dto.response.admin.*;
 import com.green.glampick.entity.BannerEntity;
+import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.OwnerEntity;
 import com.green.glampick.exception.CustomException;
+import com.green.glampick.exception.errorCode.AdminErrorCode;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.UserErrorCode;
+import com.green.glampick.repository.AdminRepository;
 import com.green.glampick.repository.BannerRepository;
+import com.green.glampick.repository.GlampingRepository;
 import com.green.glampick.repository.OwnerRepository;
+import com.green.glampick.repository.resultset.GetAccessGlampingListResultSet;
 import com.green.glampick.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.green.glampick.common.GlobalConst.MAX_BANNER_SIZE;
 
 @Slf4j
 @Service
@@ -25,10 +34,53 @@ import java.util.List;
 public class AdminServiceImpl implements AdminService {
     private final OwnerRepository ownerRepository;
     private final BannerRepository bannerRepository;
+    private final GlampingRepository glampingRepository;
+    private final AdminRepository adminRepository;
     private final CustomFileUtils customFileUtils;
+
+    //  관리자 페이지 - 사장님 회원가입 정보 확인하기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super GetOwnerSignUpResponseDto> getOwnerSignUpInfo(Long ownerId) {
+
+        try {
+
+            OwnerEntity ownerEntity = ownerRepository.findByOwnerId(ownerId);
+            return GetOwnerSignUpResponseDto.success(ownerEntity);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+    }
+
+    //  관리자 페이지 - 대기중인 사장님 회원가입 리스트 불러오기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super GetAccessOwnerSignUpListResponseDto> accessSignUpList() {
+
+        try {
+
+            List<OwnerEntity> ownerEntity = new ArrayList<>();
+            ownerEntity = adminRepository.getAccessOwnerSignUpList();
+
+            return GetAccessOwnerSignUpListResponseDto.success(ownerEntity);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+    }
 
     //  관리자 페이지 - 사장님 회원가입 승인 처리하기  //
     @Override
+    @Transactional
     public ResponseEntity<? super PatchAccessOwnerSignUpResponseDto> accessSignUp(Long ownerId) {
 
         try {
@@ -45,6 +97,7 @@ public class AdminServiceImpl implements AdminService {
 
     //  관리자 페이지 - 사장님 회원가입 반려 처리하기  //
     @Override
+    @Transactional
     public ResponseEntity<? super DeleteExclutionOwnerSignUpResponseDto> exclutionSignUp(Long ownerId) {
 
         try {
@@ -70,9 +123,16 @@ public class AdminServiceImpl implements AdminService {
 
     //  관리자 페이지 - 메인 화면 배너 추가하기  //
     @Override
+    @Transactional
     public ResponseEntity<? super PostBannerResponseDto> postBanner(List<MultipartFile> file) {
 
+        List<BannerEntity> bannerEntityList = bannerRepository.findAll();
+
         try {
+
+            if (bannerEntityList.size() + file.size() > MAX_BANNER_SIZE) {
+                throw new CustomException(AdminErrorCode.UFF);
+            }
 
             for (MultipartFile image : file) {
                 String makeFolder = String.format("banner");
@@ -99,6 +159,7 @@ public class AdminServiceImpl implements AdminService {
 
     //  관리자 페이지 - 메인 화면 배너 삭제하기  //
     @Override
+    @Transactional
     public ResponseEntity<? super DeleteBannerResponseDto> deleteBanner(Long bannerId) {
 
         try {
@@ -118,14 +179,45 @@ public class AdminServiceImpl implements AdminService {
 
     }
 
+    @Override
+    public ResponseEntity<? super GetAccessGlampingListResponseDto> getAccessGlampingList() {
+
+        List<GetAccessGlampingListResultSet> list = adminRepository.getAccessGlampingList();
+
+        return GetAccessGlampingListResponseDto.success(list);
+
+    }
+
+    //  관리자 페이지 - 사장님 글램핑 등록 상세 정보 불러오기  //
+    @Override
+    public ResponseEntity<? super GetAccessGlampingInfoResponseDto> getAccessGlamping(Long glampId) {
+        GlampingEntity glampingEntity = new GlampingEntity();
+
+        try {
+
+            glampingEntity = glampingRepository.findByGlampId(glampId);
+
+        } catch (CustomException e) {
+          throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return GetAccessGlampingInfoResponseDto.success(glampingEntity);
+
+    }
+
     //  관리자 페이지 - 글램핑 등록 승인 처리하기  //
     @Override
+    @Transactional
     public ResponseEntity<? super PatchGlampingAccessResponseDto> accessGlamping(Long glampId) {
         return null;
     }
 
     //  관리자 페이지 - 글램핑 등록 반려 처리하기  //
     @Override
+    @Transactional
     public ResponseEntity<? super PatchGlampingExclutionResponseDto> exclutionGlamping(Long glampId) {
         return null;
     }
