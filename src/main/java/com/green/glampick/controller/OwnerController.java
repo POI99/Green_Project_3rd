@@ -32,10 +32,24 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static com.green.glampick.common.swagger.description.owner.DeleteRoomImageSwaggerDescription.DELETE_ROOM_IMAGE_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.DeleteRoomImageSwaggerDescription.DELETE_ROOM_IMAGE_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.GetBookFromUserSwaggerDescription.BOOK_FROM_USER_REVIEW_VIEW_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetBookFromUserSwaggerDescription.BOOK_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.GetGlampingFromUserReviewSwaggerDescription.GLAMPING_FROM_USER_REVIEW_VIEW_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetGlampingFromUserReviewSwaggerDescription.GLAMPING_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.PostGlampingSwaggerDescription.POST_GLAMPING_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.PostGlampingSwaggerDescription.POST_GLAMPING_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.PostOwnerReviewSwaggerDescription.POST_OWNER_REVIEW_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.PostOwnerReviewSwaggerDescription.POST_OWNER_REVIEW_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.PostRoomSwaggerDescription.POST_ROOM_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.PostRoomSwaggerDescription.POST_ROOM_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.PutGlampingImageSwaggerDescription.UPDATE_GLAMPING_IMAGE_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.PutGlampingImageSwaggerDescription.UPDATE_GLAMPING_IMAGE_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.PutGlampingSwaggerDescription.UPDATE_GLAMPING_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.PutGlampingSwaggerDescription.UPDATE_GLAMPING_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.PutRoomSwaggerDescription.PUT_ROOM_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.PutRoomSwaggerDescription.PUT_ROOM_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.user.GetUserReviewSwaggerDescription.USER_REVIEW_VIEW_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.user.GetUserReviewSwaggerDescription.USER_REVIEW_VIEW_RESPONSE_ERROR_CODE;
 
@@ -51,7 +65,7 @@ public class OwnerController {
     private final AuthenticationFacade authenticationFacade;
 // 민지 =================================================================================================================
 
-    //  사장님 페이지 - 글램핑 등록하기  //
+    //  사장님 페이지 - 글램핑 정보 등록하기  //
     @PostMapping(value = "glamping", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "글램핑 정보 등록 (김민지)", description = POST_GLAMPING_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = POST_GLAMPING_RESPONSE_ERROR_CODE,
@@ -62,101 +76,53 @@ public class OwnerController {
         return service.postGlampingInfo(req, glampImg);
     }
 
-    // update - 글램핑
+    //  사장님 페이지 - 글램핑 정보 수정하기  //
     @PutMapping("glamping")
-    @Operation(summary = "글램핑 정보 수정 (김민지)", description =
-            "<p> <strong> 선택입력 : extraCharge(기준 인원 외 추가 인원당 요금) </strong> </p>" +
-                    "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>")
-    @ApiResponse(description =
-            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
-                    "<p> SU(200) : 정보 수정 성공 </p> " +
-                    "<p> VF(400) : request 데이터 입력 오류 </p> " +
-                    "<p> CU(400) : jwt 오류 </p> " +
-                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
-            responseCode = "200",
+    @Operation(summary = "글램핑 정보 수정 (김민지)", description = UPDATE_GLAMPING_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = UPDATE_GLAMPING_RESPONSE_ERROR_CODE,
             content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = PutGlampingInfoResponseDto.class)))
+                    mediaType = "application/json", schema = @Schema(implementation = PutGlampingInfoResponseDto.class)))
     public ResponseEntity<? super PutGlampingInfoResponseDto> updateGlamping(@RequestBody GlampingPutRequestDto req) {
         return service.updateGlampingInfo(req);
     }
 
-    // update - 글램핑 사진
+    //  사장님 페이지 - 글램핑 대표 이미지 수정하기  //
     @PutMapping("glamping/image")
-    @Operation(summary = "글램핑 대표 이미지 변경 (김민지)", description =
-            "<p> <strong> 선택입력 : extraCharge(기준 인원 외 추가 인원당 요금) </strong> </p>" +
-                    "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>")
-    @ApiResponse(description =
-            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
-                    "<p> SU(200) : 정보 수정 성공 </p> " +
-                    "<p> VF(400) : request 데이터 입력 오류 </p> " +
-                    "<p> CU(400) : jwt 오류 </p> " +
-                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
-            responseCode = "200",
+    @Operation(summary = "글램핑 대표 이미지 수정 (김민지)", description = UPDATE_GLAMPING_IMAGE_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = UPDATE_GLAMPING_IMAGE_RESPONSE_ERROR_CODE,
             content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = PutGlampingInfoResponseDto.class)))
+                    mediaType = "application/json", schema = @Schema(implementation = PutGlampingInfoResponseDto.class)))
     public ResponseEntity<? super PutGlampingInfoResponseDto> updateGlampingImage(@RequestPart MultipartFile image, @RequestPart long glampId) {
         return service.changeGlampingImage(image, glampId);
     }
 
-    // create - 객실
+    //  사장님 페이지 - 객실 정보 등록하기  //
     @PostMapping(value = "room", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "객실 정보 등록 (김민지)", description =
-            "<p> <strong> 선택입력 : service[] </strong> </p>" +
-                    "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
-                    "<p> 사진 업로드를 위해 테스트는 포스트맨에서 해주세요 ~ </p>" +
-                    "<p> <strong> 시간 입력 형식 = 시:분:초  ex) 12:00:00 </strong> </p>")
-    @ApiResponse(description =
-            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
-                    "<p> SU(200) : 글램핑 등록 성공 </p> " +
-                    "<p> VF(400) : request 데이터 입력 오류 </p> " +
-                    "<p> FE(400) : 이미지 업로드 오류 </p> " +
-                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
-            responseCode = "200",
+    @Operation(summary = "객실 정보 등록 (김민지)", description = POST_ROOM_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = POST_ROOM_RESPONSE_ERROR_CODE,
             content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = PostRoomInfoResponseDto.class)))
+                    mediaType = "application/json", schema = @Schema(implementation = PutGlampingInfoResponseDto.class)))
     public ResponseEntity<? super PostRoomInfoResponseDto> createRoom(@RequestPart @Valid RoomPostRequestDto req
             , @RequestPart List<MultipartFile> roomImg) {
         return service.postRoomInfo(req, roomImg);
     }
 
-    // update - 객실
+    //  사장님 페이지 - 객실 정보 수정하기  //
     @PutMapping("room")
-    @Operation(summary = "객실 정보 수정 (김민지)", description =
-            "<p> <strong> 선택입력 : service[] </strong> </p>" +
-                    "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
-                    "<p> <strong> 시간 입력 형식 = 시:분:초  ex) 12:00:00 </strong> </p>")
-    @ApiResponse(description =
-            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
-                    "<p> SU(200) : 정보 수정 성공 </p> " +
-                    "<p> VF(400) : request 데이터 입력 오류 </p> " +
-                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
-            responseCode = "200",
+    @Operation(summary = "객실 정보 수정 (김민지)", description = PUT_ROOM_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = PUT_ROOM_RESPONSE_ERROR_CODE,
             content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = PutRoomInfoResponseDto.class)))
+                    mediaType = "application/json", schema = @Schema(implementation = PutRoomInfoResponseDto.class)))
     public ResponseEntity<? super PutRoomInfoResponseDto> updateRoom(@RequestBody RoomPutRequestDto req) {
         return service.updateRoomInfo(req);
     }
 
-
-    // delete - 객실 사진
+    //  사장님 페이지 - 객실 이미지 삭제하기  //
     @DeleteMapping("room_image/{img_id}/{room_id}")
-    @Operation(summary = "객실 사진 삭제 (김민지)", description =
-            "<p> <strong> 선택입력 : service[] </strong> </p>" +
-                    "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
-                    "<p> <strong> 시간 입력 형식 = 시:분:초  ex) 12:00:00 </strong> </p>")
-    @ApiResponse(description =
-            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
-                    "<p> SU(200) : 정보 수정 성공 </p> " +
-                    "<p> VF(400) : request 데이터 입력 오류 </p> " +
-                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
-            responseCode = "200",
+    @Operation(summary = "객실 이미지 삭제 (김민지)", description = DELETE_ROOM_IMAGE_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = DELETE_ROOM_IMAGE_RESPONSE_ERROR_CODE,
             content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = ResponseDto.class)))
+                    mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class)))
     public ResponseEntity<? super ResponseDto> updateRoomImageDelete(@PathVariable("img_id") Long imgId, @PathVariable("room_id") Long roomId) {
         return service.deleteRoomImage(imgId, roomId);
     }
@@ -215,10 +181,11 @@ public class OwnerController {
         GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
         return service.patchReview(p);
     }
-    // 사장님 페이지 - 리뷰 불러오기 //
+
+    //  사장님 페이지 - 리뷰 불러오기  //
     @GetMapping("/review")
-    @Operation(summary = "리뷰 불러오기 (배강국)", description = USER_REVIEW_VIEW_DESCRIPTION)
-    @ApiResponse(responseCode = "200", description = USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
+    @Operation(summary = "리뷰 불러오기 (배강국)", description = GLAMPING_FROM_USER_REVIEW_VIEW_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = GLAMPING_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetReviewResponseDto.class)))
     public ResponseEntity<?super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto dto) {
@@ -230,6 +197,32 @@ public class OwnerController {
         return service.getReview(dto);
     }
 
+//    @Operation(summary = "예약정보 취소 처리 하기",
+//            description =
+//                    "<strong> 변수명 </strong> reservationId : 예약 PK <p>  ex)21 </p>",
+//            responses = {
+//                    @ApiResponse(
+//                            responseCode = "200",
+//                            description =
+//                                    "<p> result: 수정실패 0 수정성공 1 </p>",
+//                            content = @Content(
+//                                    mediaType = "application/json",
+//                                    schema = @Schema(implementation = PatchOwnerReviewInfoResponseDto.class)
+//                            ))})
+//    @PatchMapping("book")
+//    public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(@RequestBody ReviewPatchRequestDto p) {
+//        return service.patchReview(p);
+//    }
+
+    //  사장님 페이지 - 예약된 내역 불러오기  //
+    @GetMapping("book/{glamp_id}")
+    @Operation(summary = "글램핑에 예약된 내역 불러오기 (배강국)", description = BOOK_FROM_USER_REVIEW_VIEW_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = BOOK_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetReviewResponseDto.class)))
+    public ResponseEntity<? super GetOwnerBookListResponseDto> getGlampReservation(@PathVariable("glamp_id") Long glampId) {
+//        return service.getGlampReservation(glampId);
+        return null;
 
     // 사장님 페이지 - 예약 내역 불러오기 //
     @GetMapping("book/{glamp_id}")
