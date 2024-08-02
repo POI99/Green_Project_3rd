@@ -1,12 +1,9 @@
 package com.green.glampick.controller;
 
 import com.green.glampick.dto.ResponseDto;
-import com.green.glampick.dto.request.owner.GlampingPostRequestDto;
+import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.ReviewPostRequestDto;
-import com.green.glampick.dto.request.owner.GlampingPutRequestDto;
-import com.green.glampick.dto.request.owner.RoomPostRequestDto;
-import com.green.glampick.dto.request.owner.RoomPutRequestDto;
 import com.green.glampick.dto.request.owner.module.GlampingModule;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
@@ -144,6 +141,7 @@ public class OwnerController {
         return service.updateRoomInfo(req);
     }
 
+
     // delete - 객실 사진
     @DeleteMapping("room_image/{img_id}/{room_id}")
     @Operation(summary = "객실 사진 삭제 (김민지)", description =
@@ -217,7 +215,7 @@ public class OwnerController {
         GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
         return service.patchReview(p);
     }
-
+    // 사장님 페이지 - 리뷰 불러오기 //
     @GetMapping("/review")
     @Operation(summary = "리뷰 불러오기 (배강국)", description = USER_REVIEW_VIEW_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
@@ -232,43 +230,24 @@ public class OwnerController {
         return service.getReview(dto);
     }
 
-//    @Operation(summary = "예약정보 취소 처리 하기",
-//            description =
-//                    "<strong> 변수명 </strong> reservationId : 예약 PK <p>  ex)21 </p>",
-//            responses = {
-//                    @ApiResponse(
-//                            responseCode = "200",
-//                            description =
-//                                    "<p> result: 수정실패 0 수정성공 1 </p>",
-//                            content = @Content(
-//                                    mediaType = "application/json",
-//                                    schema = @Schema(implementation = PatchOwnerReviewInfoResponseDto.class)
-//                            ))})
-//    @PatchMapping("book")
-//    public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(@RequestBody ReviewPatchRequestDto p) {
-//        return service.patchReview(p);
-//    }
 
-    // read - 예약
+    // 사장님 페이지 - 예약 내역 불러오기 //
     @GetMapping("book/{glamp_id}")
     @Operation(summary = "글램핑 예약 내역 불러오기 (배강국)", description =
-            "<strong> <p> glamp_id (글램핑 PK) 는 필수입력입니다 </p> </strong>" +
-                    "<p> before : 이용 예정  </p>" +
-                    "<p> complete : 이용 완료 </p>" +
-                    "<p> cancel : 취소 </p>")
+            "<strong> <p> owner_id (글램핑 PK) 는 필수입력입니다 </p> </strong>"
+                    )
     @ApiResponse(description =
             "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
                     "<p> SU(200) : 예약 내역 불러오기 성공 </p> " +
                     "<p> RN(200) : 예약 내역 없음 </p> " +
-                    "<p> VF(400) : 글램핑 PK가 입력되지 않음 </p> " +
+                    "<p> VF(400) : owner PK가 입력되지 않음 </p> " +
                     "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
             responseCode = "200",
             content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
-    public ResponseEntity<? super GetOwnerBookListResponseDto> getGlampReservation(@PathVariable("glamp_id") Long glampId) {
-//        return service.getGlampReservation(glampId);
-        return null;
+    public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
+        return service.getOwnerReservation(p);
     }
 
 

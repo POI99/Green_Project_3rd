@@ -3,11 +3,12 @@ package com.green.glampick.service.implement;
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.object.UserReviewListItem;
+import com.green.glampick.dto.object.owner.BookBeforeItem;
+import com.green.glampick.dto.object.owner.BookCancelItem;
+import com.green.glampick.dto.object.owner.BookCompleteItem;
+import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.owner.GlampingPostRequestDto;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
-import com.green.glampick.dto.request.owner.GlampingPutRequestDto;
-import com.green.glampick.dto.request.owner.RoomPostRequestDto;
-import com.green.glampick.dto.request.owner.RoomPutRequestDto;
 import com.green.glampick.dto.request.owner.module.GlampingModule;
 import com.green.glampick.dto.request.owner.module.RoomModule;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
@@ -302,6 +303,15 @@ public class OwnerServiceImpl implements OwnerService {
         } catch (Exception e) {
             throw new CustomException(CommonErrorCode.DBE);
         }
+    }
+    public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
+
+
+
+
+
+
+        return null;
     }
 
     private static void setReviewItem(List<GetUserReviewResultSet> reviewInfo, List<ReviewImageEntity> imageEntities, List<UserReviewListItem> reviewListItem) {
