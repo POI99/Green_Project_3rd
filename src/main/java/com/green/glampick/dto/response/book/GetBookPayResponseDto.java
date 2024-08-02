@@ -1,12 +1,13 @@
 package com.green.glampick.dto.response.book;
 
-import com.green.glampick.common.response.ResponseCode;
-import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.ResponseDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 
 @Getter
 @Setter
@@ -17,7 +18,7 @@ public class GetBookPayResponseDto extends ResponseDto {
     private long payAmount;  // 최종 결제가
 
     private GetBookPayResponseDto(long roomPrice, long extraChargePrice, long payAmount) {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.roomPrice = roomPrice;
         this.extraChargePrice = extraChargePrice;
         this.payAmount = payAmount;

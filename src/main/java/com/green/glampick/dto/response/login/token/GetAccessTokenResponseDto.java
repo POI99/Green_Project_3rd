@@ -1,7 +1,5 @@
 package com.green.glampick.dto.response.login.token;
 
-import com.green.glampick.common.response.ResponseCode;
-import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.ResponseDto;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
 
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+
 @Getter
 @Setter
 public class GetAccessTokenResponseDto extends ResponseDto {
@@ -17,7 +18,7 @@ public class GetAccessTokenResponseDto extends ResponseDto {
     Map map;
 
     private GetAccessTokenResponseDto(Map map) {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.map = map;
     }
 

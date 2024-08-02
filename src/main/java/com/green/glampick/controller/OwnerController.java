@@ -17,6 +17,7 @@ import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import io.swagger.v3.oas.annotations.Operation;
@@ -156,9 +157,50 @@ public class OwnerController {
             content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ResponseDto.class)))
-    public ResponseEntity<? super ResponseDto> updateRoom(@PathVariable("img_id") Long imgId, @PathVariable("room_id") Long roomId) {
+    public ResponseEntity<? super ResponseDto> updateRoomImageDelete(@PathVariable("img_id") Long imgId, @PathVariable("room_id") Long roomId) {
         return service.deleteRoomImage(imgId, roomId);
     }
+
+    // post - 객실 사진
+    @PostMapping("room_image")
+    @Operation(summary = "객실 수정시에 사진 업로드 (김민지)", description =
+            "<p> <strong> 선택입력 : service[] </strong> </p>" +
+                    "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
+                    "<p> <strong> 시간 입력 형식 = 시:분:초  ex) 12:00:00 </strong> </p>")
+    @ApiResponse(description =
+            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
+                    "<p> SU(200) : 정보 수정 성공 </p> " +
+                    "<p> VF(400) : request 데이터 입력 오류 </p> " +
+                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ResponseDto.class)))
+    public ResponseEntity<? super ResponseDto> updateRoomImageInsert(@RequestPart List<MultipartFile> image, @RequestPart Long roomId) {
+//        return service.deleteRoomImage(imgId, roomId);
+        return null;
+    }
+
+    // put - 사장님 정보 수정
+    @PutMapping()
+    @Operation(summary = "사장님 정보 수정 (김민지)", description =
+            "<p> <strong> 선택입력 : service[] </strong> </p>" +
+                    "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
+                    "<p> <strong> 시간 입력 형식 = 시:분:초  ex) 12:00:00 </strong> </p>")
+    @ApiResponse(description =
+            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
+                    "<p> SU(200) : 정보 수정 성공 </p> " +
+                    "<p> VF(400) : request 데이터 입력 오류 </p> " +
+                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ResponseDto.class)))
+    public ResponseEntity<? super ResponseDto> updateOwnerInfo() {
+//        return service.deleteRoomImage(imgId, roomId);
+        return null;
+    }
+  
 // 강국 =================================================================================================================
 
     //  사장님 페이지 - 리뷰 답글 작성하기  //
