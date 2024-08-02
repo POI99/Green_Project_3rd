@@ -3,11 +3,7 @@ package com.green.glampick.service.implement;
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.object.UserReviewListItem;
-import com.green.glampick.dto.object.owner.BookBeforeItem;
-import com.green.glampick.dto.object.owner.BookCancelItem;
-import com.green.glampick.dto.object.owner.BookCompleteItem;
 import com.green.glampick.dto.request.owner.*;
-import com.green.glampick.dto.request.owner.GlampingPostRequestDto;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.owner.module.GlampingModule;
 import com.green.glampick.dto.request.owner.module.RoomModule;
@@ -25,6 +21,9 @@ import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.OwnerErrorCode;
 import com.green.glampick.mapper.OwnerMapper;
 import com.green.glampick.repository.*;
+import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
+import com.green.glampick.repository.resultset.GetReservationCancelResultSet;
+import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
 import com.green.glampick.repository.resultset.GetUserReviewResultSet;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
@@ -63,6 +62,9 @@ public class OwnerServiceImpl implements OwnerService {
     private final RoomServiceRepository roomServiceRepository;
     private final ReviewRepository reviewRepository;
     private final ReviewImageRepository reviewImageRepository;
+    private final ReservationBeforeRepository reservationBeforeRepository;
+    private final ReservationCancelRepository reservationCancelRepository;
+    private final ReservationCompleteRepository reservationCompleteRepository;
 
 // 민지 =================================================================================================================
 
@@ -266,6 +268,65 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
+    public List<GetReservationBeforeResultSet> getReservationBeforeList(ReservationGetRequestDto p) {
+        List<GetReservationBeforeResultSet> reservationBeforeResultSetList;
+        Long ownerId = p.getOwnerId();
+        int limit = p.getLimit();
+        int offset = p.getOffset();
+        try {
+            reservationBeforeResultSetList = reservationBeforeRepository.getReservationBeforeByOwnerId(ownerId,limit,offset);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return reservationBeforeResultSetList;
+    }
+
+    @Override
+    public List<GetReservationCancelResultSet> getReservationCancelList(ReservationGetRequestDto p) {
+        List<GetReservationCancelResultSet> reservationCancelResultSetList;
+        Long ownerId = p.getOwnerId();
+        int limit = p.getLimit();
+        int offset = p.getOffset();
+
+        try {
+            reservationCancelResultSetList = reservationCancelRepository.getReservationCancelByOwnerId(ownerId, limit, offset);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return reservationCancelResultSetList;
+    }
+
+    @Override
+    public List<GetReservationCompleteResultSet> getReservationCompleteList(ReservationGetRequestDto p) {
+        List<GetReservationCompleteResultSet> reservationCompleteResultSetList;
+
+        Long ownerId = p.getOwnerId();
+        int limit = p.getLimit();
+        int offset = p.getOffset();
+
+        try {
+            reservationCompleteResultSetList = reservationCompleteRepository.getReservationCompleteByOwnerId(ownerId,limit,offset);
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return reservationCompleteResultSetList;
+    }
+
+    @Override
     public ResponseEntity<? super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto p) {
 
         //리뷰 데이터 추출
@@ -276,7 +337,7 @@ public class OwnerServiceImpl implements OwnerService {
             int limit = p.getLimit();
             int offset = p.getOffset();
             long typeNum = p.getTypeNum();
-            log.info("sssssss ow{},li{},off{},type{}", ownerId,limit,offset,typeNum);
+
             List<GetUserReviewResultSet> reviewInfo = new ArrayList<>();
 
             if (typeNum == 0) {
@@ -313,27 +374,27 @@ public class OwnerServiceImpl implements OwnerService {
 
     private static void setReviewItem(List<GetUserReviewResultSet> reviewInfo, List<ReviewImageEntity> imageEntities, List<UserReviewListItem> reviewListItem) {
         for (GetUserReviewResultSet resultSet : reviewInfo) {
-        UserReviewListItem item = new UserReviewListItem();
-        item.setGlampName(resultSet.getGlampName());
-        item.setRoomName(resultSet.getRoomName());
-        item.setUserNickName(resultSet.getUserNickname());
-        item.setUserProfileImage(resultSet.getUserProfileImage());
-        item.setReviewId(resultSet.getReviewId());
-        item.setReservationId(resultSet.getReservationId());
-        item.setUserReviewContent(resultSet.getReviewContent());
-        item.setStarPoint(resultSet.getReviewStarPoint());
-        item.setOwnerReviewContent(resultSet.getOwnerReviewComment());
-        item.setCreatedAt(resultSet.getCreatedAt().toString());
-        item.setGlampId(resultSet.getGlampId());
+            UserReviewListItem item = new UserReviewListItem();
+            item.setGlampName(resultSet.getGlampName());
+            item.setRoomName(resultSet.getRoomName());
+            item.setUserNickName(resultSet.getUserNickname());
+            item.setUserProfileImage(resultSet.getUserProfileImage());
+            item.setReviewId(resultSet.getReviewId());
+            item.setReservationId(resultSet.getReservationId());
+            item.setUserReviewContent(resultSet.getReviewContent());
+            item.setStarPoint(resultSet.getReviewStarPoint());
+            item.setOwnerReviewContent(resultSet.getOwnerReviewComment());
+            item.setCreatedAt(resultSet.getCreatedAt().toString());
+            item.setGlampId(resultSet.getGlampId());
 
-        List<String> imageUrls = imageEntities.stream()
-                .filter(entity -> Objects.equals(entity.getReviewEntity().getReviewId(), resultSet.getReviewId()))
-                .map(ReviewImageEntity::getReviewImageName) // 경로를 파일명으로 구성
-                .collect(Collectors.toList());
+            List<String> imageUrls = imageEntities.stream()
+                    .filter(entity -> Objects.equals(entity.getReviewEntity().getReviewId(), resultSet.getReviewId()))
+                    .map(ReviewImageEntity::getReviewImageName) // 경로를 파일명으로 구성
+                    .collect(Collectors.toList());
 
-        item.setReviewImages(imageUrls);
+            item.setReviewImages(imageUrls);
 
-        reviewListItem.add(item);
+            reviewListItem.add(item);
 
         }
     }
