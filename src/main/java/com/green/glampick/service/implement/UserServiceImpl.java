@@ -160,13 +160,13 @@ public class UserServiceImpl implements UserService {
         ReviewEntity reviewEntity = new ReviewEntity();
 
         try {
-            ReservationCompleteEntity reservationCompleteEntity = reservationCompleteRepository.findByReservationId(dto.getReservationId().getReservationId());
+            ReservationCompleteEntity reservationCompleteEntity = reservationCompleteRepository.findByReservationId(dto.getReservationId());
             reviewEntity.setReservationId(reservationCompleteEntity);
             reviewEntity.setReviewContent(dto.getReviewContent());
             reviewEntity.setReviewStarPoint(dto.getReviewStarPoint());
             reviewEntity.setGlampId(reservationCompleteEntity.getGlamping());
             reviewEntity = reviewRepository.save(reviewEntity);
-            glampingStarRepository.fin(dto.getReservationId().getReservationId());
+            glampingStarRepository.fin(dto.getReservationId());
             glampingStarRepository.findStarPointAvg(reservationCompleteEntity.getGlamping().getGlampId());
         } catch (Exception e) {
             e.printStackTrace();
