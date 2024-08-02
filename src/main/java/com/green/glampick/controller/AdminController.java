@@ -44,6 +44,17 @@ public class AdminController {
         return service.getOwnerSignUpInfo(ownerId);
     }
 
+    //  관리자 페이지 - 대기중인 사장님 회원가입 리스트 불러오기  //
+    @GetMapping("/business/owner-list")
+    @Operation(summary = "대기중인 사장님 회원가입 리스트 불러오기 (김수찬)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetOwnerSignUpResponseDto.class)
+            ))
+    public ResponseEntity<? super GetAccessOwnerSignUpListResponseDto> accessSignUpList () {
+        return service.accessSignUpList();
+    }
+
     //  관리자 페이지 - 사장님 회원가입 승인 처리하기  //
     @PatchMapping("/access/owner/sign-up")
     @Operation(summary = "사장님 회원가입 승인 처리하기 (김수찬)", description = ACCESS_SIGN_UP_DESCRIPTION)

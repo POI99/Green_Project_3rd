@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.green.glampick.common.GlobalConst.MAX_BANNER_SIZE;
@@ -46,6 +47,27 @@ public class AdminServiceImpl implements AdminService {
 
             OwnerEntity ownerEntity = ownerRepository.findByOwnerId(ownerId);
             return GetOwnerSignUpResponseDto.success(ownerEntity);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+    }
+
+    //  관리자 페이지 - 대기중인 사장님 회원가입 리스트 불러오기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super GetAccessOwnerSignUpListResponseDto> accessSignUpList() {
+
+        try {
+
+            List<OwnerEntity> ownerEntity = new ArrayList<>();
+            ownerEntity = adminRepository.getAccessOwnerSignUpList();
+
+            return GetAccessOwnerSignUpListResponseDto.success(ownerEntity);
 
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
