@@ -1,14 +1,8 @@
 package com.green.glampick.jin;
 
 import com.green.glampick.dto.response.user.GetBookResponseDto;
-import com.green.glampick.jin.request.ReviewGetCancelRequestDto;
-import com.green.glampick.jin.request.ReviewGetHeartRequestDto;
-import com.green.glampick.jin.request.ReviewGetRoomRequestDto;
-import com.green.glampick.jin.request.ReviewGetStarRequestDto;
-import com.green.glampick.jin.response.GetGlampingCancelResponseDto;
-import com.green.glampick.jin.response.GetGlampingHeartResponseDto;
-import com.green.glampick.jin.response.GetOwnerPopularRoomResponseDto;
-import com.green.glampick.jin.response.GetOwnerStarResponseDto;
+import com.green.glampick.jin.request.*;
+import com.green.glampick.jin.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -75,7 +69,15 @@ public class OwnerJinController {
         return service.getGlampingCancelRoom(dto);
     }
 
-
+    //매출
+    @GetMapping("/revenue")
+    @Operation(summary = "매출 (이진현)", description = USER_BOOK_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = USER_BOOK_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetOwnerRevenueResponseDto.class)))
+    public ResponseEntity<? super GetOwnerRevenueResponseDto> getPopRoom(@ParameterObject ReviewGetRevenueRequestDto dto) {
+        return service.getRevenue(dto);
+    }
 
 
 
