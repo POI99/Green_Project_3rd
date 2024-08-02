@@ -144,7 +144,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
 
     @Override// 이용 완료된 객실별 예약수, 매출
     @Transactional
-    public ResponseEntity<? super GetOwnerRevenueResponseDto> getPopRoom(ReviewGetRevenueRequestDto dto) {
+    public ResponseEntity<? super GetOwnerRevenueResponseDto> getRevenue(ReviewGetRevenueRequestDto dto) {
         try {
             dto.setOwnerId(authenticationFacade.getLoginUserId());
             if (dto.getOwnerId() <= 0) {
@@ -154,9 +154,8 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.MNF);
         }
-        List<GetPopularRoom> popRoom = null;
         try {
-            popRoom = ownerRepository.findPopularRoom(dto.getOwnerId());
+            ownerRepository.findRevenue(dto.getOwnerId());
             if (dto.getOwnerId() == 0) {
                 throw new CustomException(OwnerErrorCode.NMG);
             }
@@ -167,7 +166,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             throw new CustomException(CommonErrorCode.DBE);
         }
 
-        return GetOwnerRevenueResponseDto.success();
+        return GetOwnerRevenueResponseDto.success(ownerRepository.findRevenue(dto.getOwnerId()));
     }
 }
 

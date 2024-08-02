@@ -14,15 +14,16 @@ import org.springframework.http.ResponseEntity;
 public class GetOwnerRevenueResponseDto extends ResponseDto {
 
 
+    private long revenue;
 
-    private GetOwnerRevenueResponseDto() {
+    private GetOwnerRevenueResponseDto(long revenue) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
-
+        this.revenue = revenue;
 
     }
 
-    public static ResponseEntity<GetOwnerRevenueResponseDto> success() {
-        GetOwnerRevenueResponseDto result = new GetOwnerRevenueResponseDto();
+    public static ResponseEntity<GetOwnerRevenueResponseDto> success(long revenue) {
+        GetOwnerRevenueResponseDto result = new GetOwnerRevenueResponseDto(revenue);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
