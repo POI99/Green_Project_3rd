@@ -31,7 +31,6 @@ public interface OwnerService {
     ResponseEntity<? super PutRoomInfoResponseDto> updateRoomInfo(RoomPutRequestDto p);
     ResponseEntity<? super ResponseDto> deleteRoomImage(Long imgId, Long roomId);
 
-    ResponseEntity<? super GetOwnerBookListResponseDto> getGlampReservation(Long glampId);
 
     ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p);
 

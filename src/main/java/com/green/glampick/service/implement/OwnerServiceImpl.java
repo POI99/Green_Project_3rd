@@ -253,33 +253,6 @@ public class OwnerServiceImpl implements OwnerService {
 //    }
 
 
-    @Transactional
-    public ResponseEntity<? super GetOwnerBookListResponseDto> getGlampReservation(Long glampId) {
-
-
-        if (glampId == null || glampId < 0) {
-            throw new CustomException(OwnerErrorCode.WG);
-        }
-
-        List<BookBeforeItem> before;
-        List<BookCompleteItem> complete;
-        List<BookCancelItem> cancel;
-        try {
-            before = mapper.getBookBefore(glampId);
-            complete = mapper.getBookComplete(glampId);
-            cancel = mapper.getBookCancel(glampId);
-        } catch (CustomException e) {
-            throw new CustomException(e.getErrorCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException(CommonErrorCode.DBE);
-        }
-
-        return GetOwnerBookListResponseDto.success(before, complete, cancel);
-    }
-
-
-
     // 강국 =================================================================================================================
     @Override
     @Transactional

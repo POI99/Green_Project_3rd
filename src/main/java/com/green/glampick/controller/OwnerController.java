@@ -169,26 +169,7 @@ public class OwnerController {
         return service.deleteRoomImage(imgId, roomId);
     }
 
-    // read - 예약
-    @GetMapping("book/{glamp_id}")
-    @Operation(summary = "글램핑 예약 내역 불러오기 (김민지)", description =
-            "<strong> <p> glamp_id (글램핑 PK) 는 필수입력입니다 </p> </strong>" +
-                    "<p> before : 이용 예정  </p>" +
-                    "<p> complete : 이용 완료 </p>" +
-                    "<p> cancel : 취소 </p>")
-    @ApiResponse(description =
-            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
-                    "<p> SU(200) : 예약 내역 불러오기 성공 </p> " +
-                    "<p> RN(200) : 예약 내역 없음 </p> " +
-                    "<p> VF(400) : 글램핑 PK가 입력되지 않음 </p> " +
-                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
-            responseCode = "200",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
-    public ResponseEntity<? super GetOwnerBookListResponseDto> getGlampReservation(@PathVariable("glamp_id") Long glampId) {
-        return service.getGlampReservation(glampId);
-    }
+
 // 강국 =================================================================================================================
 
     @Operation(summary = "리뷰 답글 작성하기 (배강국)",
@@ -240,6 +221,28 @@ public class OwnerController {
 //    public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(@RequestBody ReviewPatchRequestDto p) {
 //        return service.patchReview(p);
 //    }
+
+    // read - 예약
+    @GetMapping("book/{glamp_id}")
+    @Operation(summary = "글램핑 예약 내역 불러오기 (배강국)", description =
+            "<strong> <p> glamp_id (글램핑 PK) 는 필수입력입니다 </p> </strong>" +
+                    "<p> before : 이용 예정  </p>" +
+                    "<p> complete : 이용 완료 </p>" +
+                    "<p> cancel : 취소 </p>")
+    @ApiResponse(description =
+            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
+                    "<p> SU(200) : 예약 내역 불러오기 성공 </p> " +
+                    "<p> RN(200) : 예약 내역 없음 </p> " +
+                    "<p> VF(400) : 글램핑 PK가 입력되지 않음 </p> " +
+                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
+    public ResponseEntity<? super GetOwnerBookListResponseDto> getGlampReservation(@PathVariable("glamp_id") Long glampId) {
+//        return service.getGlampReservation(glampId);
+        return null;
+    }
 
 
 }
