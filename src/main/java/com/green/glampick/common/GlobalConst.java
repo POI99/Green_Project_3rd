@@ -1,6 +1,6 @@
 package com.green.glampick.common;
 
-public class GlobalConst {
+public abstract class GlobalConst {
 
     public static final int MAX_REQUEST_SIZE = 150; // 최대 파일 크기
 

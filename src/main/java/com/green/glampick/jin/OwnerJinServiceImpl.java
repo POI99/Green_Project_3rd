@@ -33,7 +33,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
         try {
             dto.setOwnerId(authenticationFacade.getLoginUserId());
             if (dto.getOwnerId() <= 0) {
-                throw new RuntimeException();
+                throw new CustomException(CommonErrorCode.MNF);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,11 +61,11 @@ public class OwnerJinServiceImpl implements OwnerJinService {
         try {
             dto.setOwnerId(authenticationFacade.getLoginUserId());
             if (dto.getOwnerId() <= 0) {
-                throw new RuntimeException();
+                throw new CustomException(CommonErrorCode.MNF);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return GetOwnerStarResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
 
         try {
@@ -93,7 +93,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return GetGlampingHeartResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
         List<GetGlampingHeart> getGlampingHearts = null;
         try {
@@ -118,11 +118,11 @@ public class OwnerJinServiceImpl implements OwnerJinService {
         try {
             dto.setOwnerId(authenticationFacade.getLoginUserId());
             if (dto.getOwnerId() <= 0) {
-                throw new RuntimeException();
+                throw new CustomException(CommonErrorCode.MNF);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return GetGlampingCancelResponseDto.validateUserId();
+            throw new CustomException(CommonErrorCode.MNF);
         }
         String formattedResult;
         try {
@@ -142,13 +142,13 @@ public class OwnerJinServiceImpl implements OwnerJinService {
         return GetGlampingCancelResponseDto.success(formattedResult);
     }
 
-    @Override// 이용 완료된 객실별 예약수, 매출
+    @Override//매출
     @Transactional
     public ResponseEntity<? super GetOwnerRevenueResponseDto> getRevenue(ReviewGetRevenueRequestDto dto) {
         try {
             dto.setOwnerId(authenticationFacade.getLoginUserId());
             if (dto.getOwnerId() <= 0) {
-                throw new RuntimeException();
+                throw new CustomException(CommonErrorCode.MNF);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,12 +1,9 @@
 package com.green.glampick.controller;
 
 import com.green.glampick.dto.ResponseDto;
-import com.green.glampick.dto.request.owner.GlampingPostRequestDto;
+import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.ReviewPostRequestDto;
-import com.green.glampick.dto.request.owner.GlampingPutRequestDto;
-import com.green.glampick.dto.request.owner.RoomPostRequestDto;
-import com.green.glampick.dto.request.owner.RoomPutRequestDto;
 import com.green.glampick.dto.request.owner.module.GlampingModule;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
@@ -20,6 +17,7 @@ import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import io.swagger.v3.oas.annotations.Operation;
@@ -125,8 +123,48 @@ public class OwnerController {
     @ApiResponse(responseCode = "200", description = DELETE_ROOM_IMAGE_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class)))
-    public ResponseEntity<? super ResponseDto> updateRoom(@PathVariable("img_id") Long imgId, @PathVariable("room_id") Long roomId) {
+    public ResponseEntity<? super ResponseDto> updateRoomImageDelete(@PathVariable("img_id") Long imgId, @PathVariable("room_id") Long roomId) {
         return service.deleteRoomImage(imgId, roomId);
+    }
+
+    // post - 객실 사진
+    @PostMapping("room_image")
+    @Operation(summary = "객실 수정시에 사진 업로드 (김민지)", description =
+            "<p> <strong> 선택입력 : service[] </strong> </p>" +
+                    "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
+                    "<p> <strong> 시간 입력 형식 = 시:분:초  ex) 12:00:00 </strong> </p>")
+    @ApiResponse(description =
+            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
+                    "<p> SU(200) : 정보 수정 성공 </p> " +
+                    "<p> VF(400) : request 데이터 입력 오류 </p> " +
+                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ResponseDto.class)))
+    public ResponseEntity<? super ResponseDto> updateRoomImageInsert(@RequestPart List<MultipartFile> image, @RequestPart Long roomId) {
+//        return service.deleteRoomImage(imgId, roomId);
+        return null;
+    }
+
+    // put - 사장님 정보 수정
+    @PutMapping()
+    @Operation(summary = "사장님 정보 수정 (김민지)", description =
+            "<p> <strong> 선택입력 : service[] </strong> </p>" +
+                    "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
+                    "<p> <strong> 시간 입력 형식 = 시:분:초  ex) 12:00:00 </strong> </p>")
+    @ApiResponse(description =
+            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
+                    "<p> SU(200) : 정보 수정 성공 </p> " +
+                    "<p> VF(400) : request 데이터 입력 오류 </p> " +
+                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ResponseDto.class)))
+    public ResponseEntity<? super ResponseDto> updateOwnerInfo() {
+//        return service.deleteRoomImage(imgId, roomId);
+        return null;
     }
   
 // 강국 =================================================================================================================
@@ -185,6 +223,24 @@ public class OwnerController {
     public ResponseEntity<? super GetOwnerBookListResponseDto> getGlampReservation(@PathVariable("glamp_id") Long glampId) {
 //        return service.getGlampReservation(glampId);
         return null;
+
+    // 사장님 페이지 - 예약 내역 불러오기 //
+    @GetMapping("book/{glamp_id}")
+    @Operation(summary = "글램핑 예약 내역 불러오기 (배강국)", description =
+            "<strong> <p> owner_id (글램핑 PK) 는 필수입력입니다 </p> </strong>"
+                    )
+    @ApiResponse(description =
+            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
+                    "<p> SU(200) : 예약 내역 불러오기 성공 </p> " +
+                    "<p> RN(200) : 예약 내역 없음 </p> " +
+                    "<p> VF(400) : owner PK가 입력되지 않음 </p> " +
+                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
+    public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
+        return service.getOwnerReservation(p);
     }
 
 

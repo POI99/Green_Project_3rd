@@ -1,13 +1,14 @@
 package com.green.glampick.dto.response.user;
 
-import com.green.glampick.common.response.ResponseCode;
-import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.entity.UserEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 
 @Getter
 @Setter
@@ -21,7 +22,7 @@ public class GetUserResponseDto extends ResponseDto {
     private String userProfileImage;
 
     private GetUserResponseDto(UserEntity userEntity) {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.userEmail = userEntity.getUserEmail();
         this.userName = userEntity.getUserName();
         this.userNickname = userEntity.getUserNickname();
