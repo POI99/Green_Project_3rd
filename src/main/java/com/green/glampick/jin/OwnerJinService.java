@@ -1,13 +1,7 @@
 package com.green.glampick.jin;
 
-import com.green.glampick.jin.request.ReviewGetCancelRequestDto;
-import com.green.glampick.jin.request.ReviewGetHeartRequestDto;
-import com.green.glampick.jin.request.ReviewGetRoomRequestDto;
-import com.green.glampick.jin.request.ReviewGetStarRequestDto;
-import com.green.glampick.jin.response.GetGlampingCancelResponseDto;
-import com.green.glampick.jin.response.GetGlampingHeartResponseDto;
-import com.green.glampick.jin.response.GetOwnerPopularRoomResponseDto;
-import com.green.glampick.jin.response.GetOwnerStarResponseDto;
+import com.green.glampick.jin.request.*;
+import com.green.glampick.jin.response.*;
 import org.springframework.http.ResponseEntity;
 
 public interface OwnerJinService {
@@ -24,4 +18,6 @@ public interface OwnerJinService {
     // 예약 취소율
     ResponseEntity<? super GetGlampingCancelResponseDto> getGlampingCancelRoom(ReviewGetCancelRequestDto dto);
 
+    //매출
+    ResponseEntity<? super GetOwnerRevenueResponseDto> getRevenue(ReviewGetRevenueRequestDto dto);
 }
