@@ -172,10 +172,8 @@ public class OwnerController {
     // read - 예약
     @GetMapping("book/{glamp_id}")
     @Operation(summary = "글램핑 예약 내역 불러오기 (김민지)", description =
-            "<strong> <p> glamp_id (글램핑 PK) 는 필수입력입니다 </p> </strong>" +
-                    "<p> before : 이용 예정  </p>" +
-                    "<p> complete : 이용 완료 </p>" +
-                    "<p> cancel : 취소 </p>")
+            "<strong> <p> glamp_id (글램핑 PK) 는 필수입력입니다 </p> </strong>"
+                    )
     @ApiResponse(description =
             "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
                     "<p> SU(200) : 예약 내역 불러오기 성공 </p> " +
