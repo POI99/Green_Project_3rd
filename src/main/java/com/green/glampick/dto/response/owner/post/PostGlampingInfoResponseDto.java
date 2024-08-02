@@ -1,7 +1,5 @@
 package com.green.glampick.dto.response.owner.post;
 
-import com.green.glampick.common.response.ResponseCode;
-import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.ResponseDto;
 import lombok.Getter;
 import lombok.Setter;

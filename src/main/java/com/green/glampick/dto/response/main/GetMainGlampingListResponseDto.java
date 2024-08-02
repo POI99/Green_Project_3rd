@@ -1,7 +1,5 @@
 package com.green.glampick.dto.response.main;
 
-import com.green.glampick.common.response.ResponseCode;
-import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.object.main.MountainViewGlampingItem;
 import com.green.glampick.dto.object.main.PopularGlampingItem;

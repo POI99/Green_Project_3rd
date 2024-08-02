@@ -1,7 +1,5 @@
 package com.green.glampick.dto.response.glamping.favorite;
 
-import com.green.glampick.common.response.ResponseCode;
-import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

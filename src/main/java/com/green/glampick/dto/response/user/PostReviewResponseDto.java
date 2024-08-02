@@ -1,19 +1,11 @@
 package com.green.glampick.dto.response.user;
 
-import com.green.glampick.common.response.ResponseCode;
-import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.ResponseDto;
-import com.green.glampick.entity.ReviewEntity;
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
-import java.util.List;
 
 import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
 import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;

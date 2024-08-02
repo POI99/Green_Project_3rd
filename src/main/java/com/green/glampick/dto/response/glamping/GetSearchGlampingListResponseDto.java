@@ -1,7 +1,5 @@
 package com.green.glampick.dto.response.glamping;
 
-import com.green.glampick.common.response.ResponseCode;
-import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.object.glamping.GlampingListItem;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,7 +1,5 @@
 package com.green.glampick.jin.response;
 
-import com.green.glampick.common.response.ResponseCode;
-import com.green.glampick.common.response.ResponseMessage;
 import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.jin.object.GetGlampingHeart;
 import lombok.Getter;
