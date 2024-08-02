@@ -111,12 +111,6 @@ public class UserController {
         return service.getFavoriteGlamping(dto);
     }
 
-//    @GetMapping("/coupon")// 쿠폰 불러오기
-//    public ResponseEntity<?super PostReviewResponseDto> getCoupon(@ParameterObject @ModelAttribute String email) {
-//        ResponseEntity<? super PostReviewResponseDto> response = service.getCoupon(email);
-//        return response;
-//    }
-
     // 유저 페이지 - 유저 정보 불러오기  //
     @GetMapping
     @Operation(summary = "유저 정보 불러오기 (이진현, 김수찬)", description = USER_INFO_DESCRIPTION)

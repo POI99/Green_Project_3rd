@@ -211,6 +211,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    //  마이페이지 - 리뷰 삭제하기  //
     @Override // 리뷰 삭제
     @Transactional
     public ResponseEntity<? super DeleteReviewResponseDto> deleteReview(DeleteReviewRequestDto dto) {
@@ -249,6 +250,7 @@ public class UserServiceImpl implements UserService {
         return DeleteReviewResponseDto.success();
     }
 
+    //  마이페이지 - 리뷰 불러오기  //
     @Override // 리뷰 불러오기
     @Transactional
     public ResponseEntity<? super GetReviewResponseDto> getReview(GetReviewRequestDto dto) {
@@ -320,6 +322,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    //  마이페이지 - 관심 글램핑 불러오기  //
     @Override //관심글램핑 불러오기
     @Transactional
     public ResponseEntity<? super GetFavoriteGlampingResponseDto> getFavoriteGlamping(GetFavoriteGlampingRequestDto dto) {
@@ -452,7 +455,8 @@ public class UserServiceImpl implements UserService {
         return UpdateUserResponseDto.success();
     }
 
-    @Override// 회원 탈퇴
+    //  마이페이지 - 회원 탈퇴하기  //
+    @Override
     @Transactional
     public ResponseEntity<? super DeleteUserResponseDto> deleteUser(DeleteUserRequestDto dto) {
 
@@ -485,6 +489,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    //  마이페이지 - 비밀번호 확인  //
     @Override
     @Transactional
     public ResponseEntity<? super PostUserPasswordResponseDto> postUserPassword(PostUserPasswordRequestDto dto) {
