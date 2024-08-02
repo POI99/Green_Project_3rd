@@ -36,7 +36,7 @@ public class BookServiceImpl implements BookService {
     private final GlampingRepository glampingRepository;
     private final AuthenticationFacade authenticationFacade;
 
-    //  글램핑 예약하기  //
+    //  예약 페이지 - 글램핑 예약하기  //
     @Override
     @Transactional
     public ResponseEntity<? super PostBookResponseDto> postBook(PostBookRequestDto dto) {
@@ -104,7 +104,7 @@ public class BookServiceImpl implements BookService {
 
     }
 
-    //  최종 결제 가격정보  //
+    //  예약 페이지 - 최종 결제 가격정보  //
     @Override
     public ResponseEntity<? super GetBookPayResponseDto> getReservationAmount(GetBookPayRequestDto dto) {
 
@@ -141,6 +141,7 @@ public class BookServiceImpl implements BookService {
         return out.isBefore(in); // 틀리면 true
     }
 
+    //  스케줄 실행 - 체크아웃 날짜가 지나면, 이용완료 테이블로 이동  //
     @Scheduled(fixedRate = 600000)
     public void cleanUpExpiredCodes() {
 
