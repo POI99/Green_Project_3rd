@@ -1,8 +1,5 @@
 package com.green.glampick.mapper;
 
-import com.green.glampick.dto.object.owner.BookBeforeItem;
-import com.green.glampick.dto.object.owner.BookCancelItem;
-import com.green.glampick.dto.object.owner.BookCompleteItem;
 import com.green.glampick.dto.request.owner.GlampingPostRequestDto;
 import com.green.glampick.dto.request.owner.RoomPostRequestDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -27,10 +24,6 @@ public interface OwnerMapper {
     List<Integer> selService(long roomId);
     void delService(long roomId);
     void insertRoomService(long roomId, List<Integer> serviceList);
-
-    List<BookBeforeItem> getBookBefore(long glampId);
-    List<BookCompleteItem> getBookComplete(long glampId);
-    List<BookCancelItem> getBookCancel(long glampId);
 
     Long getUserIdByGlampId(long glampId);
     // 강국

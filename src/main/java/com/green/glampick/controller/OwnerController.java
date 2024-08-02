@@ -13,6 +13,9 @@ import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutRoomInfoResponseDto;
 import com.green.glampick.dto.response.user.GetReviewResponseDto;
+import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
+import com.green.glampick.repository.resultset.GetReservationCancelResultSet;
+import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -230,9 +233,12 @@ public class OwnerController {
         return service.getReview(dto);
     }
 
+            //System.out.println("success: " + success);
+            //return success;
+            //return dto;
 
     // 사장님 페이지 - 예약 내역 불러오기 //
-    @GetMapping("book/{glamp_id}")
+    @GetMapping("book")
     @Operation(summary = "글램핑 예약 내역 불러오기 (배강국)", description =
             "<strong> <p> owner_id (글램핑 PK) 는 필수입력입니다 </p> </strong>"
                     )
@@ -247,9 +253,19 @@ public class OwnerController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
     public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
-        return service.getOwnerReservation(p);
+
+            long ownerId = GlampingModule.ownerId(authenticationFacade);
+            GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
+            p.setOwnerId(ownerId);
+
+            List<GetReservationBeforeResultSet> before = service.getReservationBeforeList(p);
+            List<GetReservationCancelResultSet> cancle = service.getReservationCancelList(p);
+            List<GetReservationCompleteResultSet> complete = service.getReservationCompleteList(p);
+
+            GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(before,complete,cancle);
+            ResponseEntity<ResponseDto> success = dto.success(before, complete, cancle);
+
+            return success;
     }
-
-
 }
 
