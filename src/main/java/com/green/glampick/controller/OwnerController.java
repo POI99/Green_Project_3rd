@@ -34,7 +34,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static com.green.glampick.common.swagger.description.owner.PostGlampingSwaggerDescription.POST_GLAMPING_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.PostGlampingSwaggerDescription.POST_GLAMPING_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.PostOwnerReviewSwaggerDescription.POST_OWNER_REVIEW_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.PostOwnerReviewSwaggerDescription.POST_OWNER_REVIEW_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.user.GetUserReviewSwaggerDescription.USER_REVIEW_VIEW_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.user.GetUserReviewSwaggerDescription.USER_REVIEW_VIEW_RESPONSE_ERROR_CODE;
 
@@ -49,23 +52,13 @@ public class OwnerController {
     private final OwnerService service;
     private final AuthenticationFacade authenticationFacade;
 // 민지 =================================================================================================================
-    // create - 글램핑
+
+    //  사장님 페이지 - 글램핑 등록하기  //
     @PostMapping(value = "glamping", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "글램핑 정보 등록 (김민지)", description =
-            "<p> <strong> 선택입력 : extraCharge(기준 인원 외 추가 인원당 요금) </strong> </p>" +
-                    "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
-                    "<p> 사진 업로드를 위해 테스트는 포스트맨에서 해주세요 ~ </p>")
-    @ApiResponse(description =
-                    "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
-                            "<p> SU(200) : 글램핑 등록 성공 </p> " +
-                            "<p> VF(400) : request 데이터 입력 오류 </p> " +
-                            "<p> CU(400) : jwt 오류 </p> " +
-                            "<p> FE(400) : 이미지 업로드 오류 </p> " +
-                            "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
-            responseCode = "200",
+    @Operation(summary = "글램핑 정보 등록 (김민지)", description = POST_GLAMPING_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = POST_GLAMPING_RESPONSE_ERROR_CODE,
             content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = PostGlampingInfoResponseDto.class)))
+                    mediaType = "application/json", schema = @Schema(implementation = PostGlampingInfoResponseDto.class)))
     public ResponseEntity<? super PostGlampingInfoResponseDto> createGlamping(@RequestPart @Valid GlampingPostRequestDto req
             , @RequestPart MultipartFile glampImg) {
         return service.postGlampingInfo(req, glampImg);
@@ -171,26 +164,19 @@ public class OwnerController {
   
 // 강국 =================================================================================================================
 
-    @Operation(summary = "리뷰 답글 작성하기 (배강국)",
-            description = POST_OWNER_REVIEW_DESCRIPTION
-            ,
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description =
-                                    "성공에 대한 반환 값 입니다." +
-                                            " <p> ownerId : 오너 PK <p>  ex)13 </p>",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = PatchOwnerReviewInfoResponseDto.class)
-                            ))})
+    //  사장님 페이지 - 리뷰 답글 작성하기  //
     @PatchMapping("/review")
+    @Operation(summary = "리뷰 답글 작성하기 (배강국)", description = POST_OWNER_REVIEW_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = POST_OWNER_REVIEW_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PatchOwnerReviewInfoResponseDto.class)))
     public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(@RequestBody @Valid ReviewPatchRequestDto p) {
         log.info("controller {}", p);
         GlampingModule.ownerId(authenticationFacade);
         GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
         return service.patchReview(p);
     }
+
     @GetMapping("/review")
     @Operation(summary = "리뷰 불러오기 (배강국)", description = USER_REVIEW_VIEW_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,

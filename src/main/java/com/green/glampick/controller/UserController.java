@@ -111,12 +111,6 @@ public class UserController {
         return service.getFavoriteGlamping(dto);
     }
 
-//    @GetMapping("/coupon")// 쿠폰 불러오기
-//    public ResponseEntity<?super PostReviewResponseDto> getCoupon(@ParameterObject @ModelAttribute String email) {
-//        ResponseEntity<? super PostReviewResponseDto> response = service.getCoupon(email);
-//        return response;
-//    }
-
     // 유저 페이지 - 유저 정보 불러오기  //
     @GetMapping
     @Operation(summary = "유저 정보 불러오기 (이진현, 김수찬)", description = USER_INFO_DESCRIPTION)
@@ -128,7 +122,7 @@ public class UserController {
     }
 
     //  유저 페이지 - 유저 정보 수정하기  //
-    @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})// 유저 정보 수정하기
+    @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "유저 정보 수정하기 (이진현 김수찬)", description = USER_INFO_UPDATE_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_INFO_UPDATE_RESPONSE_ERROR_CODE,
             content = @Content(
@@ -140,7 +134,7 @@ public class UserController {
     }
 
     //  유저 페이지 - 회원 탈퇴  //
-    @DeleteMapping// 회원탈퇴
+    @DeleteMapping
     @Operation(summary = "회원 탈퇴 (이진현)", description = USER_LEAVE_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_LEAVE_RESPONSE_ERROR_CODE,
             content = @Content(
