@@ -6,6 +6,7 @@ import com.green.glampick.dto.response.admin.*;
 import com.green.glampick.entity.BannerEntity;
 import com.green.glampick.entity.OwnerEntity;
 import com.green.glampick.exception.CustomException;
+import com.green.glampick.exception.errorCode.AdminErrorCode;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.UserErrorCode;
 import com.green.glampick.repository.BannerRepository;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+import static com.green.glampick.common.GlobalConst.MAX_BANNER_SIZE;
 
 @Slf4j
 @Service
@@ -95,7 +98,13 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     public ResponseEntity<? super PostBannerResponseDto> postBanner(List<MultipartFile> file) {
 
+        List<BannerEntity> bannerEntityList = bannerRepository.findAll();
+
         try {
+
+            if (bannerEntityList.size() + file.size() > MAX_BANNER_SIZE) {
+                throw new CustomException(AdminErrorCode.UFF);
+            }
 
             for (MultipartFile image : file) {
                 String makeFolder = String.format("banner");
