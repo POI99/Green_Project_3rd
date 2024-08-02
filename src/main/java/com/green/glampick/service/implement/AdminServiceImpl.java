@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -27,8 +28,28 @@ public class AdminServiceImpl implements AdminService {
     private final BannerRepository bannerRepository;
     private final CustomFileUtils customFileUtils;
 
+    //  관리자 페이지 - 사장님 회원가입 정보 확인하기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super GetOwnerSignUpResponseDto> getOwnerSignUpInfo(Long ownerId) {
+
+        try {
+
+            OwnerEntity ownerEntity = ownerRepository.findByOwnerId(ownerId);
+            return GetOwnerSignUpResponseDto.success(ownerEntity);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+    }
+
     //  관리자 페이지 - 사장님 회원가입 승인 처리하기  //
     @Override
+    @Transactional
     public ResponseEntity<? super PatchAccessOwnerSignUpResponseDto> accessSignUp(Long ownerId) {
 
         try {
@@ -45,6 +66,7 @@ public class AdminServiceImpl implements AdminService {
 
     //  관리자 페이지 - 사장님 회원가입 반려 처리하기  //
     @Override
+    @Transactional
     public ResponseEntity<? super DeleteExclutionOwnerSignUpResponseDto> exclutionSignUp(Long ownerId) {
 
         try {
@@ -70,6 +92,7 @@ public class AdminServiceImpl implements AdminService {
 
     //  관리자 페이지 - 메인 화면 배너 추가하기  //
     @Override
+    @Transactional
     public ResponseEntity<? super PostBannerResponseDto> postBanner(List<MultipartFile> file) {
 
         try {
@@ -99,6 +122,7 @@ public class AdminServiceImpl implements AdminService {
 
     //  관리자 페이지 - 메인 화면 배너 삭제하기  //
     @Override
+    @Transactional
     public ResponseEntity<? super DeleteBannerResponseDto> deleteBanner(Long bannerId) {
 
         try {
@@ -120,12 +144,14 @@ public class AdminServiceImpl implements AdminService {
 
     //  관리자 페이지 - 글램핑 등록 승인 처리하기  //
     @Override
+    @Transactional
     public ResponseEntity<? super PatchGlampingAccessResponseDto> accessGlamping(Long glampId) {
         return null;
     }
 
     //  관리자 페이지 - 글램핑 등록 반려 처리하기  //
     @Override
+    @Transactional
     public ResponseEntity<? super PatchGlampingExclutionResponseDto> exclutionGlamping(Long glampId) {
         return null;
     }

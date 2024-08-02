@@ -9,6 +9,9 @@ import java.util.List;
 
 public interface AdminService {
 
+    //  관리자 페이지 - 사장님 가입정보 확인하기  //
+    ResponseEntity<? super GetOwnerSignUpResponseDto> getOwnerSignUpInfo (Long ownerId);
+
     //  관리자 페이지 - 사장님 회원가입 승인 처리하기  //
     ResponseEntity<? super PatchAccessOwnerSignUpResponseDto> accessSignUp(Long ownerId);
 
@@ -22,9 +25,9 @@ public interface AdminService {
     ResponseEntity<? super DeleteBannerResponseDto> deleteBanner(Long bannerId);
 
     //  관리자 페이지 - 글램핑 등록 승인 처리하기  //
-    ResponseEntity<? super PatchGlampingAccessResponseDto> accessGlamping(@RequestParam Long glampId);
+    ResponseEntity<? super PatchGlampingAccessResponseDto> accessGlamping(Long glampId);
 
     //  관리자 페이지 - 글램핑 등록 반려 처리하기  //
-    ResponseEntity<? super PatchGlampingExclutionResponseDto> exclutionGlamping(@RequestParam Long glampId);
+    ResponseEntity<? super PatchGlampingExclutionResponseDto> exclutionGlamping(Long glampId);
 
 }

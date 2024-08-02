@@ -34,9 +34,14 @@ public class AdminController {
     private final AdminService service;
 
     //  관리자 페이지 - 사장님 회원가입 정보 불러오기  //
+    @GetMapping("/business/owner")
+    @Operation(summary = "사장님 회원가입 정보 불러오기 (김수찬)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetOwnerSignUpResponseDto.class)
+            ))
     public ResponseEntity<? super GetOwnerSignUpResponseDto> getOwnerSignUpInfo (@RequestParam Long ownerId) {
-//        return service.getOwnerSignUpInfo(ownerId);
-        return null;
+        return service.getOwnerSignUpInfo(ownerId);
     }
 
     //  관리자 페이지 - 사장님 회원가입 승인 처리하기  //
