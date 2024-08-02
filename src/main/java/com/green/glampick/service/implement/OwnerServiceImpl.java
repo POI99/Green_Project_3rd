@@ -19,6 +19,7 @@ import com.green.glampick.entity.*;
 import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.OwnerErrorCode;
+import com.green.glampick.exception.errorCode.UserErrorCode;
 import com.green.glampick.mapper.OwnerMapper;
 import com.green.glampick.repository.*;
 import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
@@ -33,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -50,9 +52,9 @@ import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 @Service
 @RequiredArgsConstructor
 public class OwnerServiceImpl implements OwnerService {
-    private final OwnerMapper mapper;
     private final AuthenticationFacade authenticationFacade;
     private final CustomFileUtils customFileUtils;
+    private final PasswordEncoder passwordEncoder;
     private final GlampingWaitRepository waitRepository;
     private final GlampingRepository glampingRepository;
     private final OwnerRepository ownerRepository;
@@ -191,7 +193,7 @@ public class OwnerServiceImpl implements OwnerService {
 
     // 객실 수정
     @Transactional
-    public ResponseEntity<? super PutRoomInfoResponseDto> updateRoomInfo(RoomPutRequestDto p) {
+    public ResponseEntity<? super PutRoomInfoResponseDto> updateRoomInfo(List<MultipartFile> addImg, RoomPutRequestDto p) {
         RoomPostRequestDto dto = p.getRequestDto();
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
@@ -225,29 +227,43 @@ public class OwnerServiceImpl implements OwnerService {
         List<Long> inputService = dto.getService();
         RoomModule.updateService(roomService, inputService, room, roomServiceRepository, serviceRepository);
 
+        // 삭제되는 사진이 있다면 삭제
+        if(p.getRemoveImg() != null && !p.getRemoveImg().isEmpty()){
+            for (Long img : p.getRemoveImg()){
+                // 해당 객실의 사진이 맞는지 확인
+                RoomImageEntity imageEntity = roomImageRepository.getReferenceById(img);
+                RoomModule.checkImgId(room, imageEntity);
+                // 삭제
+                RoomModule.deleteImageOne(img, roomImageRepository, customFileUtils);
+            }
+        }
+
+        // 추가되는 사진이 있다면 추가
+        if(addImg != null && !addImg.isEmpty() && !addImg.get(0).isEmpty()){
+            List<String> roomImgName = RoomModule.imgInsert(addImg, dto.getGlampId(), room.getRoomId(), customFileUtils);
+            List<RoomImageEntity> saveImage = RoomModule.saveImage(roomImgName, roomRepository.findByRoomId(room.getRoomId()));
+            roomImageRepository.saveAll(saveImage);
+        }
+
         return PutRoomInfoResponseDto.success();
     }
 
-    // 객실 사진 delete
-    public ResponseEntity<? super ResponseDto> deleteRoomImage(Long imgId, Long roomId) {
-        long ownerId = GlampingModule.ownerId(authenticationFacade);
 
-        RoomModule.isRoomIdOk(roomRepository, glampingRepository, ownerRepository, roomId, ownerId);
-
-        List<RoomImageEntity> entityList = roomImageRepository.findByRoomId(roomRepository.getReferenceById(roomId));
-        if(entityList.size() == 1){
-            throw new CustomException(OwnerErrorCode.CDF);
-        }
-        RoomModule.deleteFile(imgId, roomImageRepository, customFileUtils);
-
-        ResponseDto result = new ResponseDto(SUCCESS_CODE, SUCCESS_MESSAGE);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
-
-    // 객실 사진 insert
-//    public ResponseEntity<? super ResponseDto> insertNewRoomImg(Long imgId, Long roomId) {
-//
+//    // 객실 삭제
+//    public ResponseEntity<? super ResponseDto> deleteRoom() {
+//        return null;
 //    }
+
+    // 비밀번호 확인
+    public ResponseEntity<? super ResponseDto> checkOwnerPassword(CheckPasswordRequestDto dto) {
+        // 월욜에 여기부터 하자
+        OwnerEntity owner = ownerRepository.getReferenceById(dto.getOwnerId());
+
+        if(!passwordEncoder.matches(dto.getPassword(), owner.getOwnerPw())){
+            throw new CustomException(UserErrorCode.NMP);
+        }
+        return null;
+    }
 
 
     // 강국 =================================================================================================================

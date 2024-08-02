@@ -190,8 +190,15 @@ public class RoomModule {
         }
     }
 
+    // 해당 객실의 사진이 맞는지 확인
+    public static void checkImgId(RoomEntity roomEntity, RoomImageEntity imageEntity){
+        if(imageEntity.getRoomId() != roomEntity) {
+            throw new CustomException(OwnerErrorCode.CFI);
+        }
+    }
+
     // 파일 삭제
-    public static void deleteFile(Long imgId, RoomImageRepository roomImageRepository, CustomFileUtils customFileUtils) {
+    public static void deleteImageOne(Long imgId, RoomImageRepository roomImageRepository, CustomFileUtils customFileUtils) {
         RoomImageEntity entity = roomImageRepository.getReferenceById(imgId);
         String dbName = entity.getRoomImageName();
         try {
