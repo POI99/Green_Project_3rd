@@ -214,31 +214,12 @@ public class OwnerController {
 //        return service.patchReview(p);
 //    }
 
-    //  사장님 페이지 - 예약된 내역 불러오기  //
-    @GetMapping("book/{glamp_id}")
+    // 사장님 페이지 - 예약 내역 불러오기 //
+    @GetMapping("/book")
     @Operation(summary = "글램핑에 예약된 내역 불러오기 (배강국)", description = BOOK_FROM_USER_REVIEW_VIEW_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = BOOK_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
             content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = GetReviewResponseDto.class)))
-    public ResponseEntity<? super GetOwnerBookListResponseDto> getGlampReservation(@PathVariable("glamp_id") Long glampId) {
-//        return service.getGlampReservation(glampId);
-        return null;
-
-    // 사장님 페이지 - 예약 내역 불러오기 //
-    @GetMapping("book/{glamp_id}")
-    @Operation(summary = "글램핑 예약 내역 불러오기 (배강국)", description =
-            "<strong> <p> owner_id (글램핑 PK) 는 필수입력입니다 </p> </strong>"
-                    )
-    @ApiResponse(description =
-            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
-                    "<p> SU(200) : 예약 내역 불러오기 성공 </p> " +
-                    "<p> RN(200) : 예약 내역 없음 </p> " +
-                    "<p> VF(400) : owner PK가 입력되지 않음 </p> " +
-                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
-            responseCode = "200",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
+                    mediaType = "application/json", schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
     public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
         return service.getOwnerReservation(p);
     }

@@ -13,6 +13,7 @@ import com.green.glampick.dto.request.owner.module.GlampingModule;
 import com.green.glampick.dto.request.owner.module.RoomModule;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
+import com.green.glampick.dto.response.owner.get.GetOwnerBookListResponseDto;
 import com.green.glampick.dto.response.owner.post.PostGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutGlampingInfoResponseDto;
@@ -304,13 +305,9 @@ public class OwnerServiceImpl implements OwnerService {
             throw new CustomException(CommonErrorCode.DBE);
         }
     }
-    public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
 
-
-
-
-
-
+    @Override
+    public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(ReservationGetRequestDto p) {
         return null;
     }
 
