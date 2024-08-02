@@ -33,6 +33,12 @@ import static com.green.glampick.common.swagger.description.admin.PostBannerSwag
 public class AdminController {
     private final AdminService service;
 
+    //  관리자 페이지 - 사장님 회원가입 정보 불러오기  //
+    public ResponseEntity<? super GetOwnerSignUpResponseDto> getOwnerSignUpInfo (@RequestParam Long ownerId) {
+//        return service.getOwnerSignUpInfo(ownerId);
+        return null;
+    }
+
     //  관리자 페이지 - 사장님 회원가입 승인 처리하기  //
     @PatchMapping("/access/owner/sign-up")
     @Operation(summary = "사장님 회원가입 승인 처리하기 (김수찬)", description = ACCESS_SIGN_UP_DESCRIPTION)
