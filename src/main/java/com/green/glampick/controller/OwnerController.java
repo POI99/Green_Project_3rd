@@ -168,8 +168,7 @@ public class OwnerController {
     public ResponseEntity<? super ResponseDto> updateRoom(@PathVariable("img_id") Long imgId, @PathVariable("room_id") Long roomId) {
         return service.deleteRoomImage(imgId, roomId);
     }
-
-
+  
 // 강국 =================================================================================================================
 
     @Operation(summary = "리뷰 답글 작성하기 (배강국)",
@@ -180,7 +179,7 @@ public class OwnerController {
                             responseCode = "200",
                             description =
                                     "성공에 대한 반환 값 입니다." +
-                                            " <p> userId : 유저 PK <p>  ex)13 </p>",
+                                            " <p> ownerId : 오너 PK <p>  ex)13 </p>",
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = PatchOwnerReviewInfoResponseDto.class)
@@ -205,6 +204,7 @@ public class OwnerController {
         dto.setOwnerId(ownerId);
         return service.getReview(dto);
     }
+
 //    @Operation(summary = "예약정보 취소 처리 하기",
 //            description =
 //                    "<strong> 변수명 </strong> reservationId : 예약 PK <p>  ex)21 </p>",
