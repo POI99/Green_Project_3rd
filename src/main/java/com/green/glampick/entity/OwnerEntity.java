@@ -44,7 +44,7 @@ public class OwnerEntity extends UpdatedAt {
     @Column(nullable = false) @ColumnDefault("1") @Comment("회원 탈퇴 시 -1")
     private Integer activateStatus;
 
-    @Column(length = 50) @Comment("사업자 등록증")
+    @Column(length = 100) @Comment("사업자 등록증")
     private String businessPaperImage;
 
 
