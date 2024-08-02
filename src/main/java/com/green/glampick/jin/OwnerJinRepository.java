@@ -11,17 +11,21 @@ import java.util.List;
 public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
     @Query(
             value =
-                    "SELECT glamp_id AS glampId " +
-                            ", COUNT(glamp_id) AS glampIdCount " +
-                            ", sum(pay_amount) AS payAmount " +
-                            ", DATE(created_at) as createdAt " +
-                            "FROM reservation_complete " +
-                            "Group BY glamp_id, created_at  " +
-                            "HAVING created_at BETWEEN DATE_ADD(NOW(), INTERVAL -7 DAY ) AND NOW() " +
-                            "AND glamp_id = :ownerId ",
+                    "SELECT C.room_name as roomName" +
+                            ", COUNT(A.room_id) as count" +
+                            ", B.owner_id " +
+                            ", DATE(A.created_at) as createdAt " +
+                            "FROM reservation_complete A " +
+                            "left JOIN glamping B " +
+                            "ON A.glamp_id = B.glamp_id " +
+                            "JOIN room C " +
+                            "ON C.room_id = A.room_id " +
+                            "GROUP BY A.room_id " +
+                            "HAVING createdAt BETWEEN DATE_ADD(NOW(), INTERVAL -:startDayId DAY ) AND DATE_ADD(NOW(), INTERVAL -:endDayId DAY) " +
+                            "AND B.owner_id = :ownerId ",
             nativeQuery = true
     )
-    List<GetPopularRoom> findPopularRoom(long ownerId);
+    List<GetPopularRoom> findPopularRoom(long ownerId, long startDayId, long endDayId);
 
     @Query(
             value =
@@ -64,7 +68,10 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
 
     @Query(
             value =
-                    "SELECT COUNT(glamp_id) FROM reservation_cancel WHERE glamp_id = :glampId ",
+                    "SELECT SUM(glampId) FROM(\n" +
+                            "SELECT COUNT(glamp_id) AS glampId, DATE(created_at) AS createdAt FROM reservation_cancel WHERE glamp_id = 2\n" +
+                            "Group BY DATE(created_at)\n" +
+                            "HAVING createdAt BETWEEN DATE_ADD(NOW(), INTERVAL -9 DAY) AND DATE_ADD(NOW(), INTERVAL -9 DAY) ) AS counts ",
             nativeQuery = true
     )
     long findCancelCount(long glampId);
@@ -76,11 +83,11 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
                             "FROM reservation_complete A " +
                             "JOIN glamping B " +
                             "ON A.glamp_id = B.glamp_id " +
-                            "WHERE B.owner_id = :ownerId AND A.created_at BETWEEN DATE_ADD(NOW(), INTERVAL -7 DAY) AND NOW() " +
+                            "WHERE B.owner_id = :ownerId AND A.created_at BETWEEN DATE_ADD(NOW(), INTERVAL -:startDayId DAY ) AND DATE_ADD(NOW(), INTERVAL -:endDayId DAY)  " +
                             "GROUP BY A.glamp_id) AS sub ",
             nativeQuery = true
     )
-    long findRevenue(long ownerId);
+    long findRevenue(long ownerId, long startDayId, long endDayId);
 
 
 }

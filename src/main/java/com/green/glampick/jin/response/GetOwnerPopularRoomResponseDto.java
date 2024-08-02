@@ -18,9 +18,11 @@ public class GetOwnerPopularRoomResponseDto extends ResponseDto {
 
 
     List<GetPopularRoom> popularRooms;
+
     private GetOwnerPopularRoomResponseDto(List<GetPopularRoom> popularRooms) {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.popularRooms = popularRooms;
+
 
     }
 

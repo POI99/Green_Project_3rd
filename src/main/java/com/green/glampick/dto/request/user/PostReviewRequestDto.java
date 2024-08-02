@@ -1,6 +1,7 @@
 package com.green.glampick.dto.request.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.green.glampick.entity.ReservationCompleteEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;

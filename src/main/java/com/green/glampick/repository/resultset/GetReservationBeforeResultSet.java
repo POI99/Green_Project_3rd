@@ -4,10 +4,11 @@ public interface GetReservationBeforeResultSet {
 
     String getGlampName();
     String getGlampImage();
-    long getGlampId();
+    Long getGlampId();
+    Long getRoomId();
     String getBookId();
     String getRoomName();
-    long getReservationId();
+    Long getReservationId();
     String getCheckInDate();
     String getCheckOutDate();
     String getCreatedAt();

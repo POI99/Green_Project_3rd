@@ -13,6 +13,9 @@ import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutRoomInfoResponseDto;
 import com.green.glampick.dto.response.user.GetReviewResponseDto;
+import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
+import com.green.glampick.repository.resultset.GetReservationCancelResultSet;
+import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -220,9 +223,19 @@ public class OwnerController {
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
     public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
-        return service.getOwnerReservation(p);
+
+            long ownerId = GlampingModule.ownerId(authenticationFacade);
+            GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
+            p.setOwnerId(ownerId);
+
+            List<GetReservationBeforeResultSet> before = service.getReservationBeforeList(p);
+            List<GetReservationCancelResultSet> cancle = service.getReservationCancelList(p);
+            List<GetReservationCompleteResultSet> complete = service.getReservationCompleteList(p);
+
+            GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(before,complete,cancle);
+            ResponseEntity<ResponseDto> success = dto.success(before, complete, cancle);
+
+            return success;
     }
-
-
 }
 

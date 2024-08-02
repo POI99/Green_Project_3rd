@@ -12,6 +12,9 @@ import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutRoomInfoResponseDto;
 import com.green.glampick.dto.response.user.GetReviewResponseDto;
+import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
+import com.green.glampick.repository.resultset.GetReservationCancelResultSet;
+import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -32,5 +35,8 @@ public interface OwnerService {
     ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p);
     ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p);
 
+    List<GetReservationBeforeResultSet> getReservationBeforeList(ReservationGetRequestDto p);
+    List<GetReservationCancelResultSet> getReservationCancelList(ReservationGetRequestDto p);
+    List<GetReservationCompleteResultSet> getReservationCompleteList(ReservationGetRequestDto p);
     ResponseEntity<? super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto dto);
 }

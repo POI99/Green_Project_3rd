@@ -1,6 +1,7 @@
 package com.green.glampick.repository;
 
 import com.green.glampick.entity.ReservationCompleteEntity;
+import com.green.glampick.repository.resultset.GetReservationCancelResultSet;
 import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,7 +38,32 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
     )
     List<GetReservationCompleteResultSet> getBook(Long userId);
 
+    @Query(
+            value =
+                    "SELECT " +
+                            "B.glamp_name AS glampName, " +
+                            "B.glamp_id AS glampId, " +
+                            "A.book_id AS bookId, " +
+                            "C.room_name AS roomName, " +
+                            "A.reservation_id AS reservationId, " +
+                            "A.check_in_date AS checkInDate, " +
+                            "A.check_out_date AS checkOutDate, " +
+                            "A.created_at AS createdAt, " +
+                            "C.check_in_time AS checkInTime, " +
+                            "C.check_out_time AS checkOutTime, " +
+                            "A.status AS status, " +
+                            "C.room_id AS roomId " +
+                            "FROM reservation_complete A " +
+                            "INNER JOIN	glamping B ON A.glamp_id = B.glamp_id " +
+                            "INNER JOIN room C ON A.room_id = C.room_id " +
+                            "WHERE B.owner_id = ?1 " +
+                            "ORDER BY A.check_in_date " +
+                            "LIMIT ?2 OFFSET ?3 ",
+            nativeQuery = true
+    )
+    List<GetReservationCompleteResultSet> getReservationCompleteByOwnerId(Long userId, int limit, int offset);
+
     @Transactional
-    ReservationCompleteEntity findByReservationId(long reservationId);
+    ReservationCompleteEntity findByReservationId(Long reservationId);
 
 }
