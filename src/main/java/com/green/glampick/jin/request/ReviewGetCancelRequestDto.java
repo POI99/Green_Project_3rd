@@ -11,4 +11,6 @@ public class ReviewGetCancelRequestDto {
     private long ownerId;
     @JsonIgnore
     private long glampId;
+    private long startDayId;
+    private long endDayId;
 }

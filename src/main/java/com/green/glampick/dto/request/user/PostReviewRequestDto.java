@@ -1,6 +1,7 @@
 package com.green.glampick.dto.request.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.green.glampick.entity.ReservationCompleteEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,7 +18,7 @@ public class PostReviewRequestDto {
     @JsonIgnore private long userId;
     @JsonIgnore private long reviewId;
     @JsonIgnore private long glampId;
-    private long reservationId;
+    private ReservationCompleteEntity reservationId;
     private String reviewContent;
     private int reviewStarPoint;
     @JsonIgnore private List<MultipartFile> ReviewImageFiles = new ArrayList<>();

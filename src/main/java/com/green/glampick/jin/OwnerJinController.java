@@ -29,9 +29,9 @@ public class OwnerJinController {
     private final OwnerJinService service;
 
 
-    // 이용 완료된 객실별 예약수, 매출
+    // 이용 완료된 객실별 예약수
     @GetMapping("/poproom")
-    @Operation(summary = "이용 완료된 객실별 예약수, 매출 (이진현)", description = USER_BOOK_DESCRIPTION)
+    @Operation(summary = "이용 완료된 객실별 예약수 (이진현)", description = USER_BOOK_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_BOOK_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerPopularRoomResponseDto.class)))
