@@ -33,6 +33,7 @@ public class AdminServiceImpl implements AdminService {
     private final BannerRepository bannerRepository;
     private final CustomFileUtils customFileUtils;
 
+    //  관리자 페이지 - 사장님 회원가입 승인 처리하기  //
     @Override
     public ResponseEntity<? super PatchAccessOwnerSignUpResponseDto> accessSignUp(PatchAccessOwnerSignUpRequestDto dto) {
 
@@ -48,6 +49,7 @@ public class AdminServiceImpl implements AdminService {
         return PatchAccessOwnerSignUpResponseDto.success();
     }
 
+    //  관리자 페이지 - 사장님 회원가입 반려 처리하기  //
     @Override
     public ResponseEntity<? super DeleteExclutionOwnerSignUpResponseDto> exclutionSignUp(Long ownerId) {
 
@@ -72,6 +74,7 @@ public class AdminServiceImpl implements AdminService {
 
     }
 
+    //  관리자 페이지 - 메인 화면 배너 추가하기  //
     @Override
     public ResponseEntity<? super PostBannerResponseDto> postBanner(List<MultipartFile> file) {
 
@@ -100,6 +103,7 @@ public class AdminServiceImpl implements AdminService {
         return PostBannerResponseDto.success();
     }
 
+    //  관리자 페이지 - 메인 화면 배너 삭제하기  //
     @Override
     public ResponseEntity<? super DeleteBannerResponseDto> deleteBanner(Long bannerId) {
 
