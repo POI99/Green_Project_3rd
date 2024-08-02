@@ -20,7 +20,7 @@ public enum OwnerErrorCode implements ErrorCode {
     PE(HttpStatus.BAD_REQUEST, "최대 인원은 기준 인원보다 작을 수 없습니다."),    // PERSONNEL_ERROR
     PUE(HttpStatus.BAD_REQUEST, "객실 인원은 2명부터 6명까지 가능합니다."),    // PERSONNEL_UPDATE_ERROR
     CF(HttpStatus.BAD_REQUEST, "파일을 삭제하지 못했습니다."),    // CANT_DELETE_FILE
-    CDF(HttpStatus.BAD_REQUEST, "객실 사진은 1개 이상 있어야합니다.");    // CANT_DELETE_FINAL
+    CFI(HttpStatus.BAD_REQUEST, "사진을 삭제할 수 없습니다. 사진 ID를 다시 확인해주세요.");    // CANT_FIND_IMAGE
     private final HttpStatus httpStatus;
     private final String message;
 }

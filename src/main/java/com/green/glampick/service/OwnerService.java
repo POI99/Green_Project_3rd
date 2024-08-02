@@ -25,8 +25,10 @@ public interface OwnerService {
     ResponseEntity<? super PostRoomInfoResponseDto> postRoomInfo(RoomPostRequestDto req, List<MultipartFile> img);
     ResponseEntity<? super PutGlampingInfoResponseDto> changeGlampingImage (MultipartFile image, long glampId);
     ResponseEntity<? super PutGlampingInfoResponseDto> updateGlampingInfo(GlampingPutRequestDto req);
-    ResponseEntity<? super PutRoomInfoResponseDto> updateRoomInfo(RoomPutRequestDto p);
-    ResponseEntity<? super ResponseDto> deleteRoomImage(Long imgId, Long roomId);
+    ResponseEntity<? super PutRoomInfoResponseDto> updateRoomInfo(List<MultipartFile> addImg, RoomPutRequestDto p);
+
+    ResponseEntity<? super ResponseDto> checkOwnerPassword(CheckPasswordRequestDto dto);
+
     ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p);
     ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p);
 

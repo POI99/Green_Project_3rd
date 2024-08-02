@@ -113,23 +113,23 @@ public class OwnerController {
     @ApiResponse(responseCode = "200", description = PUT_ROOM_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = PutRoomInfoResponseDto.class)))
-    public ResponseEntity<? super PutRoomInfoResponseDto> updateRoom(@RequestBody RoomPutRequestDto req) {
-        return service.updateRoomInfo(req);
+    public ResponseEntity<? super PutRoomInfoResponseDto> updateRoom(@RequestPart List<MultipartFile> addImg, @RequestPart RoomPutRequestDto req) {
+        return service.updateRoomInfo(addImg, req);
     }
 
-    //  사장님 페이지 - 객실 이미지 삭제하기  //
-    @DeleteMapping("room_image/{img_id}/{room_id}")
-    @Operation(summary = "객실 이미지 삭제 (김민지)", description = DELETE_ROOM_IMAGE_DESCRIPTION)
-    @ApiResponse(responseCode = "200", description = DELETE_ROOM_IMAGE_RESPONSE_ERROR_CODE,
-            content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class)))
-    public ResponseEntity<? super ResponseDto> updateRoomImageDelete(@PathVariable("img_id") Long imgId, @PathVariable("room_id") Long roomId) {
-        return service.deleteRoomImage(imgId, roomId);
-    }
+//    //  사장님 페이지 - 객실 삭제하기  //
+//    @DeleteMapping("room")
+//    @Operation(summary = "객실 삭제 (김민지)", description = DELETE_ROOM_IMAGE_DESCRIPTION)
+//    @ApiResponse(responseCode = "200", description = DELETE_ROOM_IMAGE_RESPONSE_ERROR_CODE,
+//            content = @Content(
+//                    mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class)))
+//    public ResponseEntity<? super ResponseDto> updateRoomImageDelete(@PathVariable("img_id") Long imgId, @PathVariable("room_id") Long roomId) {
+//        return service.deleteRoomImage(imgId, roomId);
+//    }
 
-    // post - 객실 사진
-    @PostMapping("room_image")
-    @Operation(summary = "객실 수정시에 사진 업로드 (김민지)", description =
+    // 비밀번호 확인
+    @PostMapping("password")
+    @Operation(summary = " (김민지)", description =
             "<p> <strong> 선택입력 : service[] </strong> </p>" +
                     "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
                     "<p> <strong> 시간 입력 형식 = 시:분:초  ex) 12:00:00 </strong> </p>")
@@ -142,13 +142,12 @@ public class OwnerController {
             content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ResponseDto.class)))
-    public ResponseEntity<? super ResponseDto> updateRoomImageInsert(@RequestPart List<MultipartFile> image, @RequestPart Long roomId) {
-//        return service.deleteRoomImage(imgId, roomId);
-        return null;
+    public ResponseEntity<? super ResponseDto> checkOwnerPassword(CheckPasswordRequestDto dto) {
+        return service.checkOwnerPassword(dto);
     }
 
     // put - 사장님 정보 수정
-    @PutMapping()
+    @PutMapping("info")
     @Operation(summary = "사장님 정보 수정 (김민지)", description =
             "<p> <strong> 선택입력 : service[] </strong> </p>" +
                     "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
