@@ -13,6 +13,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+
 @Getter
 @Setter
 public class GetMainGlampingListResponseDto extends ResponseDto {
@@ -23,7 +26,7 @@ public class GetMainGlampingListResponseDto extends ResponseDto {
 
     public GetMainGlampingListResponseDto(List<PopularGlampingItem> popular, List<PetFriendlyGlampingItem> petFriendly
                                 , List<MountainViewGlampingItem> mountainView) {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.popular = popular;
         this.petFriendly = petFriendly;
         this.mountainView = mountainView;

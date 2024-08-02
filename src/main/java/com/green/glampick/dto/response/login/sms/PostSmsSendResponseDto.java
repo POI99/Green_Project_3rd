@@ -8,6 +8,9 @@ import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+
 @Getter
 @Setter
 
@@ -16,7 +19,7 @@ public class PostSmsSendResponseDto extends ResponseDto{
     private int phoneKey;
 
     private PostSmsSendResponseDto(int phoneKey) {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.phoneKey = phoneKey;
     }
 

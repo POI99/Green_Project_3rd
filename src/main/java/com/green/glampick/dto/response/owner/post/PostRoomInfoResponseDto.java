@@ -8,6 +8,9 @@ import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+
 @Getter
 @Setter
 public class PostRoomInfoResponseDto extends ResponseDto {
@@ -16,25 +19,13 @@ public class PostRoomInfoResponseDto extends ResponseDto {
     private long roomId;
 
     public PostRoomInfoResponseDto(long roomId) {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.roomId = roomId;
     }
 
     public static ResponseEntity<ResponseDto> success(long roomId) {
         PostRoomInfoResponseDto result = new PostRoomInfoResponseDto(roomId);
         return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
-
-    // req가 올바르지 않음
-    public static ResponseEntity<ResponseDto> validationFailed(String errorMsg) {
-        ResponseDto result = new ResponseDto(ResponseCode.VALIDATION_FAILED, errorMsg);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    // 이미지 업로드 과정에서 오류 발생
-    public static ResponseEntity<ResponseDto> fileUploadError() {
-        ResponseDto result = new ResponseDto(ResponseCode.FILE_UPLOAD_ERROR, ResponseMessage.FILE_UPLOAD_ERROR);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
     }
 
 }

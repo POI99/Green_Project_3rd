@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
 
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+
 @Getter
 @Setter
 public class GetAccessTokenResponseDto extends ResponseDto {
@@ -17,7 +20,7 @@ public class GetAccessTokenResponseDto extends ResponseDto {
     Map map;
 
     private GetAccessTokenResponseDto(Map map) {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.map = map;
     }
 

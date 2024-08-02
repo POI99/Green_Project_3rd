@@ -16,6 +16,9 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashSet;
 import java.util.List;
 
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+
 @Getter
 @Setter
 @ToString
@@ -53,11 +56,11 @@ public class GetGlampingInformationResponseDto extends ResponseDto {
 
 
     private GetGlampingInformationResponseDto() {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
     }
 
     public static ResponseEntity<ResponseDto> success() {
-        ResponseDto result = new ResponseDto(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        ResponseDto result = new ResponseDto(SUCCESS_CODE, SUCCESS_MESSAGE);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 

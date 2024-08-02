@@ -13,6 +13,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+
 @Getter
 @Setter
 public class GetOwnerBookListResponseDto extends ResponseDto {
@@ -23,7 +26,7 @@ public class GetOwnerBookListResponseDto extends ResponseDto {
 
     private GetOwnerBookListResponseDto(List<BookBeforeItem> before
         , List<BookCompleteItem> complete, List<BookCancelItem> cancel) {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.before = before;
         this.complete = complete;
         this.cancel = cancel;

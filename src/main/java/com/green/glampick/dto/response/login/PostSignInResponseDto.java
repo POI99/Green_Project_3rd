@@ -8,6 +8,9 @@ import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+
 @Getter
 @Setter
 public class PostSignInResponseDto extends ResponseDto {
@@ -15,7 +18,7 @@ public class PostSignInResponseDto extends ResponseDto {
     private String accessToken;
 
     private PostSignInResponseDto(String accessToken) {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.accessToken = accessToken;
     }
 

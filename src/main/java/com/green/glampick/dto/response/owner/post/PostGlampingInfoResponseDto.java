@@ -7,6 +7,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+
 @Getter
 @Setter
 public class PostGlampingInfoResponseDto extends ResponseDto {
@@ -15,7 +19,7 @@ public class PostGlampingInfoResponseDto extends ResponseDto {
     private long glampId;
 
     private PostGlampingInfoResponseDto(long glampId) {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.glampId = glampId;
     }
 
@@ -24,16 +28,5 @@ public class PostGlampingInfoResponseDto extends ResponseDto {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    // 정보가 덜 입력됨
-    public static ResponseEntity<ResponseDto> validationFailed(String errorMsg) {
-        ResponseDto result = new ResponseDto(ResponseCode.VALIDATION_FAILED, errorMsg);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    // 이미지 업로드 과정에서 오류 발생
-    public static ResponseEntity<ResponseDto> fileUploadError() {
-        ResponseDto result = new ResponseDto(ResponseCode.FILE_UPLOAD_ERROR, ResponseMessage.FILE_UPLOAD_ERROR);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
-    }
 
 }

@@ -10,12 +10,15 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+
 @Getter
 @Setter
 public class PostBannerResponseDto extends ResponseDto {
 
     private PostBannerResponseDto() {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
     }
 
     public static ResponseEntity<PostBannerResponseDto> success() {

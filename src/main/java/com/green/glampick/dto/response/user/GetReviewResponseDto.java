@@ -17,6 +17,9 @@ import org.springframework.http.ResponseEntity;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+
 @Setter
 @Getter
 
@@ -26,12 +29,12 @@ public class GetReviewResponseDto extends ResponseDto {
     List<UserReviewListItem> reviewListItems;
 
     private GetReviewResponseDto(long totalReviewsCount, List<UserReviewListItem> reviewListItems) {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.TotalReviewsCount = totalReviewsCount;
         this.reviewListItems = reviewListItems;
     }
     public GetReviewResponseDto(List<UserReviewListItem> reviewListItems) {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.reviewListItems = reviewListItems;
     }
 
