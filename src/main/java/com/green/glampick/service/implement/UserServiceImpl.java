@@ -141,7 +141,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public ResponseEntity<? super PostReviewResponseDto> postReview(PostReviewRequestDto dto, List<MultipartFile> mf) {
-
         ReviewEntity reviewEntity = new ReviewEntity();
         GlampingEntity glampingEntity = new GlampingEntity();
         ReservationCompleteEntity reservationCompleteEntity = new ReservationCompleteEntity();
@@ -162,6 +161,7 @@ public class UserServiceImpl implements UserService {
 
 
         try {
+
 //            ReservationCompleteEntity reservationCompleteEntity = reservationCompleteRepository.findByReservationId(dto.getReservationId());
             reviewEntity.setUserId(userRepository.findByUserId(dto.getUserId()));
             reviewEntity.setReservationId(reservationCompleteEntity);
@@ -170,7 +170,6 @@ public class UserServiceImpl implements UserService {
 //            reviewEntity.setGlampId(glampingRepository.findByGlampId(dto.getGlampId()));
             reservationCompleteEntity.setGlamping(glampingEntity);
             reviewEntity.setGlampId(reservationCompleteEntity.getGlamping());
-
 
             reviewEntity = reviewRepository.save(reviewEntity);
             reviewRepository.findStarPointAvg(dto.getGlampId());
