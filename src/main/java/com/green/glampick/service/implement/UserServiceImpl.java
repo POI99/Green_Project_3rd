@@ -40,8 +40,8 @@ public class UserServiceImpl implements UserService {
     private final FavoriteGlampingRepository favoriteGlampingRepository;
     private final CustomFileUtils customFileUtils;
     private final ReviewImageRepository reviewImageRepository;
-    private final GlampingStarRepository glampingStarRepository;
-
+    private final GlampingRepository glampingRepository;
+    private final OwnerRepository ownerRepository;
 
     //  마이페이지 - 예약 내역 불러오기  //
     @Override
@@ -142,6 +142,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public ResponseEntity<? super PostReviewResponseDto> postReview(PostReviewRequestDto dto, List<MultipartFile> mf) {
 
+        ReviewEntity reviewEntity = new ReviewEntity();
+        GlampingEntity glampingEntity = new GlampingEntity();
+        ReservationCompleteEntity reservationCompleteEntity = new ReservationCompleteEntity();
+
         try {
             dto.setUserId(authenticationFacade.getLoginUserId());
             if (dto.getUserId() <= 0) {
@@ -157,17 +161,20 @@ public class UserServiceImpl implements UserService {
         }
 
 
-        ReviewEntity reviewEntity = new ReviewEntity();
-
         try {
-            ReservationCompleteEntity reservationCompleteEntity = reservationCompleteRepository.findByReservationId(dto.getReservationId());
+//            ReservationCompleteEntity reservationCompleteEntity = reservationCompleteRepository.findByReservationId(dto.getReservationId());
+            reviewEntity.setUserId(userRepository.findByUserId(dto.getUserId()));
             reviewEntity.setReservationId(reservationCompleteEntity);
             reviewEntity.setReviewContent(dto.getReviewContent());
             reviewEntity.setReviewStarPoint(dto.getReviewStarPoint());
+//            reviewEntity.setGlampId(glampingRepository.findByGlampId(dto.getGlampId()));
+            reservationCompleteEntity.setGlamping(glampingEntity);
             reviewEntity.setGlampId(reservationCompleteEntity.getGlamping());
+            reviewEntity.setReviewComment(dto.getReviewComment());
+
             reviewEntity = reviewRepository.save(reviewEntity);
-            glampingStarRepository.fin(dto.getReservationId());
-            glampingStarRepository.findStarPointAvg(reservationCompleteEntity.getGlamping().getGlampId());
+            reviewRepository.findStarPointAvg(dto.getGlampId());
+            reviewRepository.fin(dto.getReservationId());
         } catch (Exception e) {
             e.printStackTrace();
             throw new CustomException(UserErrorCode.RIE);

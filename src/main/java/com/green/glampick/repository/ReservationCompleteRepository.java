@@ -1,7 +1,7 @@
 package com.green.glampick.repository;
 
+import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.ReservationCompleteEntity;
-import com.green.glampick.repository.resultset.GetReservationCancelResultSet;
 import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -65,5 +65,10 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
 
     @Transactional
     ReservationCompleteEntity findByReservationId(Long reservationId);
+
+    GlampingEntity findByGlamping(GlampingEntity glamping);
+
+
+
 
 }
