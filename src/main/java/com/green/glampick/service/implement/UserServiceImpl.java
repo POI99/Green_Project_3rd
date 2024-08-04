@@ -170,7 +170,7 @@ public class UserServiceImpl implements UserService {
 //            reviewEntity.setGlampId(glampingRepository.findByGlampId(dto.getGlampId()));
             reservationCompleteEntity.setGlamping(glampingEntity);
             reviewEntity.setGlampId(reservationCompleteEntity.getGlamping());
-            reviewEntity.setReviewComment(dto.getReviewComment());
+
 
             reviewEntity = reviewRepository.save(reviewEntity);
             reviewRepository.findStarPointAvg(dto.getGlampId());
