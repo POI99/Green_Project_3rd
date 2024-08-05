@@ -39,4 +39,10 @@ public interface AdminService {
     //  관리자 페이지 - 글램핑 등록 반려 처리하기  //
     ResponseEntity<? super PatchGlampingExclutionResponseDto> exclutionGlamping(Long glampId);
 
+    //  관리자 페이지 - 회원탈퇴 대기 사장님 리스트 불러오기  //
+    ResponseEntity<? super getDeleteOwnerListResponseDto> deleteOwnerList();
+
+    //  관리자 페이지 - 사장님 회원탈퇴 승인 처리하기  //
+    ResponseEntity<? super PatchDeleteOwnerResponseDto> deleteOwner(@RequestParam Long ownerId);
+
 }
