@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "reservation_complete")
+@Entity
 @Table(name = "reservation_complete")
 public class ReservationCompleteEntity extends CreatedAt{
 
