@@ -1,13 +1,16 @@
 package com.green.glampick.repository;
 
+import com.green.glampick.dto.response.owner.get.GetOwnerBookBeforeCountResponseDto;
 import com.green.glampick.entity.ReservationBeforeEntity;
 import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
 @Repository
@@ -62,6 +65,12 @@ public interface ReservationBeforeRepository extends JpaRepository<ReservationBe
 
     boolean existsByReservationId(Long reservationId);
 
-    @Query("SELECT r FROM reservation_before r JOIN r.glamping g JOIN r.room rm JOIN r.user u WHERE r.checkOutDate < :dateTime")
+    @Query("SELECT r FROM ReservationBeforeEntity r JOIN r.glamping g JOIN r.room rm JOIN r.user u WHERE r.checkOutDate < :dateTime")
     List<ReservationBeforeEntity> findAllByCheckOutDateBefore(LocalDate dateTime);
+
+    @Query("SELECT rb.checkInDate AS checkInDate, COUNT(rb.checkInDate) AS countBefore " +
+            "FROM  ReservationBeforeEntity rb " +
+            "WHERE FUNCTION('MONTH', rb.checkInDate) = :month " +
+            "GROUP BY rb.checkInDate")
+    List<GetOwnerBookBeforeCountResponseDto> getCountFromReservationBefore(@Param("month")int month);
 }

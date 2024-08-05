@@ -72,8 +72,9 @@ public class OwnerController {
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = PostBusinessPaperResponseDto.class)))
     public ResponseEntity<? super PostBusinessPaperResponseDto> postBusinessInfo
-            (@RequestPart MultipartFile file)
-    { return service.postBusinessInfo(file); }
+            (@RequestPart MultipartFile file) {
+        return service.postBusinessInfo(file);
+    }
 
 
 // 민지 =================================================================================================================
@@ -178,7 +179,7 @@ public class OwnerController {
 //        return service.deleteRoomImage(imgId, roomId);
         return null;
     }
-  
+
 // 강국 =================================================================================================================
 
     //  사장님 페이지 - 리뷰 답글 작성하기  //
@@ -200,7 +201,7 @@ public class OwnerController {
     @ApiResponse(responseCode = "200", description = GLAMPING_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetReviewResponseDto.class)))
-    public ResponseEntity<?super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto dto) {
+    public ResponseEntity<? super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto dto) {
         log.info("controller p: {}", dto);
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
@@ -228,24 +229,34 @@ public class OwnerController {
 
     // 사장님 페이지 - 예약 내역 불러오기 //
     @GetMapping("/book")
-    @Operation(summary = "글램핑에 예약된 내역 불러오기 (배강국)", description = BOOK_FROM_USER_REVIEW_VIEW_DESCRIPTION)
+    @Operation(summary = "사장이 글램핑에 디테일한 예약 내역 불러오기 (배강국)", description = BOOK_FROM_USER_REVIEW_VIEW_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = BOOK_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
     public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
 
-            long ownerId = GlampingModule.ownerId(authenticationFacade);
-            GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
-            p.setOwnerId(ownerId);
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
+        p.setOwnerId(ownerId);
 
-            List<GetReservationBeforeResultSet> before = service.getReservationBeforeList(p);
-            List<GetReservationCancelResultSet> cancle = service.getReservationCancelList(p);
-            List<GetReservationCompleteResultSet> complete = service.getReservationCompleteList(p);
+        List<GetReservationBeforeResultSet> before = service.getReservationBeforeList(p);
+        List<GetReservationCancelResultSet> cancle = service.getReservationCancelList(p);
+        List<GetReservationCompleteResultSet> complete = service.getReservationCompleteList(p);
 
-            GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(before,complete,cancle);
-            ResponseEntity<ResponseDto> success = dto.success(before, complete, cancle);
+        GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(before, complete, cancle);
+        ResponseEntity<ResponseDto> success = dto.success(before, complete, cancle);
 
-            return success;
+        return success;
+    }
+
+    @GetMapping("/book/count")
+    @Operation(summary = "사장이 글램핑에 디테일한 예약 내역 불러오기 (배강국)", description = "작성해야함")
+    @ApiResponse(responseCode = "200", description = "작성해야함",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
+    public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservationCount(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
+        service.getTotalCount("2024-08-05");
+        return null;
     }
 }
 

@@ -39,5 +39,7 @@ public interface OwnerService {
     List<GetReservationBeforeResultSet> getReservationBeforeList(ReservationGetRequestDto p);
     List<GetReservationCancelResultSet> getReservationCancelList(ReservationGetRequestDto p);
     List<GetReservationCompleteResultSet> getReservationCompleteList(ReservationGetRequestDto p);
+
+    Long getTotalCount(String date);
     ResponseEntity<? super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto dto);
 }

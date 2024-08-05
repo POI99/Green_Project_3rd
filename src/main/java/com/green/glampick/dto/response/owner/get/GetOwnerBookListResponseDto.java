@@ -31,6 +31,7 @@ public class GetOwnerBookListResponseDto extends ResponseDto {
         this.cancel = cancel;
     }
 
+
     public ResponseEntity<ResponseDto> success(List<GetReservationBeforeResultSet> before
             , List<GetReservationCompleteResultSet> complete, List<GetReservationCancelResultSet> cancel) {
         GetOwnerBookListResponseDto result = new GetOwnerBookListResponseDto(before, complete, cancel);
