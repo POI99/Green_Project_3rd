@@ -66,7 +66,7 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
     @Transactional
     ReservationCompleteEntity findByReservationId(Long reservationId);
 
-    GlampingEntity findByGlamping(GlampingEntity glamping);
+
 
 
 
