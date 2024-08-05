@@ -29,6 +29,7 @@ public class GlampingModule {
         }
         return loginedId;
     }
+
     //사장 권한 체크
     public static void roleCheck(Role role) {
         if (role != Role.ROLE_OWNER) {
@@ -114,10 +115,9 @@ public class GlampingModule {
 
     // 사용자가 가진 글램핑과 입력받은 pk 가 일치하는지 확인
     public static void isGlampIdOk(GlampingRepository glampingRepository,
-                                   OwnerRepository ownerRepository, long glampId, Long ownerId) {
+                                   OwnerEntity owner, long glampId) {
         Long readGlampId = null;
         try {
-            OwnerEntity owner = ownerRepository.findByOwnerId(ownerId);
             GlampingEntity glamp = glampingRepository.findByOwner(owner);
             readGlampId = glamp.getGlampId();
         } finally {

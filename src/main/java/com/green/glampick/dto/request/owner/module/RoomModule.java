@@ -128,12 +128,11 @@ public class RoomModule {
 
     // 사용자가 가진 글램핑과 입력받은 룸 pk 가 일치하는지 확인
     public static void isRoomIdOk(RoomRepository roomRepository, GlampingRepository glampingRepository,
-                                  OwnerRepository ownerRepository, long roomId, Long ownerId) {
+                                  OwnerEntity owner, long roomId) {
         GlampingEntity readGlamp = null;
         GlampingEntity glamp = null;
         RoomEntity room = null;
         try {
-            OwnerEntity owner = ownerRepository.findByOwnerId(ownerId);
             readGlamp = glampingRepository.findByOwner(owner);
             room = roomRepository.findByRoomId(roomId);
             glamp = room.getGlampId();

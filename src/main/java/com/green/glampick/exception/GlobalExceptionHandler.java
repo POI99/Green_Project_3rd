@@ -68,6 +68,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Object> handleEntityExceptions(Exception e) {
         log.error("Exception - handlerException : {}", e.getMessage());
+        e.printStackTrace();
         return handleExceptionInternal(CommonErrorCode.INVALID_ENTITY);
     }
 

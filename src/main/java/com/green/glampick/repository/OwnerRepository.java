@@ -1,6 +1,7 @@
 package com.green.glampick.repository;
 
 import com.green.glampick.common.Role;
+import com.green.glampick.dto.response.owner.get.OwnerInfoResponseDto;
 import com.green.glampick.entity.OwnerEntity;
 import com.green.glampick.entity.ReviewEntity;
 import com.green.glampick.entity.UserEntity;
@@ -18,5 +19,11 @@ public interface OwnerRepository extends JpaRepository<OwnerEntity, Long> {
     @Transactional
     @Query( "update OwnerEntity oe set oe.role = :role where oe.ownerId = :ownerId" )
     void updateOwnerRole (Role role, Long ownerId);
+
+    @Modifying
+    @Transactional
+    @Query( "select o.ownerEmail, o.ownerName, o.businessNumber, o.ownerPhone" +
+            " from OwnerEntity o where o.ownerId = :ownerId" )
+    OwnerInfoResponseDto getOwnerInfo(Long ownerId);
 
 }

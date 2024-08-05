@@ -7,6 +7,7 @@ import com.green.glampick.dto.request.owner.module.GlampingModule;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookListResponseDto;
+import com.green.glampick.dto.response.owner.get.OwnerInfoResponseDto;
 import com.green.glampick.dto.response.owner.post.PostBusinessPaperResponseDto;
 import com.green.glampick.dto.response.owner.post.PostGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
@@ -20,6 +21,7 @@ import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,14 +74,15 @@ public class OwnerController {
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = PostBusinessPaperResponseDto.class)))
     public ResponseEntity<? super PostBusinessPaperResponseDto> postBusinessInfo
-            (@RequestPart MultipartFile file)
-    { return service.postBusinessInfo(file); }
+            (@RequestPart MultipartFile file) {
+        return service.postBusinessInfo(file);
+    }
 
 
 // 민지 =================================================================================================================
 
     //  사장님 페이지 - 글램핑 정보 등록하기  //
-    @PostMapping(value = "glamping", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "glamping")//, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "글램핑 정보 등록 (김민지)", description = POST_GLAMPING_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = POST_GLAMPING_RESPONSE_ERROR_CODE,
             content = @Content(
@@ -100,17 +103,17 @@ public class OwnerController {
     }
 
     //  사장님 페이지 - 글램핑 대표 이미지 수정하기  //
-    @PutMapping("glamping/image")
+    @PatchMapping("glamping/image")
     @Operation(summary = "글램핑 대표 이미지 수정 (김민지)", description = UPDATE_GLAMPING_IMAGE_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = UPDATE_GLAMPING_IMAGE_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = PutGlampingInfoResponseDto.class)))
-    public ResponseEntity<? super PutGlampingInfoResponseDto> updateGlampingImage(@RequestPart MultipartFile image, @RequestPart long glampId) {
+    public ResponseEntity<? super PutGlampingInfoResponseDto> updateGlampingImage(@RequestPart MultipartFile image, @RequestPart @Schema(example = "1") long glampId) {
         return service.changeGlampingImage(image, glampId);
     }
 
     //  사장님 페이지 - 객실 정보 등록하기  //
-    @PostMapping(value = "room", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "room")//, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "객실 정보 등록 (김민지)", description = POST_ROOM_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = POST_ROOM_RESPONSE_ERROR_CODE,
             content = @Content(
@@ -122,63 +125,65 @@ public class OwnerController {
 
     //  사장님 페이지 - 객실 정보 수정하기  //
     @PutMapping("room")
-    @Operation(summary = "객실 정보 수정 (김민지)", description = PUT_ROOM_DESCRIPTION)
-    @ApiResponse(responseCode = "200", description = PUT_ROOM_RESPONSE_ERROR_CODE,
+    @Operation(summary = "객실 정보 수정 (김민지)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = PutRoomInfoResponseDto.class)))
     public ResponseEntity<? super PutRoomInfoResponseDto> updateRoom(@RequestPart List<MultipartFile> addImg, @RequestPart RoomPutRequestDto req) {
         return service.updateRoomInfo(addImg, req);
     }
 
-//    //  사장님 페이지 - 객실 삭제하기  //
-//    @DeleteMapping("room")
-//    @Operation(summary = "객실 삭제 (김민지)", description = DELETE_ROOM_IMAGE_DESCRIPTION)
-//    @ApiResponse(responseCode = "200", description = DELETE_ROOM_IMAGE_RESPONSE_ERROR_CODE,
-//            content = @Content(
-//                    mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class)))
-//    public ResponseEntity<? super ResponseDto> updateRoomImageDelete(@PathVariable("img_id") Long imgId, @PathVariable("room_id") Long roomId) {
-//        return service.deleteRoomImage(imgId, roomId);
-//    }
+    //  사장님 페이지 - 객실 삭제하기  //
+    @DeleteMapping("room/{room_id}")
+    @Operation(summary = "객실 삭제 (김민지)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class)))
+    public ResponseEntity<? super ResponseDto> deleteRoom(@PathVariable("room_id") @NotNull Long roomId) {
+        return service.deleteRoom(roomId);
+    }
 
     // 비밀번호 확인
-    @PostMapping("password")
-    @Operation(summary = " (김민지)", description =
-            "<p> <strong> 선택입력 : service[] </strong> </p>" +
-                    "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
-                    "<p> <strong> 시간 입력 형식 = 시:분:초  ex) 12:00:00 </strong> </p>")
-    @ApiResponse(description =
-            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
-                    "<p> SU(200) : 정보 수정 성공 </p> " +
-                    "<p> VF(400) : request 데이터 입력 오류 </p> " +
-                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
-            responseCode = "200",
+    @PostMapping("info")
+    @Operation(summary = "사장님 비밀번호 확인 (김민지)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
             content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = ResponseDto.class)))
-    public ResponseEntity<? super ResponseDto> checkOwnerPassword(CheckPasswordRequestDto dto) {
+                    mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class)))
+    public ResponseEntity<? super ResponseDto> checkOwnerPassword(@RequestBody @Valid CheckPasswordRequestDto dto) {
         return service.checkOwnerPassword(dto);
     }
 
-    // put - 사장님 정보 수정
-    @PutMapping("info")
-    @Operation(summary = "사장님 정보 수정 (김민지)", description =
-            "<p> <strong> 선택입력 : service[] </strong> </p>" +
-                    "<p> <strong> 나머지 모든 데이터는 필수 입력입니다. </strong> </p>" +
-                    "<p> <strong> 시간 입력 형식 = 시:분:초  ex) 12:00:00 </strong> </p>")
-    @ApiResponse(description =
-            "<p> <strong> ResponseCode 응답 코드 </strong> </p> " +
-                    "<p> SU(200) : 정보 수정 성공 </p> " +
-                    "<p> VF(400) : request 데이터 입력 오류 </p> " +
-                    "<p> DBE(500) : 데이터베이스 서버 오류 </p> ",
-            responseCode = "200",
+    // get - 사장님 정보 불러오기
+    @GetMapping("info")
+    @Operation(summary = "사장님 정보 불러오기 (김민지)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
             content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = ResponseDto.class)))
-    public ResponseEntity<? super ResponseDto> updateOwnerInfo() {
+                    mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class)))
+    public ResponseEntity<? super OwnerInfoResponseDto> getOwnerInfo() {
+        return service.getOwnerInfo();
+    }
+
+    // patch - 사장님 정보 수정
+    @PatchMapping("info")
+    @Operation(summary = "사장님 정보 수정 (김민지)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class)))
+    public ResponseEntity<? super ResponseDto> updateOwnerInfo(@ModelAttribute @ParameterObject @Valid PatchOwnerInfoRequestDto dto) {
+        return service.patchOwnerInfo(dto);
+    }
+
+    // patch - 탈퇴 승인 요청
+    @PatchMapping("withdraw")
+    @Operation(summary = "사장님 탈퇴 승인 요청 (김민지)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class)))
+    public ResponseEntity<? super ResponseDto> withdrawOwner(@ModelAttribute @ParameterObject @Valid OwnerWithdrawRequestDto dto) {
 //        return service.deleteRoomImage(imgId, roomId);
         return null;
     }
-  
+
 // 강국 =================================================================================================================
 
     //  사장님 페이지 - 리뷰 답글 작성하기  //
@@ -200,7 +205,7 @@ public class OwnerController {
     @ApiResponse(responseCode = "200", description = GLAMPING_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetReviewResponseDto.class)))
-    public ResponseEntity<?super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto dto) {
+    public ResponseEntity<? super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto dto) {
         log.info("controller p: {}", dto);
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
@@ -234,18 +239,18 @@ public class OwnerController {
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
     public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
 
-            long ownerId = GlampingModule.ownerId(authenticationFacade);
-            GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
-            p.setOwnerId(ownerId);
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
+        p.setOwnerId(ownerId);
 
-            List<GetReservationBeforeResultSet> before = service.getReservationBeforeList(p);
-            List<GetReservationCancelResultSet> cancle = service.getReservationCancelList(p);
-            List<GetReservationCompleteResultSet> complete = service.getReservationCompleteList(p);
+        List<GetReservationBeforeResultSet> before = service.getReservationBeforeList(p);
+        List<GetReservationCancelResultSet> cancle = service.getReservationCancelList(p);
+        List<GetReservationCompleteResultSet> complete = service.getReservationCompleteList(p);
 
-            GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(before,complete,cancle);
-            ResponseEntity<ResponseDto> success = dto.success(before, complete, cancle);
+        GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(before, complete, cancle);
+        ResponseEntity<ResponseDto> success = dto.success(before, complete, cancle);
 
-            return success;
+        return success;
     }
 }
 
