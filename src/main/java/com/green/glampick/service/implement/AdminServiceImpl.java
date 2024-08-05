@@ -2,6 +2,7 @@ package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.common.Role;
+import com.green.glampick.dto.object.admin.GetAccessOwnerSignUpListItem;
 import com.green.glampick.dto.response.admin.*;
 import com.green.glampick.entity.BannerEntity;
 import com.green.glampick.entity.GlampingEntity;
@@ -15,6 +16,7 @@ import com.green.glampick.repository.BannerRepository;
 import com.green.glampick.repository.GlampingRepository;
 import com.green.glampick.repository.OwnerRepository;
 import com.green.glampick.repository.resultset.GetAccessGlampingListResultSet;
+import com.green.glampick.repository.resultset.GetAccessOwnerSignUpListResultSet;
 import com.green.glampick.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,10 +66,9 @@ public class AdminServiceImpl implements AdminService {
 
         try {
 
-            List<OwnerEntity> ownerEntity = new ArrayList<>();
-            ownerEntity = adminRepository.getAccessOwnerSignUpList();
+            List<GetAccessOwnerSignUpListResultSet> list = adminRepository.getAccessOwnerSignUpList();
 
-            return GetAccessOwnerSignUpListResponseDto.success(ownerEntity);
+            return GetAccessOwnerSignUpListResponseDto.success(list);
 
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
@@ -179,7 +180,9 @@ public class AdminServiceImpl implements AdminService {
 
     }
 
+    //  관리자 페이지 - 승인 대기중인 글램핑장 리스트 불러오기  //
     @Override
+    @Transactional
     public ResponseEntity<? super GetAccessGlampingListResponseDto> getAccessGlampingList() {
 
         List<GetAccessGlampingListResultSet> list = adminRepository.getAccessGlampingList();
@@ -190,6 +193,7 @@ public class AdminServiceImpl implements AdminService {
 
     //  관리자 페이지 - 사장님 글램핑 등록 상세 정보 불러오기  //
     @Override
+    @Transactional
     public ResponseEntity<? super GetAccessGlampingInfoResponseDto> getAccessGlamping(Long glampId) {
         GlampingEntity glampingEntity = new GlampingEntity();
 
@@ -219,6 +223,20 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public ResponseEntity<? super PatchGlampingExclutionResponseDto> exclutionGlamping(Long glampId) {
+        return null;
+    }
+
+    //  관리자 페이지 - 회원탈퇴 대기 사장님 리스트 불러오기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super getDeleteOwnerListResponseDto> deleteOwnerList() {
+        return null;
+    }
+
+    //  관리자 페이지 - 사장님 회원탈퇴 승인 처리하기  //
+    @Transactional
+    @Override
+    public ResponseEntity<? super PatchDeleteOwnerResponseDto> deleteOwner(Long ownerId) {
         return null;
     }
 

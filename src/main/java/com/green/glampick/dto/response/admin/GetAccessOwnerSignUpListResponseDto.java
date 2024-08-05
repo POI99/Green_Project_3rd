@@ -1,7 +1,9 @@
 package com.green.glampick.dto.response.admin;
 
 import com.green.glampick.dto.ResponseDto;
+import com.green.glampick.dto.object.admin.GetAccessOwnerSignUpListItem;
 import com.green.glampick.entity.OwnerEntity;
+import com.green.glampick.repository.resultset.GetAccessOwnerSignUpListResultSet;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
@@ -16,15 +18,15 @@ import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 @Setter
 public class GetAccessOwnerSignUpListResponseDto extends ResponseDto {
 
-    private List<OwnerEntity> ownerEntities;
+    private List<GetAccessOwnerSignUpListResultSet> list;
 
-    private GetAccessOwnerSignUpListResponseDto(List<OwnerEntity> ownerEntities) {
+    private GetAccessOwnerSignUpListResponseDto(List<GetAccessOwnerSignUpListResultSet> list) {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
-        this.ownerEntities = ownerEntities;
+        this.list = list;
     }
 
-    public static ResponseEntity<GetAccessOwnerSignUpListResponseDto> success(List<OwnerEntity> ownerEntities) {
-        GetAccessOwnerSignUpListResponseDto result = new GetAccessOwnerSignUpListResponseDto(ownerEntities);
+    public static ResponseEntity<GetAccessOwnerSignUpListResponseDto> success(List<GetAccessOwnerSignUpListResultSet> list) {
+        GetAccessOwnerSignUpListResponseDto result = new GetAccessOwnerSignUpListResponseDto(list);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
