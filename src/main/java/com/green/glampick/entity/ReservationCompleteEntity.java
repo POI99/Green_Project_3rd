@@ -16,9 +16,9 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "reservation_complete")
+@Entity
 @Table(name = "reservation_complete")
-public class ReservationCompleteEntity extends CreatedAt{
+public class ReservationCompleteEntity extends CreatedAt {
 
     //예약 테이블
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("객실 ID")
@@ -31,13 +31,13 @@ public class ReservationCompleteEntity extends CreatedAt{
     @JoinColumn(name = "user_id", nullable = false) @Comment("유저 ID")
     private UserEntity user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "glamp_id", nullable = false) @Comment("글램핑 ID")
     private GlampingEntity glamping;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = RoomEntity.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false) @Comment("객실 ID")
-    private RoomEntity roomId;
+    private RoomEntity room;
 
     @Column(length = 10, nullable = false) @Comment("예약자 성함")
     private String inputName;

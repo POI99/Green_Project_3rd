@@ -1,11 +1,14 @@
 package com.green.glampick.repository;
 
+import com.green.glampick.dto.response.owner.get.GetOwnerBookCancelCountResponseDto;
 import com.green.glampick.entity.ReservationCancelEntity;
 import com.green.glampick.repository.resultset.GetReservationCancelResultSet;
 import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ReservationCancelRepository extends JpaRepository<ReservationCancelEntity, Long> {
@@ -59,4 +62,10 @@ public interface ReservationCancelRepository extends JpaRepository<ReservationCa
             nativeQuery = true
     )
     List<GetReservationCancelResultSet> getReservationCancelByOwnerId(Long userId, int limit, int offset);
+
+    @Query("SELECT rc.checkInDate AS checkInDate, COUNT(rc.checkInDate) AS countBefore " +
+            "FROM  ReservationCancelEntity rc " +
+            "WHERE FUNCTION('MONTH', rc.checkInDate) = :month " +
+            "GROUP BY rc.checkInDate")
+    List<GetOwnerBookCancelCountResponseDto> getCountFromReservationCancel(@Param("month")int month);
 }

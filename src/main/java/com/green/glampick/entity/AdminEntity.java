@@ -32,7 +32,7 @@ public class AdminEntity extends CreatedAt {
     @Column(length = 22) @Comment("휴대폰 번호")
     private String adminPhone;
 
-    @Column(nullable = false) @Enumerated(value = EnumType.STRING) @Comment("유저 권한") @Convert(converter = RoleConverter.class)
+    @Column(nullable = false) @Comment("유저 권한") @Convert(converter = RoleConverter.class)
     private Role role;
 
 

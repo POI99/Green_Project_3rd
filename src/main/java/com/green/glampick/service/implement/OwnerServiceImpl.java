@@ -9,6 +9,9 @@ import com.green.glampick.dto.request.owner.module.GlampingModule;
 import com.green.glampick.dto.request.owner.module.RoomModule;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
+import com.green.glampick.dto.response.owner.get.GetOwnerBookBeforeCountResponseDto;
+import com.green.glampick.dto.response.owner.get.GetOwnerBookCancelCountResponseDto;
+import com.green.glampick.dto.response.owner.get.GetOwnerBookCompleteCountResponseDto;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookListResponseDto;
 import com.green.glampick.dto.response.owner.get.OwnerInfoResponseDto;
 import com.green.glampick.dto.response.owner.post.PostBusinessPaperResponseDto;
@@ -23,7 +26,7 @@ import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.OwnerErrorCode;
 import com.green.glampick.exception.errorCode.UserErrorCode;
-import com.green.glampick.mapper.OwnerMapper;
+
 import com.green.glampick.repository.*;
 import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
 import com.green.glampick.repository.resultset.GetReservationCancelResultSet;
@@ -35,7 +38,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,13 +46,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
-import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 
 @Slf4j
 @Service
@@ -377,7 +381,7 @@ public class OwnerServiceImpl implements OwnerService {
 
     // 강국 =================================================================================================================
     @Override
-    @Transactional
+    @Transactional // 사장님 답글달기
     public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p) {
 
         try {
@@ -392,7 +396,7 @@ public class OwnerServiceImpl implements OwnerService {
         return PatchOwnerReviewInfoResponseDto.success();
     }
 
-    @Override
+    @Override // 예약 중 리스트 불러오기
     public List<GetReservationBeforeResultSet> getReservationBeforeList(ReservationGetRequestDto p) {
         List<GetReservationBeforeResultSet> reservationBeforeResultSetList;
         Long ownerId = p.getOwnerId();
@@ -411,7 +415,7 @@ public class OwnerServiceImpl implements OwnerService {
         return reservationBeforeResultSetList;
     }
 
-    @Override
+    @Override // 예약취소 리스트 불러오기
     public List<GetReservationCancelResultSet> getReservationCancelList(ReservationGetRequestDto p) {
         List<GetReservationCancelResultSet> reservationCancelResultSetList;
         Long ownerId = p.getOwnerId();
@@ -431,7 +435,7 @@ public class OwnerServiceImpl implements OwnerService {
         return reservationCancelResultSetList;
     }
 
-    @Override
+    @Override // 예약완료 리스트 불러오기
     public List<GetReservationCompleteResultSet> getReservationCompleteList(ReservationGetRequestDto p) {
         List<GetReservationCompleteResultSet> reservationCompleteResultSetList;
 
@@ -451,7 +455,7 @@ public class OwnerServiceImpl implements OwnerService {
         return reservationCompleteResultSetList;
     }
 
-    @Override
+    @Override //리뷰 리스트 불러오기
     public ResponseEntity<? super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto p) {
 
         //리뷰 데이터 추출
@@ -490,6 +494,20 @@ public class OwnerServiceImpl implements OwnerService {
         } catch (Exception e) {
             throw new CustomException(CommonErrorCode.DBE);
         }
+    }
+    @Override
+    public Long getTotalCount(String date) {
+        LocalDate localDate = parseToLocalDate(date);
+        int month = localDate.getMonth().getValue();
+        try {
+            List<GetOwnerBookBeforeCountResponseDto> countBefore = reservationBeforeRepository.getCountFromReservationBefore(month);
+            List<GetOwnerBookCancelCountResponseDto> countCancel = reservationCancelRepository.getCountFromReservationCancel(month);
+            List<GetOwnerBookCompleteCountResponseDto> countComplete = reservationCompleteRepository.getCountFromReservationComplete(localDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     @Override
@@ -533,4 +551,11 @@ public class OwnerServiceImpl implements OwnerService {
         }).toList();
         return reviewEntityList;
     }
+    private LocalDate parseToLocalDate(String date) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate result = LocalDate.parse(date, dateTimeFormatter);
+        return result;
+    }
+
+
 }

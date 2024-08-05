@@ -233,7 +233,7 @@ public class OwnerController {
 
     // 사장님 페이지 - 예약 내역 불러오기 //
     @GetMapping("/book")
-    @Operation(summary = "글램핑에 예약된 내역 불러오기 (배강국)", description = BOOK_FROM_USER_REVIEW_VIEW_DESCRIPTION)
+    @Operation(summary = "사장이 글램핑에 디테일한 예약 내역 불러오기 (배강국)", description = BOOK_FROM_USER_REVIEW_VIEW_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = BOOK_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
@@ -252,5 +252,16 @@ public class OwnerController {
 
         return success;
     }
+
+    @GetMapping("/book/count")
+    @Operation(summary = "사장이 글램핑에 디테일한 예약 내역 불러오기 (배강국)", description = "작성해야함")
+    @ApiResponse(responseCode = "200", description = "작성해야함",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
+    public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservationCount(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
+        service.getTotalCount("2024-08-05");
+        return null;
+    }
+  
 }
 

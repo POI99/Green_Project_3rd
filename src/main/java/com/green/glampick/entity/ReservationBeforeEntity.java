@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity(name = "reservation_before")
+@Entity
 @Table(name = "reservation_before")
 public class ReservationBeforeEntity extends CreatedAt {
     //예약 테이블

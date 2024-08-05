@@ -1,5 +1,6 @@
 package com.green.glampick.repository;
 
+import com.green.glampick.dto.response.owner.get.GetOwnerBookCompleteCountResponseDto;
 import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.ReservationCompleteEntity;
 import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -63,12 +65,10 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
     )
     List<GetReservationCompleteResultSet> getReservationCompleteByOwnerId(Long userId, int limit, int offset);
 
-    @Transactional
+    //@Transactional
     ReservationCompleteEntity findByReservationId(Long reservationId);
 
-
-
-
-
+    @Query("SELECT COUNT(rc) FROM ReservationCompleteEntity rc WHERE rc.checkInDate = :dateTime")
+    List<GetOwnerBookCompleteCountResponseDto> getCountFromReservationComplete(LocalDate dateTime);
 
 }
