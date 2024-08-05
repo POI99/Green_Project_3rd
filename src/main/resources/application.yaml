@@ -35,6 +35,10 @@ spring:
       hibernate:
         column_ordering_strategy: legacy
         format_sql: true  # 로그 찍을 때 보기 편하게 포맷팅해서 출력해줘
+    #database-platform: org.hibernate.spatial.dialect.mysql.MySQL8SpatialDialect
+    #database-platform: org.hibernate.dialect.MariaDB103Dialect
+    #database-platform: org.hibernate.dialect.MariaDBDialect
+
 
 mybatis:
   mapper-locations: mappers/**/*.xml

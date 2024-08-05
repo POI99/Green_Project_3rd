@@ -36,7 +36,7 @@ public class GlampingWaitEntity extends CreatedAt {
     @Column(length = 50, nullable = false) @Comment("글램핑 위치")
     private String glampLocation;
 
-    @Comment("글램핑 위치 좌표")
+    @Column(columnDefinition = "POINT") @Comment("글램핑 위치 좌표")
     private Point location;
 
     @Column(nullable = false, length = 9) @Comment("글램핑 지역분류")

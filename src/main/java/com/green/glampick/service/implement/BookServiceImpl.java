@@ -158,14 +158,15 @@ public class BookServiceImpl implements BookService {
                 log.info("Processing reservation: {}", beforeEntity.getBookId());
 
                 // 예약 데이터를 완료 엔티티로 옮김
-                ReservationCompleteEntity completeEntity = new ReservationCompleteEntity(
-                        null,beforeEntity.getBookId(), beforeEntity.getUser()
-                        , beforeEntity.getGlamping(), beforeEntity.getRoom(), beforeEntity.getInputName()
-                        , beforeEntity.getPersonnel(), beforeEntity.getCheckInDate(), beforeEntity.getCheckOutDate()
-                        , beforeEntity.getPg(), beforeEntity.getPayAmount(), 0
-                );
+//                ReservationCompleteEntity completeEntity = new ReservationCompleteEntity(
+//                        null,beforeEntity.getBookId(), beforeEntity.getUser()
+//                        , beforeEntity.getGlamping(), beforeEntity.getRoom(), beforeEntity.getInputName()
+//                        , beforeEntity.getPersonnel(), beforeEntity.getCheckInDate(), beforeEntity.getCheckOutDate()
+//                        , beforeEntity.getPersonnel()
+//                        , beforeEntity.getPg(), beforeEntity.getPayAmount(), 0
+//                );
 
-
+                ReservationCompleteEntity completeEntity = new ReservationCompleteEntity();
                 reservationCompleteRepository.save(completeEntity);
                 reservationBeforeRepository.delete(beforeEntity);
             }

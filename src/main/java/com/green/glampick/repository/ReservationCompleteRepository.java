@@ -65,7 +65,7 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
     )
     List<GetReservationCompleteResultSet> getReservationCompleteByOwnerId(Long userId, int limit, int offset);
 
-    @Transactional
+    //@Transactional
     ReservationCompleteEntity findByReservationId(Long reservationId);
 
     @Query("SELECT COUNT(rc) FROM ReservationCompleteEntity rc WHERE rc.checkInDate = :dateTime")
