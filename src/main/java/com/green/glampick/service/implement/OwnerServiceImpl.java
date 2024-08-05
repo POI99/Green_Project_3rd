@@ -13,9 +13,11 @@ import com.green.glampick.dto.response.owner.get.GetOwnerBookBeforeCountResponse
 import com.green.glampick.dto.response.owner.get.GetOwnerBookCancelCountResponseDto;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookCompleteCountResponseDto;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookListResponseDto;
+import com.green.glampick.dto.response.owner.get.OwnerInfoResponseDto;
 import com.green.glampick.dto.response.owner.post.PostBusinessPaperResponseDto;
 import com.green.glampick.dto.response.owner.post.PostGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
+import com.green.glampick.dto.response.owner.put.PatchOwnerInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PutRoomInfoResponseDto;
 import com.green.glampick.dto.response.user.GetReviewResponseDto;
@@ -83,16 +85,16 @@ public class OwnerServiceImpl implements OwnerService {
 
         try {
 
-                String makeFolder = String.format("businessInfo/%d", ownerId);
-                customFileUtils.makeFolders(makeFolder);
-                String saveFileName = customFileUtils.makeRandomFileName(file);
-                String saveDbFileName = String.format("/pic/businessInfo/%s",saveFileName);
-                String filePath = String.format("%s/%s", makeFolder, saveFileName);
-                customFileUtils.transferTo(file, filePath);
+            String makeFolder = String.format("businessInfo/%d", ownerId);
+            customFileUtils.makeFolders(makeFolder);
+            String saveFileName = customFileUtils.makeRandomFileName(file);
+            String saveDbFileName = String.format("/pic/businessInfo/%s", saveFileName);
+            String filePath = String.format("%s/%s", makeFolder, saveFileName);
+            customFileUtils.transferTo(file, filePath);
 
-                OwnerEntity ownerEntity = ownerRepository.findByOwnerId(ownerId);
-                ownerEntity.setBusinessPaperImage(saveDbFileName);
-                ownerRepository.save(ownerEntity);
+            OwnerEntity ownerEntity = ownerRepository.findByOwnerId(ownerId);
+            ownerEntity.setBusinessPaperImage(saveDbFileName);
+            ownerRepository.save(ownerEntity);
 
 
         } catch (CustomException e) {
@@ -114,10 +116,12 @@ public class OwnerServiceImpl implements OwnerService {
         GlampingWaitEntity entity = new GlampingWaitEntity();
         // 오너 PK 불러오기
         long ownerId = GlampingModule.ownerId(authenticationFacade);
-        entity.setOwner(ownerRepository.getReferenceById(ownerId));
+        // 권한 체크
+        OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
+        GlampingModule.roleCheck(owner.getRole());
+        entity.setOwner(owner);
 
         // 사장님이 글램핑을 이미 가지고 있는가?
-        OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
         GlampingModule.hasGlamping(waitRepository, glampingRepository, owner);
         // 이미지가 들어있는가?
         GlampingModule.imgExist(glampImg);
@@ -151,8 +155,12 @@ public class OwnerServiceImpl implements OwnerService {
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
 
+        // 권한 체크
+        OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
+        GlampingModule.roleCheck(owner.getRole());
+
         // 로그인 유저와 글램핑 PK가 매치되는가?
-        GlampingModule.isGlampIdOk(glampingRepository, ownerRepository, p.getGlampId(), ownerId);
+        GlampingModule.isGlampIdOk(glampingRepository, owner, p.getGlampId());
 
         GlampingPostRequestDto dto = p.getRequestDto();
 
@@ -181,14 +189,25 @@ public class OwnerServiceImpl implements OwnerService {
     // 글램핑 사진 수정
     @Transactional
     public ResponseEntity<? super PutGlampingInfoResponseDto> changeGlampingImage(MultipartFile image, long glampId) {
-        if(image == null || image.isEmpty()) {
+
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+
+        // 권한 체크
+        OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
+        GlampingModule.roleCheck(owner.getRole());
+
+        // 로그인 유저와 글램핑 PK가 매치되는가?
+        GlampingModule.isGlampIdOk(glampingRepository, owner, glampId);
+
+        if (image == null || image.isEmpty()) {
             throw new CustomException(OwnerErrorCode.NF);
         }
-        GlampingModule.isGlampIdOk(glampingRepository, ownerRepository, glampId, GlampingModule.ownerId(authenticationFacade));
+
         String folderPath = String.format("glampingWait/%d/glamp", glampId);
         customFileUtils.deleteFolder(folderPath);
         String fileName = GlampingModule.imageUpload(customFileUtils, image, glampId, "glamping");
         glampingRepository.updateGlampImageByGlampId(fileName, glampId);
+
         return PutGlampingInfoResponseDto.success();
     }
 
@@ -199,8 +218,11 @@ public class OwnerServiceImpl implements OwnerService {
 
         // 오너 PK 불러오기
         long ownerId = GlampingModule.ownerId(authenticationFacade);
+        // 권한 체크
+        OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
+        GlampingModule.roleCheck(owner.getRole());
         // 로그인 유저와 글램핑 PK가 매치되는가?
-        GlampingModule.isGlampIdOk(glampingRepository, ownerRepository, req.getGlampId(), ownerId);
+        GlampingModule.isGlampIdOk(glampingRepository, owner, req.getGlampId());
 
         // 사진이 들어있나?
         RoomModule.imgExist(image);
@@ -220,7 +242,7 @@ public class OwnerServiceImpl implements OwnerService {
         roomImageRepository.saveAll(saveImage);
 
         // 서비스 저장
-        if(req.getService() != null){
+        if (req.getService() != null) {
             List<RoomServiceEntity> service = RoomModule.saveService(req.getService(), roomRepository.findByRoomId(room.getRoomId()), serviceRepository);
             roomServiceRepository.saveAll(service);
         }
@@ -234,18 +256,21 @@ public class OwnerServiceImpl implements OwnerService {
         RoomPostRequestDto dto = p.getRequestDto();
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
+        // 권한 체크
+        OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
+        GlampingModule.roleCheck(owner.getRole());
 
         // 로그인 유저와 룸 Id가 매치되는가?
-        RoomModule.isRoomIdOk(roomRepository, glampingRepository, ownerRepository, p.getRoomId(), ownerId);
+        RoomModule.isRoomIdOk(roomRepository, glampingRepository, owner, p.getRoomId());
 
         // 입력된 인원 정보가 올바른지 확인
         RoomModule.personnelUpdate(dto.getPeopleNum(), dto.getPeopleMax());
 
         // 시간이 올바른지 확인
-        if(dto.getInTime() != null && !dto.getInTime().isEmpty()){
+        if (dto.getInTime() != null && !dto.getInTime().isEmpty()) {
             RoomModule.isValidTime(dto.getInTime());
         }
-        if(dto.getOutTime() != null && !dto.getOutTime().isEmpty()){
+        if (dto.getOutTime() != null && !dto.getOutTime().isEmpty()) {
             RoomModule.isValidTime(dto.getOutTime());
         }
 
@@ -265,8 +290,8 @@ public class OwnerServiceImpl implements OwnerService {
         RoomModule.updateService(roomService, inputService, room, roomServiceRepository, serviceRepository);
 
         // 삭제되는 사진이 있다면 삭제
-        if(p.getRemoveImg() != null && !p.getRemoveImg().isEmpty()){
-            for (Long img : p.getRemoveImg()){
+        if (p.getRemoveImg() != null && !p.getRemoveImg().isEmpty()) {
+            for (Long img : p.getRemoveImg()) {
                 // 해당 객실의 사진이 맞는지 확인
                 RoomImageEntity imageEntity = roomImageRepository.getReferenceById(img);
                 RoomModule.checkImgId(room, imageEntity);
@@ -276,7 +301,7 @@ public class OwnerServiceImpl implements OwnerService {
         }
 
         // 추가되는 사진이 있다면 추가
-        if(addImg != null && !addImg.isEmpty() && !addImg.get(0).isEmpty()){
+        if (addImg != null && !addImg.isEmpty() && !addImg.get(0).isEmpty()) {
             List<String> roomImgName = RoomModule.imgInsert(addImg, dto.getGlampId(), room.getRoomId(), customFileUtils);
             List<RoomImageEntity> saveImage = RoomModule.saveImage(roomImgName, roomRepository.findByRoomId(room.getRoomId()));
             roomImageRepository.saveAll(saveImage);
@@ -285,20 +310,71 @@ public class OwnerServiceImpl implements OwnerService {
         return PutRoomInfoResponseDto.success();
     }
 
+    // 객실 삭제
+    public ResponseEntity<? super ResponseDto> deleteRoom(Long roomId) {
+        // PK 불러오기
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
 
-//    // 객실 삭제
-//    public ResponseEntity<? super ResponseDto> deleteRoom() {
-//        return null;
-//    }
+        // 권한 체크
+        OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
+        GlampingModule.roleCheck(owner.getRole());
+        // 사장님이 해당 객실을 가지고있는지 확인
+        RoomModule.isRoomIdOk(roomRepository, glampingRepository, owner, roomId);
+
+        // 삭제
+        RoomEntity entity = roomRepository.getReferenceById(roomId);
+        roomRepository.delete(entity);
+
+        return null;
+    }
 
     // 비밀번호 확인
     public ResponseEntity<? super ResponseDto> checkOwnerPassword(CheckPasswordRequestDto dto) {
-        // 월욜에 여기부터 하자
-        OwnerEntity owner = ownerRepository.getReferenceById(dto.getOwnerId());
 
-        if(!passwordEncoder.matches(dto.getPassword(), owner.getOwnerPw())){
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
+
+        if (!passwordEncoder.matches(dto.getPassword(), owner.getOwnerPw())) {
             throw new CustomException(UserErrorCode.NMP);
         }
+        return null;
+    }
+
+    // 정보 불러오기
+    public ResponseEntity<? super OwnerInfoResponseDto> getOwnerInfo() {
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        OwnerInfoResponseDto result = ownerRepository.getOwnerInfo(ownerId);
+        return OwnerInfoResponseDto.success(result.getOwnerEmail(), result.getOwnerName(), result.getBusinessNumber(), result.getOwnerPhone());
+    }
+
+    // 사장님 정보 수정
+    public ResponseEntity<? super ResponseDto> patchOwnerInfo(PatchOwnerInfoRequestDto dto) {
+
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
+        if(dto.getOwnerPw() == null || dto.getOwnerPw().isEmpty()){
+            if(dto.getPhoneNum() == null || dto.getPhoneNum().isEmpty()){
+                // 변경된 내용이 없음
+                return PatchOwnerInfoResponseDto.noUpdate();
+            }
+            // 폰번호만 바뀜
+            owner.setOwnerPhone(dto.getPhoneNum());
+            ownerRepository.save(owner);
+            return PatchOwnerInfoResponseDto.success();
+        }
+        // 둘다 바뀜
+        owner.setOwnerPhone(dto.getPhoneNum());
+        owner.setOwnerPw(passwordEncoder.encode(dto.getOwnerPw()));
+        ownerRepository.save(owner);
+        return PatchOwnerInfoResponseDto.success();
+    }
+
+    // 사장님 탈퇴 승인 요청
+    public ResponseEntity<? super ResponseDto> withdrawOwner(OwnerWithdrawRequestDto dto) {
+
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
+
         return null;
     }
 
@@ -327,7 +403,7 @@ public class OwnerServiceImpl implements OwnerService {
         int limit = p.getLimit();
         int offset = p.getOffset();
         try {
-            reservationBeforeResultSetList = reservationBeforeRepository.getReservationBeforeByOwnerId(ownerId,limit,offset);
+            reservationBeforeResultSetList = reservationBeforeRepository.getReservationBeforeByOwnerId(ownerId, limit, offset);
 
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
@@ -368,7 +444,7 @@ public class OwnerServiceImpl implements OwnerService {
         int offset = p.getOffset();
 
         try {
-            reservationCompleteResultSetList = reservationCompleteRepository.getReservationCompleteByOwnerId(ownerId,limit,offset);
+            reservationCompleteResultSetList = reservationCompleteRepository.getReservationCompleteByOwnerId(ownerId, limit, offset);
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
         } catch (Exception e) {

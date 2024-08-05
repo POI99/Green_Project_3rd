@@ -53,7 +53,6 @@ public class RoomPostRequestDto {
     @JsonIgnore
     private List<String> roomImgName;
 
-    @NotBlank(message = "객실 서비스를 입력해주세요.")
     @Schema(example = "[1,2,3]", description = "객실 서비스")
     private List<Long> service;
 
