@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Comment;
 
+@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +20,7 @@ public class RoomEntity extends UpdatedAt {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "glamp_id", nullable = false) @Comment("글램핑 ID")
-    private GlampingEntity glampId;
+    private GlampingEntity glamp;
 
     @Column(length = 30, nullable = false) @Comment("객실명")
     private String roomName;
