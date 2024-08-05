@@ -9,10 +9,8 @@ import com.green.glampick.dto.response.owner.*;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookListResponseDto;
 import com.green.glampick.dto.response.owner.get.OwnerInfoResponseDto;
 import com.green.glampick.dto.response.owner.post.PostBusinessPaperResponseDto;
-import com.green.glampick.dto.response.owner.post.PostGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
-import com.green.glampick.dto.response.owner.put.PutGlampingInfoResponseDto;
-import com.green.glampick.dto.response.owner.put.PutRoomInfoResponseDto;
+import com.green.glampick.dto.response.owner.put.PatchOwnerInfoResponseDto;
 import com.green.glampick.dto.response.user.GetReviewResponseDto;
 import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
 import com.green.glampick.repository.resultset.GetReservationCancelResultSet;
@@ -21,7 +19,6 @@ import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,8 +33,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.green.glampick.common.swagger.description.owner.DeleteRoomImageSwaggerDescription.DELETE_ROOM_IMAGE_DESCRIPTION;
-import static com.green.glampick.common.swagger.description.owner.DeleteRoomImageSwaggerDescription.DELETE_ROOM_IMAGE_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.GetBookFromUserSwaggerDescription.BOOK_FROM_USER_REVIEW_VIEW_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetBookFromUserSwaggerDescription.BOOK_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.GetGlampingFromUserReviewSwaggerDescription.GLAMPING_FROM_USER_REVIEW_VIEW_DESCRIPTION;
@@ -52,8 +47,6 @@ import static com.green.glampick.common.swagger.description.owner.PutGlampingIma
 import static com.green.glampick.common.swagger.description.owner.PutGlampingImageSwaggerDescription.UPDATE_GLAMPING_IMAGE_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.PutGlampingSwaggerDescription.UPDATE_GLAMPING_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.PutGlampingSwaggerDescription.UPDATE_GLAMPING_RESPONSE_ERROR_CODE;
-import static com.green.glampick.common.swagger.description.owner.PutRoomSwaggerDescription.PUT_ROOM_DESCRIPTION;
-import static com.green.glampick.common.swagger.description.owner.PutRoomSwaggerDescription.PUT_ROOM_RESPONSE_ERROR_CODE;
 
 
 @Slf4j
@@ -86,8 +79,8 @@ public class OwnerController {
     @Operation(summary = "글램핑 정보 등록 (김민지)", description = POST_GLAMPING_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = POST_GLAMPING_RESPONSE_ERROR_CODE,
             content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = PostGlampingInfoResponseDto.class)))
-    public ResponseEntity<? super PostGlampingInfoResponseDto> createGlamping(@RequestPart @Valid GlampingPostRequestDto req
+                    mediaType = "application/json", schema = @Schema(implementation = OwnerSuccessResponseDto.class)))
+    public ResponseEntity<? super OwnerSuccessResponseDto> createGlamping(@RequestPart @Valid GlampingPostRequestDto req
             , @RequestPart MultipartFile glampImg) {
         return service.postGlampingInfo(req, glampImg);
     }
@@ -97,8 +90,8 @@ public class OwnerController {
     @Operation(summary = "글램핑 정보 수정 (김민지)", description = UPDATE_GLAMPING_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = UPDATE_GLAMPING_RESPONSE_ERROR_CODE,
             content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = PutGlampingInfoResponseDto.class)))
-    public ResponseEntity<? super PutGlampingInfoResponseDto> updateGlamping(@RequestBody GlampingPutRequestDto req) {
+                    mediaType = "application/json", schema = @Schema(implementation = OwnerSuccessResponseDto.class)))
+    public ResponseEntity<? super OwnerSuccessResponseDto> updateGlamping(@RequestBody GlampingPutRequestDto req) {
         return service.updateGlampingInfo(req);
     }
 
@@ -107,8 +100,8 @@ public class OwnerController {
     @Operation(summary = "글램핑 대표 이미지 수정 (김민지)", description = UPDATE_GLAMPING_IMAGE_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = UPDATE_GLAMPING_IMAGE_RESPONSE_ERROR_CODE,
             content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = PutGlampingInfoResponseDto.class)))
-    public ResponseEntity<? super PutGlampingInfoResponseDto> updateGlampingImage(@RequestPart MultipartFile image, @RequestPart @Schema(example = "1") long glampId) {
+                    mediaType = "application/json", schema = @Schema(implementation = OwnerSuccessResponseDto.class)))
+    public ResponseEntity<? super OwnerSuccessResponseDto> updateGlampingImage(@RequestPart MultipartFile image, @RequestPart @Schema(example = "1") long glampId) {
         return service.changeGlampingImage(image, glampId);
     }
 
@@ -117,7 +110,7 @@ public class OwnerController {
     @Operation(summary = "객실 정보 등록 (김민지)", description = POST_ROOM_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = POST_ROOM_RESPONSE_ERROR_CODE,
             content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = PutGlampingInfoResponseDto.class)))
+                    mediaType = "application/json", schema = @Schema(implementation = PostRoomInfoResponseDto.class)))
     public ResponseEntity<? super PostRoomInfoResponseDto> createRoom(@RequestPart @Valid RoomPostRequestDto req
             , @RequestPart List<MultipartFile> roomImg) {
         return service.postRoomInfo(req, roomImg);
@@ -128,8 +121,8 @@ public class OwnerController {
     @Operation(summary = "객실 정보 수정 (김민지)", description = "")
     @ApiResponse(responseCode = "200", description = "",
             content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = PutRoomInfoResponseDto.class)))
-    public ResponseEntity<? super PutRoomInfoResponseDto> updateRoom(@RequestPart List<MultipartFile> addImg, @RequestPart RoomPutRequestDto req) {
+                    mediaType = "application/json", schema = @Schema(implementation = OwnerSuccessResponseDto.class)))
+    public ResponseEntity<? super OwnerSuccessResponseDto> updateRoom(@RequestPart List<MultipartFile> addImg, @RequestPart RoomPutRequestDto req) {
         return service.updateRoomInfo(addImg, req);
     }
 
@@ -138,8 +131,8 @@ public class OwnerController {
     @Operation(summary = "객실 삭제 (김민지)", description = "")
     @ApiResponse(responseCode = "200", description = "",
             content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class)))
-    public ResponseEntity<? super ResponseDto> deleteRoom(@PathVariable("room_id") @NotNull Long roomId) {
+                    mediaType = "application/json", schema = @Schema(implementation = OwnerSuccessResponseDto.class)))
+    public ResponseEntity<? super OwnerSuccessResponseDto> deleteRoom(@PathVariable("room_id") Long roomId) {
         return service.deleteRoom(roomId);
     }
 
@@ -148,8 +141,8 @@ public class OwnerController {
     @Operation(summary = "사장님 비밀번호 확인 (김민지)", description = "")
     @ApiResponse(responseCode = "200", description = "",
             content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class)))
-    public ResponseEntity<? super ResponseDto> checkOwnerPassword(@RequestBody @Valid CheckPasswordRequestDto dto) {
+                    mediaType = "application/json", schema = @Schema(implementation = OwnerSuccessResponseDto.class)))
+    public ResponseEntity<? super OwnerSuccessResponseDto> checkOwnerPassword(@RequestBody @Valid CheckPasswordRequestDto dto) {
         return service.checkOwnerPassword(dto);
     }
 
@@ -158,7 +151,7 @@ public class OwnerController {
     @Operation(summary = "사장님 정보 불러오기 (김민지)", description = "")
     @ApiResponse(responseCode = "200", description = "",
             content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class)))
+                    mediaType = "application/json", schema = @Schema(implementation = OwnerInfoResponseDto.class)))
     public ResponseEntity<? super OwnerInfoResponseDto> getOwnerInfo() {
         return service.getOwnerInfo();
     }
@@ -168,20 +161,19 @@ public class OwnerController {
     @Operation(summary = "사장님 정보 수정 (김민지)", description = "")
     @ApiResponse(responseCode = "200", description = "",
             content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class)))
-    public ResponseEntity<? super ResponseDto> updateOwnerInfo(@ModelAttribute @ParameterObject @Valid PatchOwnerInfoRequestDto dto) {
+                    mediaType = "application/json", schema = @Schema(implementation = PatchOwnerInfoResponseDto.class)))
+    public ResponseEntity<? super PatchOwnerInfoResponseDto> updateOwnerInfo(@ModelAttribute @ParameterObject @Valid PatchOwnerInfoRequestDto dto) {
         return service.patchOwnerInfo(dto);
     }
 
     // patch - 탈퇴 승인 요청
-    @PatchMapping("withdraw")
+    @PatchMapping("withdraw/{glamp_id}")
     @Operation(summary = "사장님 탈퇴 승인 요청 (김민지)", description = "")
     @ApiResponse(responseCode = "200", description = "",
             content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class)))
-    public ResponseEntity<? super ResponseDto> withdrawOwner(@ModelAttribute @ParameterObject @Valid OwnerWithdrawRequestDto dto) {
-//        return service.deleteRoomImage(imgId, roomId);
-        return null;
+                    mediaType = "application/json", schema = @Schema(implementation = OwnerSuccessResponseDto.class)))
+    public ResponseEntity<? super OwnerSuccessResponseDto> withdrawOwner(@PathVariable("glamp_id") Long glampId) {
+        return service.withdrawOwner(glampId);
     }
 
 // 강국 =================================================================================================================
