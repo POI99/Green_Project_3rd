@@ -1,5 +1,6 @@
 package com.green.glampick.entity;
 
+import com.green.glampick.dto.request.user.PostReviewRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,15 +19,15 @@ public class ReviewEntity extends CreatedAt{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("리뷰 ID")
     private Long reviewId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false) @Comment("객실 ID")
     private UserEntity userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "glamp_id", nullable = false) @Comment("글램핑 ID")
     private GlampingEntity glampId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "reservation_id", nullable = false) @Comment("객실 ID")
     private ReservationCompleteEntity reservationId;
 
@@ -38,5 +39,7 @@ public class ReviewEntity extends CreatedAt{
 
     @Column(length = 500) @Comment("사장님 답변")
     private String reviewComment;
+
+
 
 }
