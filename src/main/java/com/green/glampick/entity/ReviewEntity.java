@@ -23,8 +23,7 @@ public class ReviewEntity extends CreatedAt{
     @JoinColumn(name = "user_id", nullable = false) @Comment("객실 ID")
     private UserEntity userId;
 
-    @ManyToOne
-    @JoinColumn(name = "glamp_id", nullable = false) @Comment("글램핑 ID")
+    @ManyToOne    @JoinColumn(name = "glamp_id", nullable = false) @Comment("글램핑 ID")
     private GlampingEntity glampId;
 
     @ManyToOne
