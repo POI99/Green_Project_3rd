@@ -10,6 +10,7 @@ import com.green.glampick.dto.response.login.mail.PostMailCheckResponseDto;
 import com.green.glampick.dto.response.login.mail.PostMailSendResponseDto;
 import com.green.glampick.dto.response.login.sms.PostSmsCheckResponseDto;
 import com.green.glampick.dto.response.login.sms.PostSmsSendResponseDto;
+import com.green.glampick.dto.response.login.social.PostSnsSignUpResponseDto;
 import com.green.glampick.dto.response.login.token.GetAccessTokenResponseDto;
 import com.green.glampick.entity.AdminEntity;
 import com.green.glampick.entity.OwnerEntity;
@@ -189,6 +190,64 @@ public class LoginServiceImpl implements LoginService {
             UserEntity savedUser = userRepository.save(userEntity);
 
             return PostSignUpResponseDto.success(savedUser.getUserId());
+
+        } catch (CustomException e) {
+            e.printStackTrace();
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+    }
+
+    //  소셜 회원가입 처리  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostSnsSignUpResponseDto> signUpSnsUser(SignUpSnsRequestDto dto) {
+
+        try {
+
+            if (dto.getUserPhone() == null || dto.getUserPhone().isEmpty()) {
+                throw new CustomException(CommonErrorCode.VF);
+            }
+            if (dto.getUserName() == null || dto.getUserName().isEmpty()) {
+                throw new CustomException(CommonErrorCode.VF);
+            }
+            if (dto.getUserNickname() == null || dto.getUserNickname().isEmpty()) {
+                throw new CustomException(CommonErrorCode.VF);
+            }
+
+            String userNickname = dto.getUserNickname();
+            String nicknameRegex = "^[a-zA-Z가-힣][a-zA-Z0-9가-힣]{2,10}$";
+            Pattern patternNickname = Pattern.compile(nicknameRegex);
+            Matcher matcherNickname = patternNickname.matcher(userNickname);
+            if (!matcherNickname.matches()) {
+                throw new CustomException(UserErrorCode.IN);
+            }
+
+            boolean existedNickname = userRepository.existsByUserNickname(userNickname);
+            if (existedNickname) {
+                throw new CustomException(UserErrorCode.DN);
+            }
+
+            String userPhone = dto.getUserPhone();
+            String phoneRegex = "^(01[016789]-?\\d{3,4}-?\\d{4})|(0[2-9][0-9]-?\\d{3,4}-?\\d{4})$";
+            Pattern patternPhone = Pattern.compile(phoneRegex);
+            Matcher matcherPhone = patternPhone.matcher(userPhone);
+            if (!matcherPhone.matches()) {
+                throw new CustomException(UserErrorCode.IPH);
+            }
+
+            //  가공이 끝난 DTO 를 새로운 userEntity 객체로 생성한다.  //
+            UserEntity userEntity = userRepository.findByUserId(dto.getUserId());
+            userEntity.setUserName(dto.getUserName());
+            userEntity.setUserNickname(dto.getUserNickname());
+            userEntity.setUserPhone(dto.getUserPhone());
+            //  바로 위에서 만든 객체를 JPA 를 통해서 DB에 저장한다.  //
+            UserEntity savedUser = userRepository.save(userEntity);
+
+            return PostSnsSignUpResponseDto.success(savedUser.getUserId());
 
         } catch (CustomException e) {
             e.printStackTrace();

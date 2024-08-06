@@ -61,25 +61,18 @@ public class SocialLoginServiceImpl extends DefaultOAuth2UserService {
             SignUpRequestDto signUpParam = new SignUpRequestDto();
             signUpParam.setUserSocialType(signInProviderType);
             signUpParam.setProviderId(oAuth2UserInfo.getId());
-            signUpParam.setUserName(oAuth2UserInfo.getName());
+            signUpParam.setUserEmail(oAuth2UserInfo.getEmail());
 
             userEntity = new UserEntity();
             userEntity.setUserSocialType(signUpParam.getUserSocialType());
             userEntity.setProviderId(signUpParam.getProviderId());
-            userEntity.setUserName(signUpParam.getUserName());
+            userEntity.setUserEmail(signUpParam.getUserEmail());
             userRepository.save(userEntity);
 
-//            userEntity = new UserEntity(
-//                    signUpParam.getUserId()
-//                    , signInParam.getProviderId()
-//                    , null
-//                    , signUpParam.getUserName()
-//                    , signUpParam.getUserProfileImage()
-//            );
         }
 
         MyUserOAuth2Vo myUserOAuth2Vo
-                = new MyUserOAuth2Vo(userEntity.getUserId(), Role.ROLE_USER, userEntity.getUserName(), userEntity.getUserProfileImage());
+                = new MyUserOAuth2Vo(userEntity.getUserId(), Role.ROLE_USER, userEntity.getUserEmail());
 
         MyUserDetail signInUser = new MyUserDetail();
         signInUser.setMyUser(myUserOAuth2Vo);

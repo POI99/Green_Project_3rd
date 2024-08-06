@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
-//import org.springframework.data.geo.Point;
 import org.locationtech.jts.geom.*;
 
 @Getter

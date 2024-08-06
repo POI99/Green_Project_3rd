@@ -1,5 +1,6 @@
 package com.green.glampick.repository;
 
+import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.ReviewEntity;
 import com.green.glampick.repository.resultset.GetUserReviewResultSet;
 import jakarta.transaction.Transactional;
@@ -160,4 +161,6 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
                             "WHERE B.reservation_id = :reservationId ",
             nativeQuery = true)
     void fin(long reservationId);
+
+
 }
