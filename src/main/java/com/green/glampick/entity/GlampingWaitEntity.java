@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.*;
 
 @Getter
 @Setter
@@ -56,5 +56,8 @@ public class GlampingWaitEntity extends CreatedAt {
 
     @Column(columnDefinition = "LONGTEXT", nullable = false) @Comment("추가 위치 정보")
     private String traffic;
+
+    @Column(columnDefinition = "TINYINT", nullable = false) @ColumnDefault("0") @Comment("심사 반려 : -1")
+    private Integer exclutionStatus;
 
 }

@@ -100,6 +100,17 @@ public class AdminController {
         return service.deleteBanner(bannerId);
     }
 
+    //  관리자 페이지 - 메인 화면 배너 불러오기  //
+    @GetMapping("banner")
+    @Operation(summary = "메인 배너 불러오기 (김수찬)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetBannerResponseDto.class)
+            ))
+    public ResponseEntity<? super GetBannerResponseDto> getBanner() {
+        return service.getBanner();
+    }
+
     //  관리자 페이지 - 승인 대기중인 글램핑장 리스트 불러오기  //
     @GetMapping("/glamping-list/owner")
     @Operation(summary = "승인 대기중인 글램핑장 리스트 불러오기 (김수찬)", description = "")
@@ -138,9 +149,9 @@ public class AdminController {
     @Operation(summary = "글램핑 등록 반려 처리하기 (김수찬)", description = "")
     @ApiResponse(responseCode = "200", description = "",
             content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = PatchGlampingExclutionResponseDto.class)
+                    mediaType = "application/json", schema = @Schema(implementation = GlampingExclutionResponseDto.class)
             ))
-    public ResponseEntity<? super PatchGlampingExclutionResponseDto> exclutionGlamping(@RequestParam Long glampId) {
+    public ResponseEntity<? super GlampingExclutionResponseDto> exclutionGlamping(@RequestParam Long glampId) {
         return service.exclutionGlamping(glampId);
     }
 
@@ -149,7 +160,7 @@ public class AdminController {
     @Operation(summary = "회원탈퇴 대기 사장님 리스트 불러오기 (김수찬)", description = "")
     @ApiResponse(responseCode = "200", description = "",
             content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = PatchGlampingExclutionResponseDto.class)
+                    mediaType = "application/json", schema = @Schema(implementation = getDeleteOwnerListResponseDto.class)
             ))
     public ResponseEntity<? super getDeleteOwnerListResponseDto> deleteOwnerList() {
         return service.deleteOwnerList();

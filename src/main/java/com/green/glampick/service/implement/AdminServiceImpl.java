@@ -2,21 +2,19 @@ package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.common.Role;
-import com.green.glampick.dto.object.admin.GetAccessOwnerSignUpListItem;
 import com.green.glampick.dto.response.admin.*;
 import com.green.glampick.entity.BannerEntity;
 import com.green.glampick.entity.GlampingEntity;
+import com.green.glampick.entity.GlampingWaitEntity;
 import com.green.glampick.entity.OwnerEntity;
 import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.AdminErrorCode;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.UserErrorCode;
-import com.green.glampick.repository.AdminRepository;
-import com.green.glampick.repository.BannerRepository;
-import com.green.glampick.repository.GlampingRepository;
-import com.green.glampick.repository.OwnerRepository;
+import com.green.glampick.repository.*;
 import com.green.glampick.repository.resultset.GetAccessGlampingListResultSet;
 import com.green.glampick.repository.resultset.GetAccessOwnerSignUpListResultSet;
+import com.green.glampick.repository.resultset.GetDeleteOwnerListResultSet;
 import com.green.glampick.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.green.glampick.common.GlobalConst.MAX_BANNER_SIZE;
@@ -37,6 +34,7 @@ public class AdminServiceImpl implements AdminService {
     private final OwnerRepository ownerRepository;
     private final BannerRepository bannerRepository;
     private final GlampingRepository glampingRepository;
+    private final GlampingWaitRepository glampingWaitRepository;
     private final AdminRepository adminRepository;
     private final CustomFileUtils customFileUtils;
 
@@ -180,6 +178,17 @@ public class AdminServiceImpl implements AdminService {
 
     }
 
+    //  관리자 페이지 - 메인 화면 배너 불러오기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super GetBannerResponseDto> getBanner() {
+
+        List<BannerEntity> list = bannerRepository.findAll();
+
+        return GetBannerResponseDto.success(list);
+
+    }
+
     //  관리자 페이지 - 승인 대기중인 글램핑장 리스트 불러오기  //
     @Override
     @Transactional
@@ -216,28 +225,71 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public ResponseEntity<? super PatchGlampingAccessResponseDto> accessGlamping(Long glampId) {
-        return null;
+        GlampingWaitEntity glampingWaitEntity = glampingWaitRepository.findByGlampId(glampId);
+
+        GlampingEntity glampingEntity = new GlampingEntity();
+        glampingEntity.setOwner(glampingWaitEntity.getOwner());
+        glampingEntity.setGlampName(glampingWaitEntity.getGlampName());
+        glampingEntity.setGlampCall(glampingWaitEntity.getGlampCall());
+        glampingEntity.setRecommendScore(0D);
+        glampingEntity.setGlampImage(glampingWaitEntity.getGlampImage());
+        glampingEntity.setStarPointAvg(0D);
+        glampingEntity.setReviewCount(0);
+        glampingEntity.setGlampLocation(glampingWaitEntity.getGlampLocation());
+        glampingEntity.setLocation(glampingWaitEntity.getLocation());
+        glampingEntity.setRegion(glampingWaitEntity.getRegion());
+        glampingEntity.setExtraCharge(glampingWaitEntity.getExtraCharge());
+        glampingEntity.setGlampIntro(glampingWaitEntity.getGlampIntro());
+        glampingEntity.setInfoBasic(glampingWaitEntity.getInfoBasic());
+        glampingEntity.setInfoNotice(glampingWaitEntity.getInfoNotice());
+        glampingEntity.setTraffic(glampingWaitEntity.getTraffic());
+        glampingEntity.setActivateStatus(1);
+
+        glampingRepository.save(glampingEntity);
+        glampingWaitRepository.delete(glampingWaitEntity);
+
+        return PatchGlampingAccessResponseDto.success();
     }
 
     //  관리자 페이지 - 글램핑 등록 반려 처리하기  //
     @Override
     @Transactional
-    public ResponseEntity<? super PatchGlampingExclutionResponseDto> exclutionGlamping(Long glampId) {
-        return null;
+    public ResponseEntity<? super GlampingExclutionResponseDto> exclutionGlamping(Long glampId) {
+
+        GlampingWaitEntity glampingWaitEntity = glampingWaitRepository.findByGlampId(glampId);
+
+        glampingWaitEntity.setExclutionStatus(-1);
+
+        glampingWaitRepository.save(glampingWaitEntity);
+
+        return GlampingExclutionResponseDto.success();
+
     }
 
     //  관리자 페이지 - 회원탈퇴 대기 사장님 리스트 불러오기  //
     @Override
     @Transactional
     public ResponseEntity<? super getDeleteOwnerListResponseDto> deleteOwnerList() {
-        return null;
+
+        List<GetDeleteOwnerListResultSet> list = ownerRepository.getDeleteOwnerList();
+
+        return getDeleteOwnerListResponseDto.success(list);
+
     }
 
     //  관리자 페이지 - 사장님 회원탈퇴 승인 처리하기  //
     @Transactional
     @Override
     public ResponseEntity<? super PatchDeleteOwnerResponseDto> deleteOwner(Long ownerId) {
-        return null;
+
+        OwnerEntity ownerEntity = ownerRepository.findByOwnerId(ownerId);
+        GlampingEntity glampingEntity = glampingRepository.findByOwner(ownerEntity);
+
+        glampingEntity.setActivateStatus(-1);
+        ownerEntity.setActivateStatus(-1);
+
+        return PatchDeleteOwnerResponseDto.success();
+
     }
 
 }
