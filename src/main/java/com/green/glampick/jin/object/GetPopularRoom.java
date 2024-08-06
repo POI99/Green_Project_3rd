@@ -2,7 +2,7 @@ package com.green.glampick.jin.object;
 
 
 public interface GetPopularRoom {
-    String getRoomName();
-    String getCount();
-    String getCreatedAt();
+    String getRoomCounts();
+    String getOwners();
+    String getDays();
 }
