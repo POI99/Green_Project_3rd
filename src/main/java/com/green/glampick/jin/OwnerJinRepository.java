@@ -74,7 +74,7 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
                     "SELECT SUM(glampId) FROM(\n" +
                             "SELECT COUNT(glamp_id) AS glampId, DATE(created_at) AS createdAt FROM reservation_cancel WHERE glamp_id = 2\n" +
                             "Group BY DATE(created_at)\n" +
-                            "HAVING createdAt BETWEEN DATE_ADD(NOW(), INTERVAL -9 DAY) AND DATE_ADD(NOW(), INTERVAL -9 DAY) ) AS counts ",
+                            "HAVING createdAt BETWEEN DATE_ADD(NOW(), INTERVAL -:startDayId DAY) AND DATE_ADD(NOW(), INTERVAL -:endDayId DAY) ) AS counts ",
             nativeQuery = true
     )
     long findCancelCount(long glampId);
@@ -82,12 +82,17 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
     @Query(
             value =
                     "SELECT SUM(sub.pay) AS total_count " +
+                            ", DATE(sub.createdAt) AS times " +
+                            ", sub.roomNam AS roomName " +
                             "FROM (SELECT A.glamp_id, SUM(A.pay_amount) AS pay " +
+                            ", date(A.created_at ) AS createdAt " +
+                            ", C.room_name AS roomNam " +
                             "FROM reservation_complete A " +
-                            "JOIN glamping B " +
-                            "ON A.glamp_id = B.glamp_id " +
-                            "WHERE B.owner_id = :ownerId AND A.created_at BETWEEN DATE_ADD(NOW(), INTERVAL -:startDayId DAY ) AND DATE_ADD(NOW(), INTERVAL -:endDayId DAY)  " +
-                            "GROUP BY A.glamp_id) AS sub ",
+                            "JOIN glamping B ON A.glamp_id = B.glamp_id " +
+                            "JOIN room C ON A.room_id = C.room_id " +
+                            "WHERE B.owner_id = :ownerId AND A.created_at BETWEEN DATE_ADD(NOW(), INTERVAL -:startDayId DAY ) AND DATE_ADD(NOW(), INTERVAL -:endDayId DAY) " +
+                            "GROUP BY A.created_at, C.room_name) AS sub " +
+                            "GROUP BY times, roomName ",
             nativeQuery = true
     )
     long findRevenue(long ownerId, long startDayId, long endDayId);
