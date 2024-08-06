@@ -1,7 +1,7 @@
 package com.green.glampick.dto.response.admin;
 
 import com.green.glampick.dto.ResponseDto;
-import com.green.glampick.repository.resultset.GetDeleteOwnerListResultSet;
+import com.green.glampick.entity.BannerEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
@@ -14,17 +14,17 @@ import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 
 @Getter
 @Setter
-public class getDeleteOwnerListResponseDto extends ResponseDto {
+public class GetBannerResponseDto extends ResponseDto {
 
-    private List<GetDeleteOwnerListResultSet> list;
+    private List<BannerEntity> list;
 
-    private getDeleteOwnerListResponseDto(List<GetDeleteOwnerListResultSet> list) {
+    private GetBannerResponseDto(List<BannerEntity> list) {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.list = list;
     }
 
-    public static ResponseEntity<getDeleteOwnerListResponseDto> success(List<GetDeleteOwnerListResultSet> list) {
-        getDeleteOwnerListResponseDto result = new getDeleteOwnerListResponseDto(list);
+    public static ResponseEntity<GetBannerResponseDto> success(List<BannerEntity> list) {
+        GetBannerResponseDto result = new GetBannerResponseDto(list);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 

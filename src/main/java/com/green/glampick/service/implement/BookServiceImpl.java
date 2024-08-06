@@ -157,16 +157,20 @@ public class BookServiceImpl implements BookService {
 
                 log.info("Processing reservation: {}", beforeEntity.getBookId());
 
-                // 예약 데이터를 완료 엔티티로 옮김
-//                ReservationCompleteEntity completeEntity = new ReservationCompleteEntity(
-//                        null,beforeEntity.getBookId(), beforeEntity.getUser()
-//                        , beforeEntity.getGlamping(), beforeEntity.getRoom(), beforeEntity.getInputName()
-//                        , beforeEntity.getPersonnel(), beforeEntity.getCheckInDate(), beforeEntity.getCheckOutDate()
-//                        , beforeEntity.getPersonnel()
-//                        , beforeEntity.getPg(), beforeEntity.getPayAmount(), 0
-//                );
-
                 ReservationCompleteEntity completeEntity = new ReservationCompleteEntity();
+                completeEntity.setReservationId(null);
+                completeEntity.setBookId(beforeEntity.getBookId());
+                completeEntity.setUser(beforeEntity.getUser());
+                completeEntity.setGlamping(beforeEntity.getGlamping());
+                completeEntity.setRoom(beforeEntity.getRoom());
+                completeEntity.setInputName(beforeEntity.getInputName());
+                completeEntity.setPersonnel(beforeEntity.getPersonnel());
+                completeEntity.setCheckInDate(beforeEntity.getCheckInDate());
+                completeEntity.setCheckOutDate(beforeEntity.getCheckOutDate());
+                completeEntity.setPg(beforeEntity.getPg());
+                completeEntity.setPayAmount(beforeEntity.getPayAmount());
+                completeEntity.setStatus(0);
+
                 reservationCompleteRepository.save(completeEntity);
                 reservationBeforeRepository.delete(beforeEntity);
             }

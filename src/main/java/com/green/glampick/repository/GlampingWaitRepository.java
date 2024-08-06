@@ -15,6 +15,7 @@ public interface GlampingWaitRepository extends JpaRepository<GlampingWaitEntity
     void updateGlampImageByGlampId(String glampImg, Long glampId);
 
     GlampingWaitEntity findByOwner(OwnerEntity owner);
+    GlampingWaitEntity findByGlampId(Long glampId);
     GlampingWaitEntity findByGlampLocation(String glampLocation);
 
 }
