@@ -75,7 +75,7 @@ public class OwnerController {
 // 민지 =================================================================================================================
 
     //  사장님 페이지 - 글램핑 정보 등록하기  //
-    @PostMapping(value = "glamping")//, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "glamping", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "글램핑 정보 등록 (김민지)", description = POST_GLAMPING_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = POST_GLAMPING_RESPONSE_ERROR_CODE,
             content = @Content(
@@ -106,7 +106,7 @@ public class OwnerController {
     }
 
     //  사장님 페이지 - 객실 정보 등록하기  //
-    @PostMapping(value = "room")//, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "room", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "객실 정보 등록 (김민지)", description = POST_ROOM_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = POST_ROOM_RESPONSE_ERROR_CODE,
             content = @Content(
