@@ -1,5 +1,6 @@
 package com.green.glampick.service;
 
+import com.green.glampick.dto.object.owner.OwnerBookCountListItem;
 import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
@@ -44,6 +45,6 @@ public interface OwnerService {
     List<GetReservationCancelResultSet> getReservationCancelList(ReservationGetRequestDto p);
     List<GetReservationCompleteResultSet> getReservationCompleteList(ReservationGetRequestDto p);
 
-    Long getTotalCount(String date);
+    List<OwnerBookCountListItem> getTotalCount(String date,Long ownerId);
     ResponseEntity<? super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto dto);
 }

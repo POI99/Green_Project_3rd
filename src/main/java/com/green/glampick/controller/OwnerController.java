@@ -1,6 +1,7 @@
 package com.green.glampick.controller;
 
 import com.green.glampick.dto.ResponseDto;
+import com.green.glampick.dto.object.owner.OwnerBookCountListItem;
 import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.owner.module.GlampingModule;
@@ -235,24 +236,32 @@ public class OwnerController {
         GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
         p.setOwnerId(ownerId);
 
-        List<GetReservationBeforeResultSet> before = service.getReservationBeforeList(p);
-        List<GetReservationCancelResultSet> cancle = service.getReservationCancelList(p);
-        List<GetReservationCompleteResultSet> complete = service.getReservationCompleteList(p);
-
-        GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(before, complete, cancle);
-        ResponseEntity<ResponseDto> success = dto.success(before, complete, cancle);
+//        List<GetReservationBeforeResultSet> before = service.getReservationBeforeList(p);
+//        List<GetReservationCancelResultSet> cancle = service.getReservationCancelList(p);
+//        List<GetReservationCompleteResultSet> complete = service.getReservationCompleteList(p);
+        List<OwnerBookCountListItem> totalCount = service.getTotalCount("2024-08-06",p.getOwnerId());
+        GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(totalCount);
+        ResponseEntity<ResponseDto> success = dto.success(totalCount);
 
         return success;
     }
 
     @GetMapping("/book/count")
-    @Operation(summary = "사장이 글램핑에 디테일한 예약 내역 불러오기 (배강국)", description = "작성해야함")
+    @Operation(summary = "예약 건수 불러오기 (배강국)", description = "작성해야함")
     @ApiResponse(responseCode = "200", description = "작성해야함",
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
     public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservationCount(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
-        service.getTotalCount("2024-08-05");
-        return null;
+
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
+        p.setOwnerId(ownerId);
+
+        List<OwnerBookCountListItem> totalCount = service.getTotalCount("2024-08-06",p.getOwnerId());
+        GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(totalCount);
+        ResponseEntity<ResponseDto> success = dto.success(totalCount);
+
+        return success;
     }
   
 }
