@@ -1,7 +1,5 @@
 package com.green.glampick.entity;
 
-import com.green.glampick.dto.request.user.PostAvgRequest;
-import com.green.glampick.dto.request.user.PostReviewRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.*;
 
 @Getter
 @Setter
@@ -23,7 +21,7 @@ public class GlampingEntity extends UpdatedAt {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("글램핑 ID")
     private Long glampId;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false, unique = true) @Comment("사장님 ID")
     private OwnerEntity owner;
 
@@ -48,7 +46,7 @@ public class GlampingEntity extends UpdatedAt {
     @Column(length = 50, nullable = false) @Comment("글램핑 위치")
     private String glampLocation;
 
-    @Comment("글램핑 위치 좌표")
+    @Column(columnDefinition = "POINT") @Comment("글램핑 위치 좌표")
     private Point location;
 
     @Column(nullable = false, length = 9) @Comment("글램핑 지역분류")

@@ -15,12 +15,12 @@ import java.util.List;
 @Getter
 public class PostReviewRequestDto {
 
-    @JsonIgnore private long userId;
-    @JsonIgnore private long reviewId;
-    @JsonIgnore private long glampId;
+    @JsonIgnore private Long userId;
+    @JsonIgnore private Long reviewId;
+    @JsonIgnore private Long glampId;
     private Long reservationId;
     private String reviewContent;
-    private int reviewStarPoint;
+    private Integer reviewStarPoint;
     @JsonIgnore private List<MultipartFile> ReviewImageFiles = new ArrayList<>();
 
 

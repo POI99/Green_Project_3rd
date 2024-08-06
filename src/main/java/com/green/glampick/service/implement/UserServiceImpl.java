@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -139,11 +140,10 @@ public class UserServiceImpl implements UserService {
 
     //  마이페이지 - 리뷰 작성하기  //
     @Override
-    @Transactional
+    //@Transactional
     public ResponseEntity<? super PostReviewResponseDto> postReview(PostReviewRequestDto dto, List<MultipartFile> mf) {
         ReviewEntity reviewEntity = new ReviewEntity();
         GlampingEntity glampingEntity = new GlampingEntity();
-        ReservationCompleteEntity reservationCompleteEntity = new ReservationCompleteEntity();
 
         try {
             dto.setUserId(authenticationFacade.getLoginUserId());
@@ -162,17 +162,17 @@ public class UserServiceImpl implements UserService {
 
         try {
 
-//            ReservationCompleteEntity reservationCompleteEntity = reservationCompleteRepository.findByReservationId(dto.getReservationId());
+            ReservationCompleteEntity reservationCompleteEntity = reservationCompleteRepository.findByReservationId(dto.getReservationId());
             reviewEntity.setUserId(userRepository.findByUserId(dto.getUserId()));
             reviewEntity.setReviewContent(dto.getReviewContent());
             reviewEntity.setReviewStarPoint(dto.getReviewStarPoint());
-            reviewEntity.setReservationId(reservationCompleteRepository.findByReservationId(dto.getReservationId()));
-//            reviewEntity.setGlampId(glampingRepository.findByGlampId(dto.getGlampId()));
-            reservationCompleteRepository.findByReservationId(dto.getReservationId()).setGlamping(glampingRepository.findByGlampId(dto.getGlampId()));
-            reviewEntity.setGlampId(reservationCompleteRepository.findByReservationId(dto.getReservationId()).getGlamping());
+            reviewEntity.setReservationId(reservationCompleteEntity);
+            Long glampId = reservationCompleteEntity.getGlamping().getGlampId();
+            glampingEntity = glampingRepository.getReferenceById(glampId);
+            reviewEntity.setGlampId(glampingEntity);
 
             reviewEntity = reviewRepository.save(reviewEntity);
-            reviewRepository.findStarPointAvg(dto.getGlampId());
+            reviewRepository.findStarPointAvg(glampId);
             reviewRepository.fin(dto.getReservationId());
         } catch (Exception e) {
             e.printStackTrace();

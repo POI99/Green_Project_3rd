@@ -55,6 +55,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+
+
+    implementation 'org.hibernate.orm:hibernate-spatial:6.5.2.Final'
+
+    implementation 'org.hibernate.orm:hibernate-core:6.5.2.Final'
+
+
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'

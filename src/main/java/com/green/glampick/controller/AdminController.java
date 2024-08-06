@@ -144,4 +144,25 @@ public class AdminController {
         return service.exclutionGlamping(glampId);
     }
 
+    //  관리자 페이지 - 회원탈퇴 대기 사장님 리스트 불러오기  //
+    @GetMapping("/get-delete-list/owner")
+    @Operation(summary = "회원탈퇴 대기 사장님 리스트 불러오기 (김수찬)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PatchGlampingExclutionResponseDto.class)
+            ))
+    public ResponseEntity<? super getDeleteOwnerListResponseDto> deleteOwnerList() {
+        return service.deleteOwnerList();
+    }
+
+    //  관리자 페이지 - 사장님 회원탈퇴 승인 처리하기  //
+    @PatchMapping("/delete/owner")
+    @Operation(summary = "사장님 회원탈퇴 처리하기 (김수찬)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PatchDeleteOwnerResponseDto.class)
+            ))
+    public ResponseEntity<? super PatchDeleteOwnerResponseDto> deleteOwner(@RequestParam Long ownerId) {
+        return service.deleteOwner(ownerId);
+    }
 }

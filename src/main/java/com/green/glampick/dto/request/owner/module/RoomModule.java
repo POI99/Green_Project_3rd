@@ -1,7 +1,6 @@
 package com.green.glampick.dto.request.owner.module;
 
 import com.green.glampick.common.CustomFileUtils;
-import com.green.glampick.dto.request.owner.GlampingPostRequestDto;
 import com.green.glampick.dto.request.owner.RoomPostRequestDto;
 import com.green.glampick.entity.*;
 import com.green.glampick.exception.CustomException;
@@ -11,13 +10,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 
 public class RoomModule {
@@ -128,15 +124,14 @@ public class RoomModule {
 
     // 사용자가 가진 글램핑과 입력받은 룸 pk 가 일치하는지 확인
     public static void isRoomIdOk(RoomRepository roomRepository, GlampingRepository glampingRepository,
-                                  OwnerRepository ownerRepository, long roomId, Long ownerId) {
+                                  OwnerEntity owner, long roomId) {
         GlampingEntity readGlamp = null;
         GlampingEntity glamp = null;
         RoomEntity room = null;
         try {
-            OwnerEntity owner = ownerRepository.findByOwnerId(ownerId);
             readGlamp = glampingRepository.findByOwner(owner);
             room = roomRepository.findByRoomId(roomId);
-            glamp = room.getGlampId();
+            glamp = room.getGlamp();
         } finally {
             if (room == null || readGlamp != glamp) {
                 throw new CustomException(OwnerErrorCode.NMR);

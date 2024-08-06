@@ -7,5 +7,6 @@ public interface GetAccessGlampingListResultSet {
     Long getOwnerId();
     String getBusinessNumber();
     String getOwnerName();
+    String getRegion();
 
 }
