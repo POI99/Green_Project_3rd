@@ -490,8 +490,10 @@ public class OwnerServiceImpl implements OwnerService {
             return GetReviewResponseDto.success(reviewListItem);
 
         } catch (CustomException e) {
+            e.printStackTrace();
             throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new CustomException(CommonErrorCode.DBE);
         }
     }
@@ -532,24 +534,37 @@ public class OwnerServiceImpl implements OwnerService {
                         newItem.setCheckInDate(bookCount.getCheckInDate());
                         newItem.setCancelCount(cancelCount);
                         plusBookCountListItems.add(newItem);
+                        break;
                     }
                 }
             }
             for (GetOwnerBookCompleteCountResponseDto bookCount : countComplete) {
-                OwnerBookCountListItem item = new OwnerBookCountListItem();
-//                item.setCheckInDate(bookCount.getCheckInDate());
-                item.setIngCount(bookCount.getCountComplete());
-
                 for (OwnerBookCountListItem ownerItem : bookCountListItems) {
-                    String checkInDate = ownerItem.getCheckInDate();
-                    String checkInDate2 = item.getCheckInDate();
+                    boolean found = false;
 
-                    if (checkInDate.equals(checkInDate2)) { // 같은 체크인 날짜가 존재하거나 안하거나 한번만 세팅 해주고싶다.
-                        ownerItem.setCompleteCount(item.getCancelCount());
-                    } else {
-                        ownerItem.setCompleteCount(item.getCancelCount());
+                    String checkInDate = ownerItem.getCheckInDate();
+                    String completeDate = bookCount.getCheckInDate().toString();
+                    Long completeCount = bookCount.getCountComplete();
+
+                    if (checkInDate.equals(completeDate)) { // 같은 체크인 날짜가 존재하거나 안하거나 한번만 세팅 해주고싶다.
+                        ownerItem.setCompleteCount(completeCount);
+                        found = true;
+                        break;
                     }
+                    if (!found) {
+                        OwnerBookCountListItem newItem = new OwnerBookCountListItem();
+                        newItem.setCheckInDate(bookCount.getCheckInDate());
+                        newItem.setCompleteCount(completeCount);
+                        plusBookCountListItems.add(newItem);
+                        break;
+                    }
+                    //dsd
+                    System.out.println();
+                    return null;
                 }
+
+
+
             }
 
         } catch (Exception e) {

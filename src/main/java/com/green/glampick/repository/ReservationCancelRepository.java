@@ -63,7 +63,7 @@ public interface ReservationCancelRepository extends JpaRepository<ReservationCa
     )
     List<GetReservationCancelResultSet> getReservationCancelByOwnerId(Long userId, int limit, int offset);
 
-    @Query("SELECT rc.checkInDate AS checkInDate, COUNT(rc.checkInDate) AS countBefore " +
+    @Query("SELECT rc.checkInDate AS checkInDate, COUNT(rc.checkInDate) AS countCancel " +
             "FROM  ReservationCancelEntity rc " +
             "WHERE FUNCTION('MONTH', rc.checkInDate) = :month " +
             "GROUP BY rc.checkInDate")

@@ -68,7 +68,7 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
     //@Transactional
     ReservationCompleteEntity findByReservationId(Long reservationId);
 
-    @Query("SELECT rc.checkInDate AS checkInDate, COUNT(rc.checkInDate) AS countBefore " +
+    @Query("SELECT rc.checkInDate AS checkInDate, COUNT(rc.checkInDate) AS countComplete " +
             "FROM  ReservationCompleteEntity rc " +
             "WHERE FUNCTION('MONTH', rc.checkInDate) = :month " +
             "GROUP BY rc.checkInDate")
