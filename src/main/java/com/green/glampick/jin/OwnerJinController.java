@@ -40,8 +40,8 @@ public class OwnerJinController {
     }
 
     // 평균 별점
-    @GetMapping("/star")
-    @Operation(summary = "평균 별점 (이진현)", description = USER_BOOK_DESCRIPTION)
+    @GetMapping("/starheart")
+    @Operation(summary = "평균 별점, 관심 수 (이진현)", description = USER_BOOK_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = USER_BOOK_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerStarResponseDto.class)))
@@ -49,15 +49,15 @@ public class OwnerJinController {
         return service.getStarRoom(dto);
     }
 
-    // 관심 수
-    @GetMapping("/roomheart")
-    @Operation(summary = "관심 수  (이진현)", description = USER_BOOK_DESCRIPTION)
-    @ApiResponse(responseCode = "200", description = USER_BOOK_RESPONSE_ERROR_CODE,
-            content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = GetGlampingHeartResponseDto.class)))
-    public ResponseEntity<? super GetGlampingHeartResponseDto> getHeartRoom(@ParameterObject ReviewGetHeartRequestDto dto) {
-        return service.getHeartRoom(dto);
-    }
+//    // 관심 수
+//    @GetMapping("/roomheart")
+//    @Operation(summary = "관심 수  (이진현)", description = USER_BOOK_DESCRIPTION)
+//    @ApiResponse(responseCode = "200", description = USER_BOOK_RESPONSE_ERROR_CODE,
+//            content = @Content(
+//                    mediaType = "application/json", schema = @Schema(implementation = GetGlampingHeartResponseDto.class)))
+//    public ResponseEntity<? super GetGlampingHeartResponseDto> getHeartRoom(@ParameterObject ReviewGetHeartRequestDto dto) {
+//        return service.getHeartRoom(dto);
+//    }
 
     // 예약 취소율
     @GetMapping("/glampingcancel")
