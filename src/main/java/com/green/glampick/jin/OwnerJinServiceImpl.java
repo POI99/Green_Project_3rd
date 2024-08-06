@@ -142,7 +142,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
         return GetGlampingCancelResponseDto.success(formattedResult);
     }
 
-    @Override//매출dlek
+    @Override//매출
     @Transactional
     public ResponseEntity<? super GetOwnerRevenueResponseDto> getRevenue(ReviewGetRevenueRequestDto dto) {
         try {
