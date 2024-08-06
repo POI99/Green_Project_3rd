@@ -35,37 +35,28 @@ public class GlampingServiceImpl implements GlampingService {
     @Override
     @Transactional
     public ResponseEntity<? super GetSearchGlampingListResponseDto> searchGlamping(GlampingSearchRequestDto req) {
-        // 필요한 데이터가 모두 입력되었는지
-        try {
-            isNull(req.getRegion());
-            isNull(req.getInDate());
-            isNull(req.getOutDate());
-        } catch (Exception e) {
-            e.printStackTrace();
-            String msg = e.getMessage();
-            throw new CustomException(CommonErrorCode.MNF);
-        }
 
-        // 값이 올바르게 들어갔는지
-        if (req.getPeople() < 2 || req.getPeople() > 6) {
-            throw new CustomException(GlampingErrorCode.WP);
-        }
+        // 날짜가 올바르게 들어가있나?
         if (checkDate(req.getInDate(), req.getOutDate())) {
             throw new CustomException(GlampingErrorCode.WD);
         }
 
-
-        List<Integer> filter = req.getFilter();
-        if (filter != null) {
-            req.setFilterSize(filter.size());
+        // 필터가 있는지
+        if(req.getFilter() != null && !req.getFilter().isEmpty()){
+            req.setFilterSize(1);
         }
 
-        if (req.getSortType() < 0) {     // default 1
-            req.setSortType(1);
+        // searchGlamping1 : 필터, 날짜, 인원수
+        List<Long> roomList = mapper.searchGlamping1(req);
+        if(roomList == null || roomList.isEmpty()){
+            // 검색결과 없음
+            return GetSearchGlampingListResponseDto.isNull();
         }
 
-        List<GlampingListItem> result = mapper.searchGlampList(req);
-        if (result == null || result.isEmpty()) {
+        req.setRoomList(roomList);
+        List<GlampingListItem> result = mapper.searchGlamping2(req);
+        if(result == null || result.isEmpty()){
+            // 검색결과 없음
             return GetSearchGlampingListResponseDto.isNull();
         }
 
@@ -73,7 +64,6 @@ public class GlampingServiceImpl implements GlampingService {
 
         return GetSearchGlampingListResponseDto.success(searchCount, result);
     }
-
 
     // 강국 =================================================================================================================
     @Override
@@ -271,7 +261,7 @@ public class GlampingServiceImpl implements GlampingService {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    // 민지 에러체크 =========================================================================================================
+    // =========================================================================================================
     private void isNull(String text) {
         if (text == null || text.isEmpty()) {
             throw new RuntimeException();

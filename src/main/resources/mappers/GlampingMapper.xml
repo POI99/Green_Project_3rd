@@ -175,46 +175,51 @@
         </if>
     </sql>
 
-    <select id="searchGlampList">
-        SELECT distinct(A.glamp_id) AS glampId
+<!--  필터, 날짜, 인원수  -->
+    <select id="searchGlamping1">
+        SELECT A.room_id
+        FROM room A
+        JOIN room_service B
+        ON A.room_id = B.room_id
+        LEFT JOIN (
+            SELECT room_id
+            FROM reservation_before
+            WHERE (#{outDate} >  check_in_date
+            AND check_out_date > #{inDate} )
+        ) C
+        ON A.room_id = C.room_id
+        <where>
+            C.room_id IS NULL
+            AND (#{people} >= A.room_num_people  AND A.room_max_people >= #{people})
+            <if test="filterSize != 0">
+                AND B.service_id IN
+                <foreach item="filterId" collection="filter" open="(" separator="," close=")">
+                    #{filterId}
+                </foreach>
+            </if>
+        </where>
+        GROUP BY A.glamp_id
+        ORDER BY A.room_price
+    </select>
+<!--  지역 분류, 검색어, 정렬  -->
+    <select id="searchGlamping2">
+        SELECT A.glamp_id AS glampId
             , A.glamp_name AS glampName
             , A.glamp_image AS glampPic
             , A.star_point_avg AS starPoint
             , A.review_count AS reviewCount
-             , D.room_price AS price
+            , B.room_price AS price
         FROM glamping A
-        LEFT JOIN (
-            SELECT glamp_id, room_id
-            FROM reservation_before
-            WHERE (check_in_date >= #{outDate}
-            AND #{inDate} >= check_out_date )
-            AND room_id IS NOT NULL
-        ) B
+        JOIN room B
         ON A.glamp_id = B.glamp_id
-        <if test="filterSize != 0">
-        JOIN (
-            SELECT A.glamp_id
-            FROM room A
-            JOIN room_service B ON A.room_id = B.room_id
-            WHERE B.service_id IN
-            <foreach item="filterId" collection="filter" open="(" separator="," close=")">
-                #{filterId}
-            </foreach>
-            GROUP BY A.glamp_id
-            HAVING COUNT(DISTINCT B.service_id) = #{filterSize}
-        ) C
-        ON A.glamp_id = C.glamp_id
-        </if>
-        JOIN room D
-        ON A.glamp_id = D.glamp_id
-            AND D.room_price = ( SELECT MIN(room_price)
-                    FROM room
-                    WHERE glamp_id = A.glamp_id
-                            AND (#{people} >= room_num_people  AND room_max_people >= #{people})
-            )
         <where>
+            A.activate_status = 1
+            AND B.room_id IN
+            <foreach collection="roomList" item="roomId" open="(" separator="," close=")">
+                #{roomId}
+            </foreach>
             <if test="region != 'all'">
-                A.region = #{region}
+                AND A.region = #{region}
             </if>
             <if test="searchWord != null and searchWord != ''">
                 AND (A.glamp_name like '%${searchWord}%' OR A.traffic like '%${searchWord}%')
@@ -223,45 +228,25 @@
         <include refid="sort"/>
         LIMIT #{startIdx}, #{size}
     </select>
-
+<!--  검색 결과 수  -->
     <select id="searchCount">
-        SELECT COUNT(DISTINCT A.glamp_id)
+        SELECT COUNT(A.glamp_id)
         FROM glamping A
-        LEFT JOIN (
-        SELECT glamp_id, room_id
-        FROM reservation_before
-        WHERE (check_in_date >= #{outDate}
-        OR #{inDate} >= check_out_date )
-        AND room_id IS NOT NULL
-        ) B
+        JOIN room B
         ON A.glamp_id = B.glamp_id
-        <if test="filterSize != 0">
-            JOIN (
-            SELECT A.glamp_id
-            FROM room A
-            JOIN room_service B ON A.room_id = B.room_id
-            WHERE B.service_id IN
-            <foreach item="filterId" collection="filter" open="(" separator="," close=")">
-                #{filterId}
+        <where>
+            A.activate_status = 1
+            AND B.room_id IN
+            <foreach collection="roomList" item="roomId" open="(" separator="," close=")">
+                #{roomId}
             </foreach>
-            GROUP BY A.glamp_id
-            HAVING COUNT(DISTINCT B.service_id) = #{filterSize}
-            ) C
-            ON A.glamp_id = C.glamp_id
-        </if>
-        JOIN room D
-        ON A.glamp_id = D.glamp_id
-        AND D.room_price = ( SELECT MIN(room_price)
-        FROM room
-        WHERE glamp_id = A.glamp_id
-        AND (#{people} >= room_num_people  AND room_max_people >= #{people})
-        )
-        <if test="region != 'all'">
-            WHERE A.region = #{region}
-        </if>
-        <if test="searchWord != null and searchWord != ''">
-            AND (A.glamp_name like '%${searchWord}%' OR A.traffic like '%${searchWord}%')
-        </if>
+            <if test="region != 'all'">
+                AND A.region = #{region}
+            </if>
+            <if test="searchWord != null and searchWord != ''">
+                AND (A.glamp_name like '%${searchWord}%' OR A.traffic like '%${searchWord}%')
+            </if>
+        </where>
     </select>
 
 </mapper>
