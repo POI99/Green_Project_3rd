@@ -6,15 +6,18 @@ import com.green.glampick.dto.request.owner.GlampingPostRequestDto;
 import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.GlampingWaitEntity;
 import com.green.glampick.entity.OwnerEntity;
+import com.green.glampick.entity.ReservationBeforeEntity;
 import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.OwnerErrorCode;
 import com.green.glampick.repository.GlampingRepository;
 import com.green.glampick.repository.GlampingWaitRepository;
 import com.green.glampick.repository.OwnerRepository;
+import com.green.glampick.repository.ReservationBeforeRepository;
 import com.green.glampick.security.AuthenticationFacade;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -156,6 +159,14 @@ public class GlampingModule {
             dto.setTraffic(entity.getTraffic());
         }
         return dto;
+    }
+
+    // 예약 된 글램핑이 있는지 확인
+    public static void existReservation(GlampingEntity glamp, ReservationBeforeRepository reservationBeforeRepository) {
+        List<ReservationBeforeEntity> reservation = reservationBeforeRepository.findByGlamping(glamp);
+        if (reservation != null && !reservation.isEmpty()) {
+            throw new CustomException(OwnerErrorCode.CD);
+        }
     }
 
 

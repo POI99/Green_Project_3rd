@@ -11,8 +11,9 @@ import java.util.List;
 @Mapper
 public interface GlampingMapper {
     // 민지
-    List<GlampingListItem>  searchGlampList(GlampingSearchRequestDto req);
-    int searchCount(GlampingSearchRequestDto req);
+    List<Long> searchGlamping1(GlampingSearchRequestDto p);
+    List<GlampingListItem> searchGlamping2(GlampingSearchRequestDto p);
+    int searchCount(GlampingSearchRequestDto p);
 
     // 강국
     // 관심등록

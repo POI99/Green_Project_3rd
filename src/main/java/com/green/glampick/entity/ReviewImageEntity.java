@@ -18,7 +18,7 @@ public class ReviewImageEntity extends CreatedAt{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("객실 이미지 ID")
     private Long reviewImageId; // 객실 이미지 ID
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id", nullable = false) @Comment("리뷰 ID")
     private ReviewEntity reviewEntity; // 리뷰 ID
 

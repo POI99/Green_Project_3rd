@@ -11,18 +11,21 @@ import java.util.List;
 public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
     @Query(
             value =
-                    "SELECT C.room_name as roomName" +
-                            ", COUNT(A.room_id) as count" +
-                            ", B.owner_id " +
+                    "SELECT  sub.roomcounts as roomCounts" +
+                            ", sub.owners as owners" +
+                            ", DATE(sub.createdAt)AS days " +
+                            "FROM (SELECT C.room_name as roomName " +
+                            ", COUNT(A.room_id) as roomcounts " +
+                            ", B.owner_id AS owners " +
                             ", DATE(A.created_at) as createdAt " +
                             "FROM reservation_complete A " +
                             "left JOIN glamping B " +
                             "ON A.glamp_id = B.glamp_id " +
                             "JOIN room C " +
                             "ON C.room_id = A.room_id " +
-                            "GROUP BY A.room_id " +
-                            "HAVING createdAt BETWEEN DATE_ADD(NOW(), INTERVAL -:startDayId DAY ) AND DATE_ADD(NOW(), INTERVAL -:endDayId DAY) " +
-                            "AND B.owner_id = :ownerId ",
+                            "WHERE B.owner_id = :ownerId AND A.created_at BETWEEN DATE_ADD(NOW(), INTERVAL -:startDayId DAY ) AND DATE_ADD(NOW(), INTERVAL -:endDayId DAY) " +
+                            "GROUP BY A.created_at) AS sub " +
+                            "GROUP BY days ",
             nativeQuery = true
     )
     List<GetPopularRoom> findPopularRoom(long ownerId, long startDayId, long endDayId);
