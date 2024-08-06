@@ -1,5 +1,6 @@
 package com.green.glampick.dto.request.owner;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.green.glampick.common.Paging;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import static com.green.glampick.common.GlobalConst.PAGING_SIZE;
 @Setter
 @ToString
 public class ReservationGetRequestDto extends Paging {
+    @JsonIgnore
     @Schema(example = "1", description = "사장님PK")
     private Long ownerId;
 
