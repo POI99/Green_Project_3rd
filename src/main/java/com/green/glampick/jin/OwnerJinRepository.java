@@ -74,7 +74,7 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
                     "SELECT SUM(glampId) FROM(\n" +
                             "SELECT COUNT(glamp_id) AS glampId, DATE(created_at) AS createdAt FROM reservation_cancel WHERE glamp_id = 2\n" +
                             "Group BY DATE(created_at)\n" +
-                            "HAVING createdAt BETWEEN DATE_ADD(NOW(), INTERVAL -:startDayId DAY) AND DATE_ADD(NOW(), INTERVAL -:endDayId DAY) ) AS counts ",
+                            "HAVING createdAt BETWEEN DATE_ADD(NOW(), INTERVAL 9 ) AND DATE_ADD(NOW(), INTERVAL 0) ) AS counts ",
             nativeQuery = true
     )
     long findCancelCount(long glampId);
