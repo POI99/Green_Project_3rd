@@ -2,6 +2,7 @@ package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.dto.object.UserReviewListItem;
+import com.green.glampick.dto.object.owner.OwnerBookCountListItem;
 import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.owner.module.GlampingModule;
@@ -500,8 +501,10 @@ public class OwnerServiceImpl implements OwnerService {
             return GetReviewResponseDto.success(reviewListItem);
 
         } catch (CustomException e) {
+            e.printStackTrace();
             throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new CustomException(CommonErrorCode.DBE);
         }
     }
@@ -512,7 +515,69 @@ public class OwnerServiceImpl implements OwnerService {
         try {
             List<GetOwnerBookBeforeCountResponseDto> countBefore = reservationBeforeRepository.getCountFromReservationBefore(month);
             List<GetOwnerBookCancelCountResponseDto> countCancel = reservationCancelRepository.getCountFromReservationCancel(month);
-            List<GetOwnerBookCompleteCountResponseDto> countComplete = reservationCompleteRepository.getCountFromReservationComplete(localDate);
+            List<GetOwnerBookCompleteCountResponseDto> countComplete = reservationCompleteRepository.getCountFromReservationComplete(month);
+
+            List<OwnerBookCountListItem> bookCountListItems = new ArrayList<>();
+
+
+            for (GetOwnerBookBeforeCountResponseDto bookCount :countBefore) {
+                OwnerBookCountListItem item = new OwnerBookCountListItem();
+                item.setCheckInDate(bookCount.getCheckInDate());
+                item.setIngCount(bookCount.getCountBefore());
+                bookCountListItems.add(item);
+            }
+            List<OwnerBookCountListItem> plusBookCountListItems = new ArrayList<>(bookCountListItems);
+
+            for (GetOwnerBookCancelCountResponseDto bookCount : countCancel) {
+                for (OwnerBookCountListItem ownerItem : bookCountListItems) {
+                    boolean found = false;
+
+                    String checkInDate = ownerItem.getCheckInDate();
+                    String cancelDate = bookCount.getCheckInDate().toString();
+                    Long cancelCount = bookCount.getCountCancel();
+                    if (checkInDate.equals(cancelDate)) { // 같은 체크인 날짜가 존재하거나 안하거나 한번만 세팅 해주고싶다.
+                        ownerItem.setCancelCount(cancelCount);
+                        found = true;
+                        break;
+                    }
+                    if (!found) {
+                        OwnerBookCountListItem newItem = new OwnerBookCountListItem();
+                        newItem.setCheckInDate(bookCount.getCheckInDate());
+                        newItem.setCancelCount(cancelCount);
+                        plusBookCountListItems.add(newItem);
+                        break;
+                    }
+                }
+            }
+            for (GetOwnerBookCompleteCountResponseDto bookCount : countComplete) {
+                for (OwnerBookCountListItem ownerItem : bookCountListItems) {
+                    boolean found = false;
+
+                    String checkInDate = ownerItem.getCheckInDate();
+                    String completeDate = bookCount.getCheckInDate().toString();
+                    Long completeCount = bookCount.getCountComplete();
+
+                    if (checkInDate.equals(completeDate)) { // 같은 체크인 날짜가 존재하거나 안하거나 한번만 세팅 해주고싶다.
+                        ownerItem.setCompleteCount(completeCount);
+                        found = true;
+                        break;
+                    }
+                    if (!found) {
+                        OwnerBookCountListItem newItem = new OwnerBookCountListItem();
+                        newItem.setCheckInDate(bookCount.getCheckInDate());
+                        newItem.setCompleteCount(completeCount);
+                        plusBookCountListItems.add(newItem);
+                        break;
+                    }
+                    //dsd
+                    System.out.println();
+                    return null;
+                }
+
+
+
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
