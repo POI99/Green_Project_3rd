@@ -52,6 +52,8 @@ springdoc:
     default-model-expand-depth: 10
     default-models-expand-depth: 10
     display-request-duration: true
+    tags-sorter: alpha
+    doc-expansion: none
   cache:
     disabled: true
 

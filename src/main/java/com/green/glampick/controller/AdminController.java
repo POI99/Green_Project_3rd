@@ -69,7 +69,7 @@ public class AdminController {
 
     //  관리자 페이지 - 사장님 회원가입 반려 처리하기  //
     @DeleteMapping("/exclution/owner/sign-up")
-    @Operation(summary = "반려 처리하기 (김수찬)", description = EXCLUTION_SIGN_UP_DESCRIPTION)
+    @Operation(summary = "사장님 회원가입 반려 처리하기 (김수찬)", description = EXCLUTION_SIGN_UP_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = EXCLUTION_SIGN_UP_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = PatchAccessOwnerSignUpResponseDto.class)
