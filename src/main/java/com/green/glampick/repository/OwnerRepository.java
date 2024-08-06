@@ -5,6 +5,7 @@ import com.green.glampick.dto.response.owner.get.OwnerInfoResponseDto;
 import com.green.glampick.entity.OwnerEntity;
 import com.green.glampick.entity.ReviewEntity;
 import com.green.glampick.entity.UserEntity;
+import com.green.glampick.repository.resultset.OwnerInfoResultSet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -20,10 +21,10 @@ public interface OwnerRepository extends JpaRepository<OwnerEntity, Long> {
     @Query( "update OwnerEntity oe set oe.role = :role where oe.ownerId = :ownerId" )
     void updateOwnerRole (Role role, Long ownerId);
 
-    @Modifying
     @Transactional
-    @Query( "select o.ownerEmail, o.ownerName, o.businessNumber, o.ownerPhone" +
+    @Query( "select o.ownerEmail AS ownerEmail, o.ownerName AS ownerName" +
+            ", o.businessNumber AS businessNumber, o.ownerPhone AS ownerPhone" +
             " from OwnerEntity o where o.ownerId = :ownerId" )
-    OwnerInfoResponseDto getOwnerInfo(Long ownerId);
+    OwnerInfoResultSet getOwnerInfo(Long ownerId);
 
 }

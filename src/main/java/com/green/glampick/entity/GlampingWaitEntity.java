@@ -32,7 +32,6 @@ public class GlampingWaitEntity extends CreatedAt {
     @Column(length = 200, nullable = false) @Comment("대표 이미지")
     private String glampImage;
 
-
     @Column(length = 50, nullable = false) @Comment("글램핑 위치")
     private String glampLocation;
 

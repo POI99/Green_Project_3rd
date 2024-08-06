@@ -1,6 +1,7 @@
 package com.green.glampick.repository;
 
 import com.green.glampick.dto.response.owner.get.GetOwnerBookBeforeCountResponseDto;
+import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.ReservationBeforeEntity;
 import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -73,4 +74,6 @@ public interface ReservationBeforeRepository extends JpaRepository<ReservationBe
             "WHERE FUNCTION('MONTH', rb.checkInDate) = :month " +
             "GROUP BY rb.checkInDate")
     List<GetOwnerBookBeforeCountResponseDto> getCountFromReservationBefore(@Param("month")int month);
+
+    List<ReservationBeforeEntity> findByGlamping(GlampingEntity glamping);
 }

@@ -1,7 +1,6 @@
 package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
-import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.object.UserReviewListItem;
 import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
@@ -15,11 +14,8 @@ import com.green.glampick.dto.response.owner.get.GetOwnerBookCompleteCountRespon
 import com.green.glampick.dto.response.owner.get.GetOwnerBookListResponseDto;
 import com.green.glampick.dto.response.owner.get.OwnerInfoResponseDto;
 import com.green.glampick.dto.response.owner.post.PostBusinessPaperResponseDto;
-import com.green.glampick.dto.response.owner.post.PostGlampingInfoResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PatchOwnerInfoResponseDto;
-import com.green.glampick.dto.response.owner.put.PutGlampingInfoResponseDto;
-import com.green.glampick.dto.response.owner.put.PutRoomInfoResponseDto;
 import com.green.glampick.dto.response.user.GetReviewResponseDto;
 import com.green.glampick.entity.*;
 import com.green.glampick.exception.CustomException;
@@ -28,10 +24,7 @@ import com.green.glampick.exception.errorCode.OwnerErrorCode;
 import com.green.glampick.exception.errorCode.UserErrorCode;
 
 import com.green.glampick.repository.*;
-import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
-import com.green.glampick.repository.resultset.GetReservationCancelResultSet;
-import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
-import com.green.glampick.repository.resultset.GetUserReviewResultSet;
+import com.green.glampick.repository.resultset.*;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +40,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +103,7 @@ public class OwnerServiceImpl implements OwnerService {
 
     // 글램핑 등록
     @Transactional
-    public ResponseEntity<? super PostGlampingInfoResponseDto> postGlampingInfo(GlampingPostRequestDto req
+    public ResponseEntity<? super OwnerSuccessResponseDto> postGlampingInfo(GlampingPostRequestDto req
             , MultipartFile glampImg) {
         GlampingWaitEntity entity = new GlampingWaitEntity();
         // 오너 PK 불러오기
@@ -130,11 +122,16 @@ public class OwnerServiceImpl implements OwnerService {
 
         // 글램핑 아이디 받아오기
         entity.setGlampName(req.getGlampName());
-        entity.setGlampCall(GlampingModule.glampingCall(req.getGlampCall()));
+        if(req.getGlampCall() != null && !req.getGlampCall().isEmpty()){
+            entity.setGlampCall(GlampingModule.glampingCall(req.getGlampCall()));
+        }
         entity.setGlampImage("img");
         entity.setGlampLocation(req.getGlampLocation());
         entity.setRegion(req.getRegion());
-        entity.setExtraCharge(req.getExtraCharge());
+        entity.setExtraCharge(0);
+        if(req.getExtraCharge() != null && req.getExtraCharge() > 0){
+            entity.setExtraCharge(req.getExtraCharge());
+        }
         entity.setGlampIntro(req.getIntro());
         entity.setInfoBasic(req.getBasic());
         entity.setInfoNotice(req.getNotice());
@@ -146,12 +143,12 @@ public class OwnerServiceImpl implements OwnerService {
         String fileName = GlampingModule.imageUpload(customFileUtils, glampImg, glampId, "glampingWait");
         waitRepository.updateGlampImageByGlampId(fileName, glampId);
 
-        return PostGlampingInfoResponseDto.success(glampId);
+        return OwnerSuccessResponseDto.postInformation();
     }
 
     // 글램핑 수정
     @Transactional
-    public ResponseEntity<? super PutGlampingInfoResponseDto> updateGlampingInfo(GlampingPutRequestDto p) {
+    public ResponseEntity<? super OwnerSuccessResponseDto> updateGlampingInfo(GlampingPutRequestDto p) {
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
 
@@ -183,12 +180,12 @@ public class OwnerServiceImpl implements OwnerService {
                 , dto.getIntro(), dto.getBasic(), dto.getNotice(), dto.getTraffic(), p.getGlampId());
 
 
-        return PutGlampingInfoResponseDto.success();
+        return OwnerSuccessResponseDto.updateInformation();
     }
 
     // 글램핑 사진 수정
     @Transactional
-    public ResponseEntity<? super PutGlampingInfoResponseDto> changeGlampingImage(MultipartFile image, long glampId) {
+    public ResponseEntity<? super OwnerSuccessResponseDto> changeGlampingImage(MultipartFile image, long glampId) {
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
 
@@ -208,7 +205,7 @@ public class OwnerServiceImpl implements OwnerService {
         String fileName = GlampingModule.imageUpload(customFileUtils, image, glampId, "glamping");
         glampingRepository.updateGlampImageByGlampId(fileName, glampId);
 
-        return PutGlampingInfoResponseDto.success();
+        return OwnerSuccessResponseDto.updateInformation();
     }
 
     // 객실 등록
@@ -247,12 +244,13 @@ public class OwnerServiceImpl implements OwnerService {
             roomServiceRepository.saveAll(service);
         }
 
+//        return OwnerSuccessResponseDto.postInformation();
         return PostRoomInfoResponseDto.success(room.getRoomId());
     }
 
     // 객실 수정
     @Transactional
-    public ResponseEntity<? super PutRoomInfoResponseDto> updateRoomInfo(List<MultipartFile> addImg, RoomPutRequestDto p) {
+    public ResponseEntity<? super OwnerSuccessResponseDto> updateRoomInfo(List<MultipartFile> addImg, RoomPutRequestDto p) {
         RoomPostRequestDto dto = p.getRequestDto();
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
@@ -307,11 +305,11 @@ public class OwnerServiceImpl implements OwnerService {
             roomImageRepository.saveAll(saveImage);
         }
 
-        return PutRoomInfoResponseDto.success();
+        return OwnerSuccessResponseDto.updateInformation();
     }
 
     // 객실 삭제
-    public ResponseEntity<? super ResponseDto> deleteRoom(Long roomId) {
+    public ResponseEntity<? super OwnerSuccessResponseDto> deleteRoom(Long roomId) {
         // PK 불러오기
         long ownerId = GlampingModule.ownerId(authenticationFacade);
 
@@ -325,11 +323,11 @@ public class OwnerServiceImpl implements OwnerService {
         RoomEntity entity = roomRepository.getReferenceById(roomId);
         roomRepository.delete(entity);
 
-        return null;
+        return OwnerSuccessResponseDto.deleteInformation();
     }
 
     // 비밀번호 확인
-    public ResponseEntity<? super ResponseDto> checkOwnerPassword(CheckPasswordRequestDto dto) {
+    public ResponseEntity<? super OwnerSuccessResponseDto> checkOwnerPassword(CheckPasswordRequestDto dto) {
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
         OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
@@ -337,18 +335,18 @@ public class OwnerServiceImpl implements OwnerService {
         if (!passwordEncoder.matches(dto.getPassword(), owner.getOwnerPw())) {
             throw new CustomException(UserErrorCode.NMP);
         }
-        return null;
+        return OwnerSuccessResponseDto.passwordTrue();
     }
 
     // 정보 불러오기
     public ResponseEntity<? super OwnerInfoResponseDto> getOwnerInfo() {
         long ownerId = GlampingModule.ownerId(authenticationFacade);
-        OwnerInfoResponseDto result = ownerRepository.getOwnerInfo(ownerId);
-        return OwnerInfoResponseDto.success(result.getOwnerEmail(), result.getOwnerName(), result.getBusinessNumber(), result.getOwnerPhone());
+        OwnerInfoResultSet result = ownerRepository.getOwnerInfo(ownerId);
+        return OwnerInfoResponseDto.success(result);
     }
 
     // 사장님 정보 수정
-    public ResponseEntity<? super ResponseDto> patchOwnerInfo(PatchOwnerInfoRequestDto dto) {
+    public ResponseEntity<? super PatchOwnerInfoResponseDto> patchOwnerInfo(PatchOwnerInfoRequestDto dto) {
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
         OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
@@ -362,20 +360,32 @@ public class OwnerServiceImpl implements OwnerService {
             ownerRepository.save(owner);
             return PatchOwnerInfoResponseDto.success();
         }
-        // 둘다 바뀜
-        owner.setOwnerPhone(dto.getPhoneNum());
+        if(dto.getPhoneNum() != null && !dto.getPhoneNum().isEmpty()){
+            owner.setOwnerPhone(dto.getPhoneNum());
+        }
         owner.setOwnerPw(passwordEncoder.encode(dto.getOwnerPw()));
         ownerRepository.save(owner);
         return PatchOwnerInfoResponseDto.success();
     }
 
     // 사장님 탈퇴 승인 요청
-    public ResponseEntity<? super ResponseDto> withdrawOwner(OwnerWithdrawRequestDto dto) {
+    public ResponseEntity<? super OwnerSuccessResponseDto> withdrawOwner(Long glampId) {
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
         OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
+        GlampingModule.isGlampIdOk(glampingRepository, owner, glampId);
 
-        return null;
+        // 예약 된 글램핑이 있는지 확인
+        GlampingEntity glamping = glampingRepository.getReferenceById(glampId);
+        GlampingModule.existReservation(glamping, reservationBeforeRepository);
+
+        // 탈퇴 요청
+        owner.setActivateStatus(0);
+        ownerRepository.save(owner);
+        glamping.setActivateStatus(0);
+        glampingRepository.save(glamping);
+
+        return OwnerSuccessResponseDto.withdraw();
     }
 
 
