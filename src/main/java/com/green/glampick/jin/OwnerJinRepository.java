@@ -106,6 +106,20 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
     List<GetRevenue> findRevenue(long ownerId, long startDayId, long endDayId);
 
 
+
+    @Query(
+            value =
+                    "SELECT COUNT(A.room_id) " +
+            ", C.owner_id " +
+            ", B.room_name " +
+            "FROM reservation_cancel A " +
+            "JOIN room B ON A.room_id = B.room_id " +
+            "JOIN glamping C ON B.glamp_id = C.glamp_id " +
+            "GROUP BY B.room_name " +
+            "having C.owner_id = :ownerId ",
+            nativeQuery = true
+    )
+    long findRoomCount(long ownerId);
 }
 
 /*

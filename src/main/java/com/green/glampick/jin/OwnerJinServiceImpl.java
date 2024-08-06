@@ -4,10 +4,7 @@ import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.OwnerErrorCode;
-import com.green.glampick.jin.object.GetGlampingHeart;
-import com.green.glampick.jin.object.GetPopularRoom;
-import com.green.glampick.jin.object.GetRevenue;
-import com.green.glampick.jin.object.GetStarHeart;
+import com.green.glampick.jin.object.*;
 import com.green.glampick.jin.request.*;
 import com.green.glampick.jin.response.*;
 import com.green.glampick.mapper.OwnerMapper;
@@ -127,6 +124,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             throw new CustomException(CommonErrorCode.MNF);
         }
         String formattedResult;
+        List<GetCancelDto> cancelDtos = null;
         try {
             long total = ownerRepository.findTotalCount(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
             long cancel = ownerRepository.findCancelCount(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
@@ -135,13 +133,14 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             }
             double result = (double) cancel / total * 100;
             formattedResult = String.format("%.2f", result);
+
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.DBE);
         }
-        return GetGlampingCancelResponseDto.success(formattedResult);
+        return GetGlampingCancelResponseDto.success(cancelDtos);
     }
 
     @Override//매출
