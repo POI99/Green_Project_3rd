@@ -1,6 +1,7 @@
 package com.green.glampick.controller;
 
 import com.green.glampick.dto.request.admin.DeleteBannerRequestDto;
+import com.green.glampick.dto.request.admin.exclusionSignUpRequestDto;
 import com.green.glampick.dto.response.admin.*;
 import com.green.glampick.service.AdminService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +23,8 @@ import static com.green.glampick.common.swagger.description.admin.DeleteBannerSw
 import static com.green.glampick.common.swagger.description.admin.DeleteBannerSwaggerDescription.DELETE_BANNER_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.admin.DeleteExclutionSignUpSwaggerDescription.EXCLUTION_SIGN_UP_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.admin.DeleteExclutionSignUpSwaggerDescription.EXCLUTION_SIGN_UP_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.admin.GetAccessGlampingSwaggerDescription.ACCESS_GLAMPING_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.admin.GetAccessGlampingSwaggerDescription.ACCESS_GLAMPING_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.admin.PatchAccessSignUpSwaggerDescription.ACCESS_SIGN_UP_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.admin.PatchAccessSignUpSwaggerDescription.ACCESS_SIGN_UP_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.admin.PostBannerSwaggerDescription.POST_BANNER_DESCRIPTION;
@@ -69,14 +72,14 @@ public class AdminController {
         return service.accessSignUp(ownerId);
     }
 
-    //  관리자 페이지 - 사장님 회원가입 반려 처리하기  //
+    //  관리자 페이지 - 사장님 회원가입 반려 처리하기 - 완료  //
     @DeleteMapping("/exclution/owner/sign-up")
-    @Operation(summary = "사장님 회원가입 반려 처리하기 (김수찬)", description = EXCLUTION_SIGN_UP_DESCRIPTION)
+    @Operation(summary = "사장님 회원가입 반려 처리하기 (김수찬) - 완료", description = EXCLUTION_SIGN_UP_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = EXCLUTION_SIGN_UP_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = PatchAccessOwnerSignUpResponseDto.class)
             ))
-    public ResponseEntity<? super DeleteExclutionOwnerSignUpResponseDto> exclutionSignUp(@RequestParam Long ownerId) {
+    public ResponseEntity<? super DeleteExclusionOwnerSignUpResponseDto> exclusionSignUp(@RequestParam Long ownerId) {
         return service.exclutionSignUp(ownerId);
     }
 
@@ -91,15 +94,15 @@ public class AdminController {
         return service.postBanner(file);
     }
 
-    //  관리자 페이지 - 메인 화면 배너 삭제하기  //
+    //  관리자 페이지 - 메인 화면 배너 삭제하기 - 완료  //
     @DeleteMapping("/banner")
     @Operation(summary = "메인 배너 삭제하기 (김수찬) - 완료", description = DELETE_BANNER_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = DELETE_BANNER_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = DeleteBannerResponseDto.class)
             ))
-    public ResponseEntity<? super DeleteBannerResponseDto> deleteBanner(@ParameterObject DeleteBannerRequestDto dto) {
-        return service.deleteBanner(dto);
+    public ResponseEntity<? super DeleteBannerResponseDto> deleteBanner(@RequestParam Long bannerId) {
+        return service.deleteBanner(bannerId);
     }
 
     //  관리자 페이지 - 메인 화면 배너 불러오기  //
@@ -124,10 +127,10 @@ public class AdminController {
         return service.getAccessGlampingList();
     }
 
-    //  관리자 페이지 - 사장님 글램핑 등록 상세 정보 불러오기  //
+    //  관리자 페이지 - 사장님 글램핑 등록 상세 정보 불러오기 - 완료  //
     @GetMapping("/glamping/owner")
-    @Operation(summary = "사장님 글램핑 등록 정보 불러오기 (김수찬)", description = "")
-    @ApiResponse(responseCode = "200", description = "",
+    @Operation(summary = "사장님 글램핑 등록 정보 불러오기 (김수찬)", description = ACCESS_GLAMPING_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = ACCESS_GLAMPING_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetAccessGlampingInfoResponseDto.class)
             ))
