@@ -7,6 +7,7 @@ import com.green.glampick.dto.request.owner.module.GlampingModule;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookListResponseDto;
+import com.green.glampick.dto.response.owner.get.GetRoomListResponseDto;
 import com.green.glampick.dto.response.owner.get.OwnerInfoResponseDto;
 import com.green.glampick.dto.response.owner.post.PostBusinessPaperResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
@@ -135,6 +136,37 @@ public class OwnerController {
     public ResponseEntity<? super OwnerSuccessResponseDto> deleteRoom(@PathVariable("room_id") Long roomId) {
         return service.deleteRoom(roomId);
     }
+
+    // 글램핑 get
+//    @GetMapping("glamping")
+//    @Operation(summary = "글램핑 정보 불러오기 (김민지)", description = "")
+//    @ApiResponse(responseCode = "200", description = "",
+//            content = @Content(
+//                    mediaType = "application/json", schema = @Schema(implementation = GetGlampingInfoResponseDto.class)))
+//    public ResponseEntity<? super GetGlampingInfoResponseDto> getGlamping() {
+//        return service.getGlamping();
+//    }
+
+    // 객실 list get
+    @GetMapping("room/{glamp_id}")
+    @Operation(summary = "객실 정보 리스트 불러오기 (김민지)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetRoomListResponseDto.class)))
+    public ResponseEntity<? super GetRoomListResponseDto> getRoomList(@PathVariable("glamp_id") Long glampId) {
+        return service.getRoomList(glampId);
+    }
+
+    // 객실 상세보기
+//    @GetMapping("room/{glamp_id}/{room_id}")
+//    @Operation(summary = "객실 정보 상세 불러오기 (김민지)", description = "")
+//    @ApiResponse(responseCode = "200", description = "",
+//            content = @Content(
+//                    mediaType = "application/json", schema = @Schema(implementation = GetRoomInfoResponseDto.class)))
+//    public ResponseEntity<? super GetRoomInfoResponseDto> getRoomOne(@PathVariable("glamp_id") Long glampId
+//            , @PathVariable("room_id") Long roomId) {
+//        return service.getRoomOne(glampId, roomId);
+//    }
 
     // 비밀번호 확인
     @PostMapping("info")
