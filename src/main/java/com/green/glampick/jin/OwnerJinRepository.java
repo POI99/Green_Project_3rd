@@ -1,10 +1,7 @@
 package com.green.glampick.jin;
 
 import com.green.glampick.entity.OwnerEntity;
-import com.green.glampick.jin.object.GetGlampingHeart;
-import com.green.glampick.jin.object.GetPopularRoom;
-import com.green.glampick.jin.object.GetRevenue;
-import com.green.glampick.jin.object.GetStarHeart;
+import com.green.glampick.jin.object.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -106,12 +103,28 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
     List<GetRevenue> findRevenue(long ownerId, long startDayId, long endDayId);
 
 
-
     @Query(
             value =
-                    "SELECT COUNT(A.room_id) " +
+                    "SELECT COUNT(A.room_id) as counts" +
+                            ", C.owner_id " +
+                            ", B.room_name as roomName" +
+                            ", DATE(A.created_at) " +
+                            "FROM reservation_cancel A " +
+                            "JOIN room B ON A.room_id = B.room_id " +
+                            "JOIN glamping C ON B.glamp_id = C.glamp_id " +
+                            "WHERE C.owner_id = :ownerId AND A.created_at BETWEEN :startDayId AND :endDayId " +
+                            "GROUP BY B.room_name ",
+            nativeQuery = true
+    )
+    List<GetCancelDto> findRoomCount(long ownerId, long startDayId, long endDayId);
+}
+
+/*
+    @Query(
+            value =
+                    "SELECT COUNT(A.room_id) as counts" +
             ", C.owner_id " +
-            ", B.room_name " +
+            ", B.room_name as roomName" +
             "FROM reservation_cancel A " +
             "JOIN room B ON A.room_id = B.room_id " +
             "JOIN glamping C ON B.glamp_id = C.glamp_id " +
@@ -120,15 +133,4 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
             nativeQuery = true
     )
     long findRoomCount(long ownerId);
-}
-
-/*
-@Query(value = "SELECT A.glamp_id, COUNT(A.glamp_id) AS heart, DATE(A.created_at) as createdAt, B.owner_id " +
-                   "FROM glamp_favorite A " +
-                   "JOIN glamping B ON A.glamp_id = B.glamp_id " +
-                   "WHERE B.owner_id = :ownerId " +
-                   "AND A.created_at BETWEEN DATE_ADD(NOW(), INTERVAL -:interval DAY) AND NOW() " +
-                   "GROUP BY DATE(A.created_at), A.glamp_id, B.owner_id",
-           nativeQuery = true)
-    List<Object[]> findPopularRooms(@Param("ownerId") long ownerId, @Param("interval") int interval);
  */

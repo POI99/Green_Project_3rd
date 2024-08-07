@@ -124,7 +124,8 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             throw new CustomException(CommonErrorCode.MNF);
         }
         String formattedResult;
-        List<GetCancelDto> cancelDtos = null;
+
+        List<GetCancelDto> room = ownerRepository.findRoomCount(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
         try {
             long total = ownerRepository.findTotalCount(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
             long cancel = ownerRepository.findCancelCount(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
@@ -134,13 +135,14 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             double result = (double) cancel / total * 100;
             formattedResult = String.format("%.2f", result);
 
+
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.DBE);
         }
-        return GetGlampingCancelResponseDto.success(cancelDtos);
+        return GetGlampingCancelResponseDto.success(room, formattedResult);
     }
 
     @Override//매출

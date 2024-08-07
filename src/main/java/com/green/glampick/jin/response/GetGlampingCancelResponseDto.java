@@ -16,16 +16,17 @@ import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 @Setter
 public class GetGlampingCancelResponseDto extends ResponseDto {
 
-    List<GetCancelDto> cancelDtos;
+    List<GetCancelDto> room;
     private String formattedResult;
 
-    private GetGlampingCancelResponseDto(List<GetCancelDto> cancelDtos) {
+    private GetGlampingCancelResponseDto(List<GetCancelDto> room, String formattedResult) {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
-        this.cancelDtos = cancelDtos;
+        this.formattedResult = formattedResult;
+        this.room = room;
     }
 
-    public static ResponseEntity<GetGlampingCancelResponseDto> success(List<GetCancelDto> cancelDtos) {
-        GetGlampingCancelResponseDto results = new GetGlampingCancelResponseDto(cancelDtos);
+    public static ResponseEntity<GetGlampingCancelResponseDto> success(List<GetCancelDto> room, String formattedResult) {
+        GetGlampingCancelResponseDto results = new GetGlampingCancelResponseDto(room, formattedResult);
         return ResponseEntity.status(HttpStatus.OK).body(results);
     }
 
