@@ -58,6 +58,6 @@ public class GlampingWaitEntity extends CreatedAt {
     private String traffic;
 
     @Column(columnDefinition = "TINYINT", nullable = false) @ColumnDefault("0") @Comment("심사 반려 : -1")
-    private Integer exclutionStatus;
+    private Integer exclusionStatus;
 
 }

@@ -324,7 +324,28 @@ public class OwnerServiceImpl implements OwnerService {
         return OwnerSuccessResponseDto.deleteInformation();
     }
 
-    // 객실 정보 불러오기
+    // 글램핑 정보 불러오기
+    public ResponseEntity<? super GetGlampingInfoResponseDto> getGlamping() {
+        /*
+            state : glamping table 에 로그인 회원에 대한 정보가 있다면 true 없으면 false
+                    true - glamping table 에서 get
+                    false -	glamping wait table 에서 get
+         */
+
+        // 사장님 PK 불러오기
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
+
+        boolean state = true ;
+        GlampingEntity glamping = glampingRepository.findByOwner(owner);
+        if(glamping == null) {
+            state = false;
+        }
+
+        return null;
+    }
+
+    // 객실 정보 미리보기
     public ResponseEntity<? super GetRoomListResponseDto> getRoomList(Long glampId) {
         // PK 불러오기
         long ownerId = GlampingModule.ownerId(authenticationFacade);
@@ -340,11 +361,32 @@ public class OwnerServiceImpl implements OwnerService {
         List<GetRoomListResultSet> resultSet = roomRepository.getRoomList(glamping);
         List<GetRoomItem> result = new ArrayList<>();
         for (GetRoomListResultSet item : resultSet) {
-            GetRoomItem room = new GetRoomItem(item.getRoomName(), item.getRoomImageName());
+            GetRoomItem room = new GetRoomItem(item.getRoomId(), item.getRoomName(), item.getRoomImageName());
             result.add(room);
         }
 
         return GetRoomListResponseDto.success(result);
+    }
+
+    // 객실 정보 상세보기
+    public ResponseEntity<? super GetRoomInfoResponseDto> getRoomOne(Long glampId, Long roomId) {
+        // PK 불러오기
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+
+        // 권한 체크
+        OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
+        log.info("============={}", owner.getOwnerId());
+        GlampingModule.roleCheck(owner.getRole());
+        // 사장님이 해당 글램핑을 가지고있는지 확인
+        GlampingModule.isGlampIdOk(glampingRepository, owner, glampId);
+
+        // 정보 불러오기
+        GetRoomInfoResultSet resultSet = roomRepository.getRoomInfo(roomId);
+        RoomEntity room = roomRepository.getReferenceById(roomId);
+        List<String> roomImage = roomImageRepository.getRoomImg(room);
+        List<Long> service = serviceRepository.findRoomServiceIdByRoom(room);
+
+        return GetRoomInfoResponseDto.success(resultSet, roomImage, service);
     }
 
     // 비밀번호 확인

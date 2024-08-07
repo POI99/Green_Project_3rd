@@ -9,6 +9,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GetRoomItem {
 
+    @Schema(example = "1")
+    private Long roomId;
     @Schema(example = "카라반 102호")
     private String roomName;
     @Schema(example = "이미지 주소")

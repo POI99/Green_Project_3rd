@@ -4,9 +4,7 @@ import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
-import com.green.glampick.dto.response.owner.get.GetOwnerBookListResponseDto;
-import com.green.glampick.dto.response.owner.get.GetRoomListResponseDto;
-import com.green.glampick.dto.response.owner.get.OwnerInfoResponseDto;
+import com.green.glampick.dto.response.owner.get.*;
 import com.green.glampick.dto.response.owner.post.PostBusinessPaperResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PatchOwnerInfoResponseDto;
@@ -39,8 +37,10 @@ public interface OwnerService {
     // 객실 삭제
     ResponseEntity<? super OwnerSuccessResponseDto> deleteRoom(Long roomId);
     // 글램핑 get
+    ResponseEntity<? super GetGlampingInfoResponseDto> getGlamping();
     // 객실 get
     ResponseEntity<? super GetRoomListResponseDto> getRoomList(Long glampId);
+    ResponseEntity<? super GetRoomInfoResponseDto> getRoomOne(Long glampId, Long roomId);
     // 비밀번호 확인
     ResponseEntity<? super OwnerSuccessResponseDto> checkOwnerPassword(CheckPasswordRequestDto dto);
     // 회원정보 불러오기
