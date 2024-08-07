@@ -12,4 +12,6 @@ public interface ServiceRepository extends JpaRepository<ServiceEntity, Long> {
     @Query("select s.serviceId from ServiceEntity s join RoomServiceEntity rs on s = rs.service" +
             " where rs.room = :room")
     List<Long> findRoomServiceIdByRoom(RoomEntity room);
+
+
 }

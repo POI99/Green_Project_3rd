@@ -62,6 +62,9 @@ dependencies {
     implementation 'org.hibernate.orm:hibernate-core:6.5.2.Final'
 
 
+    implementation 'org.locationtech.jts:jts-core:1.18.2'  // 버전은 최신 안정 버전으로
+
+
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'

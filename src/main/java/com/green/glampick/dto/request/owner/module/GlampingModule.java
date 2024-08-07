@@ -123,6 +123,8 @@ public class GlampingModule {
         try {
             GlampingEntity glamp = glampingRepository.findByOwner(owner);
             readGlampId = glamp.getGlampId();
+        } catch (Exception e){
+            e.printStackTrace();
         } finally {
             if (readGlampId == null || readGlampId != glampId) {
                 throw new CustomException(OwnerErrorCode.NMG);

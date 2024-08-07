@@ -11,6 +11,7 @@ public class DeleteBannerSwaggerDescription {
     public static final String DELETE_BANNER_RESPONSE_ERROR_CODE =
 
             "<strong>발생 가능한 에러코드</strong>" +
+            "<p>NFB - 배너 PK를 찾을 수 없음 (400)" +
             "<p>NP - 권한 없음 (403)</p>" +
             "<p>DBE - 데이터베이스 에러 (500)</p>"
             ;
