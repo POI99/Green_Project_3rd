@@ -11,4 +11,5 @@ public interface GetGlampingInfoResultSet {
     String getBasic();
     String getNotice();
     String getTraffic();
+    Integer getExclusionStatus();
 }

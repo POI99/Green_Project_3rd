@@ -34,9 +34,9 @@ public interface GlampingRepository extends JpaRepository<GlampingEntity, Long> 
     void updateGlampImageByGlampId(String glampImg, Long glampId);
 
     @Query(" select g.glampName AS name, g.glampCall AS call" +
-            ", g.glampImage AS image, g.location AS location, " +
+            ", g.glampImage AS image, g.glampLocation AS location, " +
             "g.region AS region, g.extraCharge AS charge, g.glampIntro AS intro, g.infoBasic AS basic" +
-            ", g.infoNotice AS notice, g.traffic AS traffic from GlampingEntity g")
-    GetGlampingInfoResultSet getGlampingInfo();
+            ", g.infoNotice AS notice, g.traffic AS traffic from GlampingEntity g where g.owner = :owner")
+    GetGlampingInfoResultSet getGlampingInfo(OwnerEntity owner);
 
 }

@@ -1,5 +1,6 @@
 package com.green.glampick.repository;
 
+import com.green.glampick.repository.resultset.GetGlampingInfoResultSet;
 import org.springframework.data.jpa.repository.Modifying;
 import com.green.glampick.entity.GlampingWaitEntity;
 import com.green.glampick.entity.OwnerEntity;
@@ -18,4 +19,10 @@ public interface GlampingWaitRepository extends JpaRepository<GlampingWaitEntity
     GlampingWaitEntity findByGlampId(Long glampId);
     GlampingWaitEntity findByGlampLocation(String glampLocation);
 
+    @Query(" select g.glampName AS name, g.glampCall AS call" +
+            ", g.glampImage AS image, g.glampLocation AS location, " +
+            "g.region AS region, g.extraCharge AS charge, g.glampIntro AS intro, g.infoBasic AS basic" +
+            ", g.infoNotice AS notice, g.traffic AS traffic, g.exclusionStatus AS exclusionStatus" +
+            " from GlampingWaitEntity g where g.owner = :owner")
+    GetGlampingInfoResultSet getGlampingInfo(OwnerEntity owner);
 }

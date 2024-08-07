@@ -47,5 +47,7 @@ public class OwnerEntity extends UpdatedAt {
     @Column(length = 100) @Comment("사업자 등록증")
     private String businessPaperImage;
 
+    @Column(nullable = false) @ColumnDefault("1") @Comment("글램핑 정상 등록 완료 = 1")
+    private Integer glampingStatus;
 
 }
