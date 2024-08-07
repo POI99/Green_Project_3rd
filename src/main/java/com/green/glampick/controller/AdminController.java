@@ -1,5 +1,6 @@
 package com.green.glampick.controller;
 
+import com.green.glampick.dto.request.admin.DeleteBannerRequestDto;
 import com.green.glampick.dto.response.admin.*;
 import com.green.glampick.service.AdminService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -91,13 +93,13 @@ public class AdminController {
 
     //  관리자 페이지 - 메인 화면 배너 삭제하기  //
     @DeleteMapping("/banner")
-    @Operation(summary = "메인 배너 삭제하기 (김수찬)", description = DELETE_BANNER_DESCRIPTION)
+    @Operation(summary = "메인 배너 삭제하기 (김수찬) - 완료", description = DELETE_BANNER_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = DELETE_BANNER_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = DeleteBannerResponseDto.class)
             ))
-    public ResponseEntity<? super DeleteBannerResponseDto> deleteBanner(@RequestParam Long bannerId) {
-        return service.deleteBanner(bannerId);
+    public ResponseEntity<? super DeleteBannerResponseDto> deleteBanner(@ParameterObject DeleteBannerRequestDto dto) {
+        return service.deleteBanner(dto);
     }
 
     //  관리자 페이지 - 메인 화면 배너 불러오기  //
