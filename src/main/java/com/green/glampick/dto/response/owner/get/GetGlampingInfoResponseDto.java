@@ -1,14 +1,12 @@
 package com.green.glampick.dto.response.owner.get;
 
 import com.green.glampick.dto.ResponseDto;
-import com.green.glampick.dto.object.owner.GetRoomItem;
+import com.green.glampick.repository.resultset.GetGlampingInfoResultSet;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-
-import java.util.List;
 
 import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
 
@@ -51,9 +49,25 @@ public class GetGlampingInfoResponseDto extends ResponseDto {
     private Integer exclusionStatus;
 
 
+
+    public static ResponseEntity<GetGlampingInfoResponseDto> success(boolean state, GetGlampingInfoResultSet resultSet) {
+        GetGlampingInfoResponseDto result = new GetGlampingInfoResponseDto(state, resultSet.getName(), resultSet.getCall()
+                , resultSet.getImage(), resultSet.getLocation(), resultSet.getRegion(), resultSet.getCharge()
+                , resultSet.getIntro(), resultSet.getBasic(), resultSet.getNotice(), resultSet.getTraffic());
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    public static ResponseEntity<GetGlampingInfoResponseDto> successWait(boolean state
+            , GetGlampingInfoResultSet resultSet) {
+        GetGlampingInfoResponseDto result = new GetGlampingInfoResponseDto(state, resultSet.getName(), resultSet.getCall()
+                , resultSet.getImage(), resultSet.getLocation(), resultSet.getRegion(), resultSet.getCharge()
+                , resultSet.getIntro(), resultSet.getBasic(), resultSet.getNotice(), resultSet.getTraffic(), resultSet.getExclusionStatus());
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
     public GetGlampingInfoResponseDto(boolean state, String glampName, String glampCall, String glampImage
             , String glampLocation, String region, Integer extraCharge, String glampIntro, String infoBasic
-        , String infoNotice, String traffic, Integer exclusionStatus){
+            , String infoNotice, String traffic, Integer exclusionStatus){
         super(SUCCESS_CODE, "글램핑 정보 리스트를 불러왔습니다.");
         this.state=state;
         this.glampName=glampName;
@@ -69,9 +83,21 @@ public class GetGlampingInfoResponseDto extends ResponseDto {
         this.exclusionStatus=exclusionStatus;
     }
 
-    public static ResponseEntity<GetRoomListResponseDto> success(List<GetRoomItem> r) {
-        GetRoomListResponseDto result = new GetRoomListResponseDto(r);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    public GetGlampingInfoResponseDto(boolean state, String glampName, String glampCall, String glampImage
+            , String glampLocation, String region, Integer extraCharge, String glampIntro, String infoBasic
+            , String infoNotice, String traffic){
+        super(SUCCESS_CODE, "글램핑 정보 리스트를 불러왔습니다.");
+        this.state=state;
+        this.glampName=glampName;
+        this.glampCall=glampCall;
+        this.glampImage=glampImage;
+        this.region=region;
+        this.glampLocation=glampLocation;
+        this.extraCharge=extraCharge;
+        this.glampIntro=glampIntro;
+        this.infoBasic=infoBasic;
+        this.infoNotice=infoNotice;
+        this.traffic=traffic;
     }
 
 }
