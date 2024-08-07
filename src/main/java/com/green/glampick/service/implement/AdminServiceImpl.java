@@ -3,8 +3,8 @@ package com.green.glampick.service.implement;
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.common.Role;
 import com.green.glampick.dto.request.admin.DeleteBannerRequestDto;
+import com.green.glampick.dto.request.admin.exclusionSignUpRequestDto;
 import com.green.glampick.dto.request.admin.module.AdminModule;
-import com.green.glampick.dto.request.owner.module.RoomModule;
 import com.green.glampick.dto.response.admin.*;
 import com.green.glampick.entity.BannerEntity;
 import com.green.glampick.entity.GlampingEntity;
@@ -99,19 +99,15 @@ public class AdminServiceImpl implements AdminService {
         return PatchAccessOwnerSignUpResponseDto.success();
     }
 
-    //  관리자 페이지 - 사장님 회원가입 반려 처리하기  //
+    //  관리자 페이지 - 사장님 회원가입 반려 처리하기 - 완료  //
     @Override
     @Transactional
-    public ResponseEntity<? super DeleteExclutionOwnerSignUpResponseDto> exclutionSignUp(Long ownerId) {
+    public ResponseEntity<? super DeleteExclusionOwnerSignUpResponseDto> exclutionSignUp(Long ownerId) {
 
         try {
 
             OwnerEntity ownerEntity = ownerRepository.findByOwnerId(ownerId);
-
-            if (ownerEntity.getRole() != Role.ROLE_RESERVE_OWNER) {
-                throw new CustomException(UserErrorCode.NEP);
-            }
-
+            if (ownerEntity.getRole() != Role.ROLE_RESERVE_OWNER) { throw new CustomException(UserErrorCode.NEP); }
             ownerRepository.delete(ownerEntity);
 
         } catch (CustomException e) {
@@ -121,7 +117,7 @@ public class AdminServiceImpl implements AdminService {
             throw new CustomException(CommonErrorCode.DBE);
         }
 
-        return DeleteExclutionOwnerSignUpResponseDto.success();
+        return DeleteExclusionOwnerSignUpResponseDto.success();
 
     }
 
@@ -161,28 +157,17 @@ public class AdminServiceImpl implements AdminService {
         return PostBannerResponseDto.success();
     }
 
-    //  관리자 페이지 - 메인 화면 배너 삭제하기  //
+    //  관리자 페이지 - 메인 화면 배너 삭제하기 - 완료  //
     @Override
     @Transactional
-    public ResponseEntity<? super DeleteBannerResponseDto> deleteBanner(DeleteBannerRequestDto dto) {
-
-        try {
-            dto.setAdminIdx(authenticationFacade.getLoginUserId());
-            if (dto.getAdminIdx() <= 0) {
-                throw new RuntimeException();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException(CommonErrorCode.MNF);
-        }
-
+    public ResponseEntity<? super DeleteBannerResponseDto> deleteBanner(Long bannerId) {
 
         try {
 
-            if (dto.getBannerId() == null) { throw new CustomException(AdminErrorCode.NFB); }
+            if (bannerId == null) { throw new CustomException(AdminErrorCode.NFB); }
 
-            BannerEntity bannerEntity = bannerRepository.findByBannerId(dto.getBannerId());
-            AdminModule.deleteImageOne(dto.getBannerId(), bannerRepository, customFileUtils);
+            BannerEntity bannerEntity = bannerRepository.findByBannerId(bannerId);
+            AdminModule.deleteImageOne(bannerId, bannerRepository, customFileUtils);
             bannerRepository.delete(bannerEntity);
 
         } catch (CustomException e) {
@@ -219,15 +204,19 @@ public class AdminServiceImpl implements AdminService {
 
     }
 
-    //  관리자 페이지 - 사장님 글램핑 등록 상세 정보 불러오기  //
+    //  관리자 페이지 - 사장님 글램핑 등록 상세 정보 불러오기 - 완료  //
     @Override
     @Transactional
     public ResponseEntity<? super GetAccessGlampingInfoResponseDto> getAccessGlamping(Long glampId) {
+
+
         GlampingEntity glampingEntity = new GlampingEntity();
 
         try {
 
             glampingEntity = glampingRepository.findByGlampId(glampId);
+
+            if (glampingEntity == null) { throw new CustomException(AdminErrorCode.NG); }
 
         } catch (CustomException e) {
           throw new CustomException(e.getErrorCode());
