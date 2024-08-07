@@ -258,7 +258,7 @@ public class AdminServiceImpl implements AdminService {
 
         GlampingWaitEntity glampingWaitEntity = glampingWaitRepository.findByGlampId(glampId);
 
-        glampingWaitEntity.setExclutionStatus(-1);
+        glampingWaitEntity.setExclusionStatus(-1);
 
         glampingWaitRepository.save(glampingWaitEntity);
 
