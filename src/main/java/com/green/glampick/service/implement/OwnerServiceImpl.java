@@ -2,7 +2,9 @@ package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.dto.object.UserReviewListItem;
+import com.green.glampick.dto.object.owner.OwnerBookItem;
 import com.green.glampick.dto.object.owner.OwnerBookCountListItem;
+import com.green.glampick.dto.object.owner.OwnerBookDetailListItem;
 import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.owner.module.GlampingModule;
@@ -411,20 +413,23 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override // 예약 중 리스트 불러오기
-    public List<GetReservationBeforeResultSet> getReservationBeforeList(ReservationGetRequestDto p) {
-
-        List<GetReservationBeforeResultSet> reservationBeforeResultSetList;
-        Long ownerId = p.getOwnerId();
-        int limit = p.getLimit(); // size
-        int offset = p.getOffset(); // startIdx
-
-        Pageable pageable = PageRequest.of(offset,limit);
-        String date = "2024-08-11";
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate localDate = LocalDate.parse(date, dateTimeFormatter);
+    public List<OwnerBookDetailListItem> getReservationBeforeList(ReservationGetRequestDto p) {
         try {
-            reservationBeforeResultSetList = reservationBeforeRepository.getReservationBeforeByOwnerId(ownerId, pageable, localDate);
+            List<OwnerBookItem> reservationBeforeResultSetList;
+            Long ownerId = p.getOwnerId();
+            int limit = p.getLimit(); // size
+            int offset = p.getOffset(); // startIdx
+            String date = p.getDate(); // Date
 
+            Pageable pageable = PageRequest.of(offset,limit);
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate localDate = LocalDate.parse(date, dateTimeFormatter);
+
+            List<OwnerBookDetailListItem> bookDetailListItems = new ArrayList<>();
+
+            reservationBeforeResultSetList = reservationBeforeRepository.getReservationBeforeByOwnerId(ownerId, pageable, localDate);
+            setBookDetailList(reservationBeforeResultSetList, bookDetailListItems);
+            return bookDetailListItems;
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
@@ -432,23 +437,29 @@ public class OwnerServiceImpl implements OwnerService {
             throw new CustomException(CommonErrorCode.DBE);
         }
 
-        return reservationBeforeResultSetList;
     }
 
     @Override // 예약취소 리스트 불러오기
-    public List<GetReservationCancelResultSet> getReservationCancelList(ReservationGetRequestDto p) {
-        List<GetReservationCancelResultSet> reservationCancelResultSetList;
-        Long ownerId = p.getOwnerId();
-        int limit = p.getLimit();
-        int offset = p.getOffset();
-
-        Pageable pageable = PageRequest.of(offset,limit);
-        String date = "2024-08-08";
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate localDate = LocalDate.parse(date, dateTimeFormatter);
-
+    public List<OwnerBookDetailListItem> getReservationCancelList(ReservationGetRequestDto p) {
         try {
+            List<OwnerBookItem> reservationCancelResultSetList;
+            Long ownerId = p.getOwnerId();
+            int limit = p.getLimit();
+            int offset = p.getOffset();
+            String date = p.getDate();
+
+            Pageable pageable = PageRequest.of(offset,limit);
+
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate localDate = LocalDate.parse(date, dateTimeFormatter);
+
+            List<OwnerBookDetailListItem> bookDetailListItems = new ArrayList<>();
+
+
             reservationCancelResultSetList = reservationCancelRepository.getReservationCancelByOwnerId(ownerId, pageable, localDate);
+            setBookDetailList(reservationCancelResultSetList,bookDetailListItems);
+
+            return bookDetailListItems;
 
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
@@ -456,25 +467,28 @@ public class OwnerServiceImpl implements OwnerService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.DBE);
         }
-
-        return reservationCancelResultSetList;
     }
 
     @Override // 예약완료 리스트 불러오기
-    public List<GetReservationCompleteResultSet> getReservationCompleteList(ReservationGetRequestDto p) {
-        List<GetReservationCompleteResultSet> reservationCompleteResultSetList;
-
-        Long ownerId = p.getOwnerId();
-        int limit = p.getLimit();
-        int offset = p.getOffset();
-
-        Pageable pageable = PageRequest.of(offset,limit);
-        String date = "2024-08-03";
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate localDate = LocalDate.parse(date, dateTimeFormatter);
+    public List<OwnerBookDetailListItem> getReservationCompleteList(ReservationGetRequestDto p) {
         try {
-//            reservationCompleteResultSetList = reservationCompleteRepository.getReservationCompleteByOwnerId(ownerId, pageable, localDate);
-            reservationCompleteResultSetList = reservationCompleteRepository.getReservationCompleteByOwnerId(ownerId, limit, offset);
+            List<OwnerBookItem> reservationCompleteResultSetList;
+            Long ownerId = p.getOwnerId();
+            int limit = p.getLimit();
+            int offset = p.getOffset();
+            String date = p.getDate();
+
+            Pageable pageable = PageRequest.of(offset,limit);
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate localDate = LocalDate.parse(date, dateTimeFormatter);
+
+            List<OwnerBookDetailListItem> bookDetailListItems = new ArrayList<>();
+
+            reservationCompleteResultSetList = reservationCompleteRepository.getReservationCompleteByOwnerId(ownerId, pageable, localDate);
+            setBookDetailList(reservationCompleteResultSetList, bookDetailListItems);
+
+            return bookDetailListItems;
+
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
@@ -482,7 +496,6 @@ public class OwnerServiceImpl implements OwnerService {
             throw new CustomException(CommonErrorCode.DBE);
         }
 
-        return reservationCompleteResultSetList;
     }
 
     @Override //리뷰 리스트 불러오기
@@ -529,7 +542,8 @@ public class OwnerServiceImpl implements OwnerService {
             throw new CustomException(CommonErrorCode.DBE);
         }
     }
-    @Override
+
+    @Override // 날짜별 예약건수
     public List<OwnerBookCountListItem> getTotalCount(String date, Long ownerId) {
         LocalDate localDate = parseToLocalDate(date);
         int month = localDate.getMonth().getValue();
@@ -604,12 +618,25 @@ public class OwnerServiceImpl implements OwnerService {
 
         return null;
     }
-
     @Override
     public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(ReservationGetRequestDto p) {
         return null;
     }
 
+    //===========================================================================================================
+    private static void setBookDetailList(List<OwnerBookItem> reservationResultSetList, List<OwnerBookDetailListItem> bookDetailListItems) {
+        for (OwnerBookItem resultSet : reservationResultSetList) {
+            OwnerBookDetailListItem item = new OwnerBookDetailListItem();
+            item.setInputName(resultSet.getInputName());
+            item.setRoomName(resultSet.getRoomName());
+            item.setPersonnel(resultSet.getPersonnel());
+            item.setPayAmount(resultSet.getPayAmount());
+            item.setCheckInDate(resultSet.getCheckInDate().toString());
+            item.setCheckOutDate(resultSet.getCheckOutDate().toString());
+
+            bookDetailListItems.add(item);
+        }
+    }
     private static void setReviewItem(List<GetUserReviewResultSet> reviewInfo, List<ReviewImageEntity> imageEntities, List<UserReviewListItem> reviewListItem) {
         for (GetUserReviewResultSet resultSet : reviewInfo) {
             UserReviewListItem item = new UserReviewListItem();
