@@ -40,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -561,6 +562,7 @@ public class OwnerServiceImpl implements OwnerService {
             //reviewItem List Setting
             setReviewItem(reviewInfo, imageEntities, reviewListItem);
 
+            //reviewTotalCount
             return GetReviewResponseDto.success(reviewListItem);
 
         } catch (CustomException e) {
@@ -572,13 +574,13 @@ public class OwnerServiceImpl implements OwnerService {
         }
     }
     @Override
-    public Long getTotalCount(String date) {
+    public List<OwnerBookCountListItem> getTotalCount(String date, Long ownerId) {
         LocalDate localDate = parseToLocalDate(date);
         int month = localDate.getMonth().getValue();
         try {
-            List<GetOwnerBookBeforeCountResponseDto> countBefore = reservationBeforeRepository.getCountFromReservationBefore(month);
-            List<GetOwnerBookCancelCountResponseDto> countCancel = reservationCancelRepository.getCountFromReservationCancel(month);
-            List<GetOwnerBookCompleteCountResponseDto> countComplete = reservationCompleteRepository.getCountFromReservationComplete(month);
+            List<GetOwnerBookBeforeCountResponseDto> countBefore = reservationBeforeRepository.getCountFromReservationBefore(month,ownerId);
+            List<GetOwnerBookCancelCountResponseDto> countCancel = reservationCancelRepository.getCountFromReservationCancel(month,ownerId);
+            List<GetOwnerBookCompleteCountResponseDto> countComplete = reservationCompleteRepository.getCountFromReservationComplete(month,ownerId);
 
             List<OwnerBookCountListItem> bookCountListItems = new ArrayList<>();
 
@@ -589,59 +591,58 @@ public class OwnerServiceImpl implements OwnerService {
                 item.setIngCount(bookCount.getCountBefore());
                 bookCountListItems.add(item);
             }
-            List<OwnerBookCountListItem> plusBookCountListItems = new ArrayList<>(bookCountListItems);
+            List<OwnerBookCountListItem> plusBookCountListItems = new LinkedList<>(bookCountListItems);
 
             for (GetOwnerBookCancelCountResponseDto bookCount : countCancel) {
-                for (OwnerBookCountListItem ownerItem : bookCountListItems) {
-                    boolean found = false;
+//                for (OwnerBookCountListItem ownerItem : bookCountListItems) {
 
-                    String checkInDate = ownerItem.getCheckInDate();
+                for (Integer i = 0 ; i < bookCountListItems.size() ;i++ ) {
+
+                    String checkInDate = bookCountListItems.get(i).getCheckInDate();
                     String cancelDate = bookCount.getCheckInDate().toString();
                     Long cancelCount = bookCount.getCountCancel();
-                    if (checkInDate.equals(cancelDate)) { // 같은 체크인 날짜가 존재하거나 안하거나 한번만 세팅 해주고싶다.
-                        ownerItem.setCancelCount(cancelCount);
-                        found = true;
+                    if (checkInDate.equals(cancelDate)) {
+                        plusBookCountListItems.get(i).setCancelCount(cancelCount); //
                         break;
                     }
-                    if (!found) {
+                    if (i == bookCountListItems.size()-1)
+                    {
                         OwnerBookCountListItem newItem = new OwnerBookCountListItem();
                         newItem.setCheckInDate(bookCount.getCheckInDate());
                         newItem.setCancelCount(cancelCount);
                         plusBookCountListItems.add(newItem);
-                        break;
                     }
                 }
             }
-            for (GetOwnerBookCompleteCountResponseDto bookCount : countComplete) {
-                for (OwnerBookCountListItem ownerItem : bookCountListItems) {
-                    boolean found = false;
+            List<OwnerBookCountListItem> plusBookCountListItems2 = new LinkedList<>(plusBookCountListItems);
 
-                    String checkInDate = ownerItem.getCheckInDate();
+            for (GetOwnerBookCompleteCountResponseDto bookCount : countComplete) {
+//                for (OwnerBookCountListItem ownerItem : bookCountListItems) {
+
+                for (Integer i = 0 ; i < plusBookCountListItems.size() ;i++ ) {
+
+                    String checkInDate = plusBookCountListItems.get(i).getCheckInDate();
                     String completeDate = bookCount.getCheckInDate().toString();
                     Long completeCount = bookCount.getCountComplete();
-
-                    if (checkInDate.equals(completeDate)) { // 같은 체크인 날짜가 존재하거나 안하거나 한번만 세팅 해주고싶다.
-                        ownerItem.setCompleteCount(completeCount);
-                        found = true;
+                    if (checkInDate.equals(completeDate)) {
+                        plusBookCountListItems2.get(i).setCompleteCount(completeCount); //
                         break;
                     }
-                    if (!found) {
+                    if (i == plusBookCountListItems.size()-1)
+                    {
                         OwnerBookCountListItem newItem = new OwnerBookCountListItem();
                         newItem.setCheckInDate(bookCount.getCheckInDate());
                         newItem.setCompleteCount(completeCount);
-                        plusBookCountListItems.add(newItem);
-                        break;
+                        plusBookCountListItems2.add(newItem);
                     }
-                    //dsd
-                    System.out.println();
-                    return null;
                 }
-
-
-
             }
 
-        } catch (Exception e) {
+
+            return plusBookCountListItems2;
+
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
 

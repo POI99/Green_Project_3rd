@@ -82,8 +82,7 @@ public class OAuth2AuthenticationSuccessHandler
         //http://localhost:8080/oauth/redirect?user_id=1&nm=홍길동&pic=https://image.jpg&access_token=aslkdjslajf
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("user_id", myUserOAuth2Vo.getUserId())
-                .queryParam("nm", myUserOAuth2Vo.getNm()).encode()
-                .queryParam("pic", myUserOAuth2Vo.getPic())
+                .queryParam("user_email", myUserOAuth2Vo.getUserEmail()).encode()
                 .queryParam("access_token", accessToken)
                 .build()
                 .toUriString();

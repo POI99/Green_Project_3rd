@@ -11,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface GlampingRepository extends JpaRepository<GlampingEntity, Long> {
 
-    GlampingEntity findByGlampId(long glampId);
+    GlampingEntity findByGlampId(Long glampId);
+
+    Double findStarPointAvgByGlampId(Long glampId);
 
     GlampingEntity findByOwner(OwnerEntity owner);
     GlampingEntity findByGlampLocation(String glampLocation);

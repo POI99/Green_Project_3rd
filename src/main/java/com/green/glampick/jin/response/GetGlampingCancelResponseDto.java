@@ -1,10 +1,13 @@
 package com.green.glampick.jin.response;
 
 import com.green.glampick.dto.ResponseDto;
+import com.green.glampick.jin.object.GetCancelDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
 import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
@@ -13,15 +16,17 @@ import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 @Setter
 public class GetGlampingCancelResponseDto extends ResponseDto {
 
-    private String result;
+    List<GetCancelDto> room;
+    private String formattedResult;
 
-    private GetGlampingCancelResponseDto(String result) {
+    private GetGlampingCancelResponseDto(List<GetCancelDto> room, String formattedResult) {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
-        this.result = result;
+        this.formattedResult = formattedResult;
+        this.room = room;
     }
 
-    public static ResponseEntity<GetGlampingCancelResponseDto> success(String result) {
-        GetGlampingCancelResponseDto results = new GetGlampingCancelResponseDto(result);
+    public static ResponseEntity<GetGlampingCancelResponseDto> success(List<GetCancelDto> room, String formattedResult) {
+        GetGlampingCancelResponseDto results = new GetGlampingCancelResponseDto(room, formattedResult);
         return ResponseEntity.status(HttpStatus.OK).body(results);
     }
 

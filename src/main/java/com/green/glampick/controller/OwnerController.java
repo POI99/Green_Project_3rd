@@ -1,6 +1,7 @@
 package com.green.glampick.controller;
 
 import com.green.glampick.dto.ResponseDto;
+import com.green.glampick.dto.object.owner.OwnerBookCountListItem;
 import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.owner.module.GlampingModule;
@@ -34,6 +35,8 @@ import java.util.List;
 
 import static com.green.glampick.common.swagger.description.owner.GetBookFromUserSwaggerDescription.BOOK_FROM_USER_REVIEW_VIEW_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetBookFromUserSwaggerDescription.BOOK_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.GetGlampingBookCountDescription.BOOK_COUNT_FROM_OWNER_GLAMPING_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetGlampingBookCountDescription.BOOK_COUNT_RESPONSE_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetGlampingFromUserReviewSwaggerDescription.GLAMPING_FROM_USER_REVIEW_VIEW_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetGlampingFromUserReviewSwaggerDescription.GLAMPING_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.PostGlampingSwaggerDescription.POST_GLAMPING_DESCRIPTION;
@@ -74,7 +77,7 @@ public class OwnerController {
 // 민지 =================================================================================================================
 
     //  사장님 페이지 - 글램핑 정보 등록하기  //
-    @PostMapping(value = "glamping")//, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "glamping", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "글램핑 정보 등록 (김민지)", description = POST_GLAMPING_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = POST_GLAMPING_RESPONSE_ERROR_CODE,
             content = @Content(
@@ -105,7 +108,7 @@ public class OwnerController {
     }
 
     //  사장님 페이지 - 객실 정보 등록하기  //
-    @PostMapping(value = "room")//, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "room", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "객실 정보 등록 (김민지)", description = POST_ROOM_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = POST_ROOM_RESPONSE_ERROR_CODE,
             content = @Content(
@@ -265,24 +268,33 @@ public class OwnerController {
         GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
         p.setOwnerId(ownerId);
 
-        List<GetReservationBeforeResultSet> before = service.getReservationBeforeList(p);
-        List<GetReservationCancelResultSet> cancle = service.getReservationCancelList(p);
-        List<GetReservationCompleteResultSet> complete = service.getReservationCompleteList(p);
-
-        GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(before, complete, cancle);
-        ResponseEntity<ResponseDto> success = dto.success(before, complete, cancle);
+//        List<GetReservationBeforeResultSet> before = service.getReservationBeforeList(p);
+//        List<GetReservationCancelResultSet> cancle = service.getReservationCancelList(p);
+//        List<GetReservationCompleteResultSet> complete = service.getReservationCompleteList(p);
+        List<OwnerBookCountListItem> totalCount = service.getTotalCount("2024-08-06",p.getOwnerId());
+        GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(totalCount);
+        ResponseEntity<ResponseDto> success = dto.success(totalCount);
 
         return success;
     }
 
     @GetMapping("/book/count")
-    @Operation(summary = "사장이 글램핑에 디테일한 예약 내역 불러오기 (배강국)", description = "작성해야함")
-    @ApiResponse(responseCode = "200", description = "작성해야함",
+    @Operation(summary = "예약 건수 불러오기 (배강국)", description = BOOK_COUNT_FROM_OWNER_GLAMPING_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = BOOK_COUNT_RESPONSE_DESCRIPTION,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
     public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservationCount(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
-        service.getTotalCount("2024-08-05");
-        return null;
+
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
+        p.setOwnerId(ownerId);
+
+        List<OwnerBookCountListItem> totalCount = service.getTotalCount("2024-08-06",p.getOwnerId());
+
+        GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(totalCount);
+        ResponseEntity<ResponseDto> success = dto.success(totalCount);
+
+        return success;
     }
   
 }

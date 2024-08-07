@@ -6,6 +6,7 @@ import com.green.glampick.dto.response.login.mail.PostMailCheckResponseDto;
 import com.green.glampick.dto.response.login.mail.PostMailSendResponseDto;
 import com.green.glampick.dto.response.login.sms.PostSmsCheckResponseDto;
 import com.green.glampick.dto.response.login.sms.PostSmsSendResponseDto;
+import com.green.glampick.dto.response.login.social.PostSnsSignUpResponseDto;
 import com.green.glampick.dto.response.login.token.GetAccessTokenResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,6 +25,10 @@ public interface LoginService {
     //  이메일 회원가입 처리  //
     ResponseEntity<? super PostSignUpResponseDto> signUpUser(SignUpRequestDto dto);
 
+    //  소셜 회원가입 처리  //
+    ResponseEntity<? super PostSnsSignUpResponseDto> signUpSnsUser(SignUpSnsRequestDto dto);
+
+    //  사장님 회원가입 처리  //
     ResponseEntity<? super PostOwnerSignUpResponseDto> signUpOwner(OwnerSignUpRequestDto dto);
 
     //  이메일 로그인 처리  //

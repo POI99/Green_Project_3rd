@@ -1,5 +1,6 @@
 package com.green.glampick.controller;
 
+import com.green.glampick.dto.response.admin.GetBannerResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -31,5 +32,14 @@ public class MainController {
                 mediaType = "application/json", schema = @Schema(implementation = GetMainGlampingListResponseDto.class)))
     public ResponseEntity<? super GetMainGlampingListResponseDto> mainGlampingList() {
         return service.mainGlampingList();
+    }
+
+    @GetMapping("banner")
+    @Operation(summary = "메인 화면 배너 불러오기 (김수찬)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetBannerResponseDto.class)))
+    ResponseEntity<? super GetBannerResponseDto> getBanner() {
+        return service.getBanner();
     }
 }

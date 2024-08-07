@@ -71,9 +71,10 @@ public interface ReservationBeforeRepository extends JpaRepository<ReservationBe
 
     @Query("SELECT rb.checkInDate AS checkInDate, COUNT(rb.checkInDate) AS countBefore " +
             "FROM  ReservationBeforeEntity rb " +
-            "WHERE FUNCTION('MONTH', rb.checkInDate) = :month " +
+            "JOIN rb.glamping g JOIN g.owner o " +
+            "WHERE FUNCTION('MONTH', rb.checkInDate) = :month AND o.ownerId = :ownerId " +
             "GROUP BY rb.checkInDate")
-    List<GetOwnerBookBeforeCountResponseDto> getCountFromReservationBefore(@Param("month")int month);
+    List<GetOwnerBookBeforeCountResponseDto> getCountFromReservationBefore(@Param("month")int month, @Param("ownerId")Long ownerId);
 
     List<ReservationBeforeEntity> findByGlamping(GlampingEntity glamping);
 }
