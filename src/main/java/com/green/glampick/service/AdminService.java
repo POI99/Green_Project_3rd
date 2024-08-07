@@ -1,5 +1,6 @@
 package com.green.glampick.service;
 
+import com.green.glampick.dto.request.admin.DeleteBannerRequestDto;
 import com.green.glampick.dto.response.admin.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +25,7 @@ public interface AdminService {
     ResponseEntity<? super PostBannerResponseDto> postBanner(List<MultipartFile> file);
 
     //  관리자 페이지 - 메인 화면 배너 삭제하기  //
-    ResponseEntity<? super DeleteBannerResponseDto> deleteBanner(Long bannerId);
+    ResponseEntity<? super DeleteBannerResponseDto> deleteBanner(DeleteBannerRequestDto dto);
 
     //  관리자 페이지 - 메인 화면 배너 불러오기  //
     ResponseEntity<? super GetBannerResponseDto> getBanner();

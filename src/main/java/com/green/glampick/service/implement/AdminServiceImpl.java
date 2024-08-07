@@ -2,6 +2,9 @@ package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.common.Role;
+import com.green.glampick.dto.request.admin.DeleteBannerRequestDto;
+import com.green.glampick.dto.request.admin.module.AdminModule;
+import com.green.glampick.dto.request.owner.module.RoomModule;
 import com.green.glampick.dto.response.admin.*;
 import com.green.glampick.entity.BannerEntity;
 import com.green.glampick.entity.GlampingEntity;
@@ -15,6 +18,7 @@ import com.green.glampick.repository.*;
 import com.green.glampick.repository.resultset.GetAccessGlampingListResultSet;
 import com.green.glampick.repository.resultset.GetAccessOwnerSignUpListResultSet;
 import com.green.glampick.repository.resultset.GetDeleteOwnerListResultSet;
+import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +35,7 @@ import static com.green.glampick.common.GlobalConst.MAX_BANNER_SIZE;
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
+    private final AuthenticationFacade authenticationFacade;
     private final OwnerRepository ownerRepository;
     private final BannerRepository bannerRepository;
     private final GlampingRepository glampingRepository;
@@ -138,7 +143,7 @@ public class AdminServiceImpl implements AdminService {
                 customFileUtils.makeFolders(makeFolder);
                 String saveFileName = customFileUtils.makeRandomFileName(image);
                 String saveDbFileName = String.format("/pic/banner/%s",saveFileName);
-                String filePath = String.format("%s/%s", makeFolder, saveFileName);
+                String filePath = String.format("/%s/%s", makeFolder, saveFileName);
                 customFileUtils.transferTo(image, filePath);
 
                 BannerEntity bannerEntity = new BannerEntity();
@@ -159,11 +164,25 @@ public class AdminServiceImpl implements AdminService {
     //  관리자 페이지 - 메인 화면 배너 삭제하기  //
     @Override
     @Transactional
-    public ResponseEntity<? super DeleteBannerResponseDto> deleteBanner(Long bannerId) {
+    public ResponseEntity<? super DeleteBannerResponseDto> deleteBanner(DeleteBannerRequestDto dto) {
+
+        try {
+            dto.setAdminIdx(authenticationFacade.getLoginUserId());
+            if (dto.getAdminIdx() <= 0) {
+                throw new RuntimeException();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.MNF);
+        }
+
 
         try {
 
-            BannerEntity bannerEntity = bannerRepository.findByBannerId(bannerId);
+            if (dto.getBannerId() == null) { throw new CustomException(AdminErrorCode.NFB); }
+
+            BannerEntity bannerEntity = bannerRepository.findByBannerId(dto.getBannerId());
+            AdminModule.deleteImageOne(dto.getBannerId(), bannerRepository, customFileUtils);
             bannerRepository.delete(bannerEntity);
 
         } catch (CustomException e) {
@@ -175,7 +194,6 @@ public class AdminServiceImpl implements AdminService {
 
         return DeleteBannerResponseDto.success();
 
-
     }
 
     //  관리자 페이지 - 메인 화면 배너 불러오기  //
@@ -184,6 +202,7 @@ public class AdminServiceImpl implements AdminService {
     public ResponseEntity<? super GetBannerResponseDto> getBanner() {
 
         List<BannerEntity> list = bannerRepository.findAll();
+
 
         return GetBannerResponseDto.success(list);
 
