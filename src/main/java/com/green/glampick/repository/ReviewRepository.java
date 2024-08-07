@@ -160,4 +160,7 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
                             "WHERE B.reservation_id = :reservationId ",
             nativeQuery = true)
     void fin(long reservationId);
+
+    @Query("SELECT COUNT(r.reviewId) FROM ReviewEntity r JOIN r.glampId g JOIN g.owner o WHERE o.ownerId = :ownerId")
+    Long getTotalOwnersReviewsCount(@Param("ownerId") Long ownerId);
 }

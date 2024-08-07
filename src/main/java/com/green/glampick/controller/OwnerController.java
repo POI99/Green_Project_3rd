@@ -233,21 +233,27 @@ public class OwnerController {
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
     public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
+        try {
+            long ownerId = GlampingModule.ownerId(authenticationFacade);
+            GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
+            p.setOwnerId(ownerId);
 
-        long ownerId = GlampingModule.ownerId(authenticationFacade);
-        GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
-        p.setOwnerId(ownerId);
+            List<GetReservationBeforeResultSet> before = service.getReservationBeforeList(p);
 
-//        List<GetReservationBeforeResultSet> before = service.getReservationBeforeList(p);
-//        List<GetReservationCancelResultSet> cancle = service.getReservationCancelList(p);
-//        List<GetReservationCompleteResultSet> complete = service.getReservationCompleteList(p);
-        List<OwnerBookCountListItem> totalCount = service.getTotalCount("2024-08-06",p.getOwnerId());
-        GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(totalCount);
-        ResponseEntity<ResponseDto> success = dto.success(totalCount);
+            List<GetReservationCancelResultSet> cancel = service.getReservationCancelList(p);
+            List<GetReservationCompleteResultSet> complete = service.getReservationCompleteList(p);
 
-        return success;
+            GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(before, complete, cancel);
+            ResponseEntity<ResponseDto> success = dto.success(before, complete, cancel);
+            return success;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+
     }
 
+/*
     @GetMapping("/book/count")
     @Operation(summary = "예약 건수 불러오기 (배강국)", description = BOOK_COUNT_FROM_OWNER_GLAMPING_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = BOOK_COUNT_RESPONSE_DESCRIPTION,
@@ -260,12 +266,14 @@ public class OwnerController {
         p.setOwnerId(ownerId);
 
         List<OwnerBookCountListItem> totalCount = service.getTotalCount("2024-08-06",p.getOwnerId());
+//        List<OwnerBookCountListItem> totalCount = service.getTotalCount(p.getDate(),p.getOwnerId());
 
         GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(totalCount);
         ResponseEntity<ResponseDto> success = dto.success(totalCount);
 
         return success;
     }
-  
+
+ */
 }
 

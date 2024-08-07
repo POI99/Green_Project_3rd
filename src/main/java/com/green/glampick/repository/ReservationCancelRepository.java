@@ -2,8 +2,10 @@ package com.green.glampick.repository;
 
 import com.green.glampick.dto.response.owner.get.GetOwnerBookCancelCountResponseDto;
 import com.green.glampick.entity.ReservationCancelEntity;
+import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
 import com.green.glampick.repository.resultset.GetReservationCancelResultSet;
 import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -39,29 +41,48 @@ public interface ReservationCancelRepository extends JpaRepository<ReservationCa
     List<GetReservationCancelResultSet> getBook(Long userId);
 
 
-    @Query(
-            value =
-                    "SELECT " +
-                            "B.glamp_name AS glampName, " +
-                            "B.glamp_id AS glampId, " +
-                            "A.book_id AS bookId, " +
-                            "C.room_name AS roomName, " +
-                            "A.reservation_id AS reservationId, " +
-                            "A.check_in_date AS checkInDate, " +
-                            "A.check_out_date AS checkOutDate, " +
-                            "A.created_at AS createdAt, " +
-                            "C.check_in_time AS checkInTime, " +
-                            "C.check_out_time AS checkOutTime, " +
-                            "C.room_id AS roomId " +
-                            "FROM reservation_cancel A " +
-                            "INNER JOIN	glamping B ON A.glamp_id = B.glamp_id " +
-                            "INNER JOIN room C ON A.room_id = C.room_id " +
-                            "WHERE B.owner_id = ?1 " +
-                            "ORDER BY A.check_in_date " +
-                            "LIMIT ?2 OFFSET ?3 ",
-            nativeQuery = true
+//    @Query(
+//            value =
+//                    "SELECT " +
+//                            "B.glamp_name AS glampName, " +
+//                            "B.glamp_id AS glampId, " +
+//                            "A.book_id AS bookId, " +
+//                            "C.room_name AS roomName, " +
+//                            "A.reservation_id AS reservationId, " +
+//                            "A.check_in_date AS checkInDate, " +
+//                            "A.check_out_date AS checkOutDate, " +
+//                            "A.created_at AS createdAt, " +
+//                            "C.check_in_time AS checkInTime, " +
+//                            "C.check_out_time AS checkOutTime, " +
+//                            "C.room_id AS roomId " +
+//                            "FROM reservation_cancel A " +
+//                            "INNER JOIN	glamping B ON A.glamp_id = B.glamp_id " +
+//                            "INNER JOIN room C ON A.room_id = C.room_id " +
+//                            "WHERE B.owner_id = ?1 " +
+//                            "ORDER BY A.check_in_date " +
+//                            "LIMIT ?2 OFFSET ?3 ",
+//            nativeQuery = true
+//    )
+//    List<GetReservationCancelResultSet> getReservationCancelByOwnerId(Long userId, int limit, int offset);
+    @Query( "SELECT " +
+            "g.glampName AS glampName, " +
+            "g.glampId AS glampId, " +
+            "rc.bookId AS bookId, " +
+            "r.roomName AS roomName, " +
+            "rc.reservationId AS reservationId, " +
+            "rc.checkInDate AS checkInDate, " +
+            "rc.checkOutDate AS checkOutDate, "+
+            "rc.checkInDate AS createdAt, " +
+            "r.checkInTime AS checkInTime, " +
+            "r.checkOutTime AS checkOutTime, " +
+            "r.roomId AS roomId " +
+            "FROM  ReservationCancelEntity rc " +
+            "JOIN rc.glamping g " +
+            "JOIN rc.roomId r " +
+            "WHERE g.owner.ownerId = :ownerId AND rc.checkInDate = :date " +
+            "ORDER BY rc.checkInDate "
     )
-    List<GetReservationCancelResultSet> getReservationCancelByOwnerId(Long userId, int limit, int offset);
+    List<GetReservationCancelResultSet> getReservationCancelByOwnerId(@Param("ownerId") Long ownerId, Pageable pageable, @Param("date") LocalDate date);
 
     @Query("SELECT rc.checkInDate AS checkInDate, COUNT(rc.checkInDate) AS countCancel " +
             "FROM  ReservationCancelEntity rc " +

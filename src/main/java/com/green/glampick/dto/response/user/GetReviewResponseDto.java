@@ -17,12 +17,12 @@ import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 
 public class GetReviewResponseDto extends ResponseDto {
 
-    long TotalReviewsCount;
+    Long totalReviewsCount;
     List<UserReviewListItem> reviewListItems;
 
-    private GetReviewResponseDto(long totalReviewsCount, List<UserReviewListItem> reviewListItems) {
+    private GetReviewResponseDto(Long totalReviewsCount, List<UserReviewListItem> reviewListItems) {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
-        this.TotalReviewsCount = totalReviewsCount;
+        this.totalReviewsCount = totalReviewsCount;
         this.reviewListItems = reviewListItems;
     }
     public GetReviewResponseDto(List<UserReviewListItem> reviewListItems) {
@@ -34,8 +34,8 @@ public class GetReviewResponseDto extends ResponseDto {
         GetReviewResponseDto result = new GetReviewResponseDto(totalReviewsCount, reviewListItems);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
-    public static ResponseEntity<GetReviewResponseDto> success(List<UserReviewListItem> reviewListItems) {
-        GetReviewResponseDto result = new GetReviewResponseDto(reviewListItems);
+    public static ResponseEntity<GetReviewResponseDto> success(List<UserReviewListItem> reviewListItems, Long totalReviewsCount) {
+        GetReviewResponseDto result = new GetReviewResponseDto(totalReviewsCount,reviewListItems);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }

@@ -33,6 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springdoc.core.annotations.ParameterObject;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -410,12 +412,18 @@ public class OwnerServiceImpl implements OwnerService {
 
     @Override // 예약 중 리스트 불러오기
     public List<GetReservationBeforeResultSet> getReservationBeforeList(ReservationGetRequestDto p) {
+
         List<GetReservationBeforeResultSet> reservationBeforeResultSetList;
         Long ownerId = p.getOwnerId();
-        int limit = p.getLimit();
-        int offset = p.getOffset();
+        int limit = p.getLimit(); // size
+        int offset = p.getOffset(); // startIdx
+
+        Pageable pageable = PageRequest.of(offset,limit);
+        String date = "2024-08-11";
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(date, dateTimeFormatter);
         try {
-            reservationBeforeResultSetList = reservationBeforeRepository.getReservationBeforeByOwnerId(ownerId, limit, offset);
+            reservationBeforeResultSetList = reservationBeforeRepository.getReservationBeforeByOwnerId(ownerId, pageable, localDate);
 
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
@@ -434,8 +442,13 @@ public class OwnerServiceImpl implements OwnerService {
         int limit = p.getLimit();
         int offset = p.getOffset();
 
+        Pageable pageable = PageRequest.of(offset,limit);
+        String date = "2024-08-08";
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(date, dateTimeFormatter);
+
         try {
-            reservationCancelResultSetList = reservationCancelRepository.getReservationCancelByOwnerId(ownerId, limit, offset);
+            reservationCancelResultSetList = reservationCancelRepository.getReservationCancelByOwnerId(ownerId, pageable, localDate);
 
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
@@ -455,7 +468,12 @@ public class OwnerServiceImpl implements OwnerService {
         int limit = p.getLimit();
         int offset = p.getOffset();
 
+        Pageable pageable = PageRequest.of(offset,limit);
+        String date = "2024-08-03";
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(date, dateTimeFormatter);
         try {
+//            reservationCompleteResultSetList = reservationCompleteRepository.getReservationCompleteByOwnerId(ownerId, pageable, localDate);
             reservationCompleteResultSetList = reservationCompleteRepository.getReservationCompleteByOwnerId(ownerId, limit, offset);
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
@@ -500,7 +518,8 @@ public class OwnerServiceImpl implements OwnerService {
             setReviewItem(reviewInfo, imageEntities, reviewListItem);
 
             //reviewTotalCount
-            return GetReviewResponseDto.success(reviewListItem);
+            Long totalCount = reviewRepository.getTotalOwnersReviewsCount(ownerId);
+            return GetReviewResponseDto.success(reviewListItem,totalCount);
 
         } catch (CustomException e) {
             e.printStackTrace();
