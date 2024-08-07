@@ -499,6 +499,7 @@ public class OwnerServiceImpl implements OwnerService {
             //reviewItem List Setting
             setReviewItem(reviewInfo, imageEntities, reviewListItem);
 
+            //reviewTotalCount
             return GetReviewResponseDto.success(reviewListItem);
 
         } catch (CustomException e) {
@@ -515,8 +516,8 @@ public class OwnerServiceImpl implements OwnerService {
         int month = localDate.getMonth().getValue();
         try {
             List<GetOwnerBookBeforeCountResponseDto> countBefore = reservationBeforeRepository.getCountFromReservationBefore(month,ownerId);
-            List<GetOwnerBookCancelCountResponseDto> countCancel = reservationCancelRepository.getCountFromReservationCancel(month);
-            List<GetOwnerBookCompleteCountResponseDto> countComplete = reservationCompleteRepository.getCountFromReservationComplete(month);
+            List<GetOwnerBookCancelCountResponseDto> countCancel = reservationCancelRepository.getCountFromReservationCancel(month,ownerId);
+            List<GetOwnerBookCompleteCountResponseDto> countComplete = reservationCompleteRepository.getCountFromReservationComplete(month,ownerId);
 
             List<OwnerBookCountListItem> bookCountListItems = new ArrayList<>();
 

@@ -24,6 +24,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -217,7 +220,11 @@ public class GlampingServiceImpl implements GlampingService {
 
         //input ResponseDto
         GetGlampingReviewInfoResponseDto dto = GetGlampingReviewInfoResponseDto.builder()
-                .reviewListItems(reviews).roomNames(roomNameList).allReviewImage(reviewImage).build();
+                .code(SUCCESS_CODE)
+                .message(SUCCESS_MESSAGE)
+                .reviewListItems(reviews)
+                .roomNames(roomNameList)
+                .allReviewImage(reviewImage).build();
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
@@ -227,7 +234,10 @@ public class GlampingServiceImpl implements GlampingService {
         //페이징 리뷰 이미지
         List<String> images = mapper.allReviewImages(p);
 
-        GetMoreReviewImgageResponseDto dto = GetMoreReviewImgageResponseDto.builder().moreReviewImage(images).build();
+        GetMoreReviewImgageResponseDto dto = GetMoreReviewImgageResponseDto.builder()
+                .code(SUCCESS_CODE)
+                .message(SUCCESS_MESSAGE)
+                .moreReviewImage(images).build();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
@@ -256,7 +266,10 @@ public class GlampingServiceImpl implements GlampingService {
             }
         }
 
-        GetMoreRoomImageResponseDto dto = GetMoreRoomImageResponseDto.builder().moreRoomImages(hashMapImages).build();
+        GetMoreRoomImageResponseDto dto = GetMoreRoomImageResponseDto.builder()
+                .code(SUCCESS_CODE)
+                .message(SUCCESS_MESSAGE)
+                .moreRoomImages(hashMapImages).build();
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }

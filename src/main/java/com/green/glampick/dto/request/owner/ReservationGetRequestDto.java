@@ -16,6 +16,9 @@ public class ReservationGetRequestDto extends Paging {
     @Schema(example = "1", description = "사장님PK")
     private Long ownerId;
 
+    @Schema(example = "2024-08-07", description = "캘린더 데이트")
+    private String date;
+
     public ReservationGetRequestDto(Integer page) {
         super(page, PAGING_SIZE);
     }

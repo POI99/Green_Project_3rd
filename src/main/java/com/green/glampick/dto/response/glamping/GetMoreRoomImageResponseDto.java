@@ -23,13 +23,13 @@ public class GetMoreRoomImageResponseDto extends ResponseDto {
 
     private HashMap<String, List<String>> moreRoomImages;
 
-    public static ResponseEntity<ResponseDto> success() {
-        ResponseDto result = new ResponseDto(SUCCESS_CODE, SUCCESS_MESSAGE);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
-
     public GetMoreRoomImageResponseDto(HashMap<String, List<String>> moreRoomImages) {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.moreRoomImages = moreRoomImages;
+    }
+
+    public static ResponseEntity<ResponseDto> success() {
+        ResponseDto result = new ResponseDto(SUCCESS_CODE, SUCCESS_MESSAGE);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }

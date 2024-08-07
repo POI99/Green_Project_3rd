@@ -36,6 +36,8 @@ import java.util.List;
 
 import static com.green.glampick.common.swagger.description.owner.GetBookFromUserSwaggerDescription.BOOK_FROM_USER_REVIEW_VIEW_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetBookFromUserSwaggerDescription.BOOK_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.GetGlampingBookCountDescription.BOOK_COUNT_FROM_OWNER_GLAMPING_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetGlampingBookCountDescription.BOOK_COUNT_RESPONSE_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetGlampingFromUserReviewSwaggerDescription.GLAMPING_FROM_USER_REVIEW_VIEW_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetGlampingFromUserReviewSwaggerDescription.GLAMPING_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.PostGlampingSwaggerDescription.POST_GLAMPING_DESCRIPTION;
@@ -247,8 +249,8 @@ public class OwnerController {
     }
 
     @GetMapping("/book/count")
-    @Operation(summary = "예약 건수 불러오기 (배강국)", description = "작성해야함")
-    @ApiResponse(responseCode = "200", description = "작성해야함",
+    @Operation(summary = "예약 건수 불러오기 (배강국)", description = BOOK_COUNT_FROM_OWNER_GLAMPING_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = BOOK_COUNT_RESPONSE_DESCRIPTION,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
     public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservationCount(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
@@ -258,6 +260,7 @@ public class OwnerController {
         p.setOwnerId(ownerId);
 
         List<OwnerBookCountListItem> totalCount = service.getTotalCount("2024-08-06",p.getOwnerId());
+
         GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(totalCount);
         ResponseEntity<ResponseDto> success = dto.success(totalCount);
 
