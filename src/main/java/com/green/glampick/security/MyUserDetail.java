@@ -37,7 +37,7 @@ public class MyUserDetail implements UserDetails, OAuth2User {
 
     @Override
     public String getUsername() {
-        return String.valueOf(myUser.getUserId());
+        return null;
     }
 
     @Override

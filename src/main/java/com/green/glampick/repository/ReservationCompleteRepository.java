@@ -7,6 +7,7 @@ import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -70,8 +71,9 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
 
     @Query("SELECT rc.checkInDate AS checkInDate, COUNT(rc.checkInDate) AS countComplete " +
             "FROM  ReservationCompleteEntity rc " +
-            "WHERE FUNCTION('MONTH', rc.checkInDate) = :month " +
+            "JOIN rc.glamping g JOIN g.owner o " +
+            "WHERE FUNCTION('MONTH', rc.checkInDate) = :month AND o.ownerId = :ownerId " +
             "GROUP BY rc.checkInDate")
-    List<GetOwnerBookCompleteCountResponseDto> getCountFromReservationComplete(int month);
+    List<GetOwnerBookCompleteCountResponseDto> getCountFromReservationComplete(@Param("month")int month, @Param("ownerId")Long ownerId);
 
 }

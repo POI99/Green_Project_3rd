@@ -5,17 +5,25 @@ import com.green.glampick.dto.object.glamping.*;
 import com.green.glampick.dto.request.glamping.*;
 import com.green.glampick.dto.response.glamping.*;
 import com.green.glampick.dto.response.glamping.favorite.GetFavoriteGlampingResponseDto;
+import com.green.glampick.entity.GlampFavoriteEntity;
+import com.green.glampick.entity.GlampingEntity;
+import com.green.glampick.entity.ReviewEntity;
 import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.GlampingErrorCode;
 import com.green.glampick.mapper.GlampingMapper;
+import com.green.glampick.repository.FavoriteGlampingRepository;
+import com.green.glampick.repository.GlampingRepository;
+import com.green.glampick.repository.ReviewRepository;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.GlampingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.geolatte.geom.codec.WkbDecodeException;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,11 +32,17 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
+import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class GlampingServiceImpl implements GlampingService {
     private final GlampingMapper mapper;
+    private final GlampingRepository glampingRepository;
+    private final FavoriteGlampingRepository favoriteGlampingRepository;
+    private final ReviewRepository reviewRepository;
     private final AuthenticationFacade facade;
 
     // 민지 =================================================================================================================
@@ -217,7 +231,11 @@ public class GlampingServiceImpl implements GlampingService {
 
         //input ResponseDto
         GetGlampingReviewInfoResponseDto dto = GetGlampingReviewInfoResponseDto.builder()
-                .reviewListItems(reviews).roomNames(roomNameList).allReviewImage(reviewImage).build();
+                .code(SUCCESS_CODE)
+                .message(SUCCESS_MESSAGE)
+                .reviewListItems(reviews)
+                .roomNames(roomNameList)
+                .allReviewImage(reviewImage).build();
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
@@ -227,7 +245,10 @@ public class GlampingServiceImpl implements GlampingService {
         //페이징 리뷰 이미지
         List<String> images = mapper.allReviewImages(p);
 
-        GetMoreReviewImgageResponseDto dto = GetMoreReviewImgageResponseDto.builder().moreReviewImage(images).build();
+        GetMoreReviewImgageResponseDto dto = GetMoreReviewImgageResponseDto.builder()
+                .code(SUCCESS_CODE)
+                .message(SUCCESS_MESSAGE)
+                .moreReviewImage(images).build();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
@@ -256,7 +277,10 @@ public class GlampingServiceImpl implements GlampingService {
             }
         }
 
-        GetMoreRoomImageResponseDto dto = GetMoreRoomImageResponseDto.builder().moreRoomImages(hashMapImages).build();
+        GetMoreRoomImageResponseDto dto = GetMoreRoomImageResponseDto.builder()
+                .code(SUCCESS_CODE)
+                .message(SUCCESS_MESSAGE)
+                .moreRoomImages(hashMapImages).build();
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
@@ -320,6 +344,29 @@ public class GlampingServiceImpl implements GlampingService {
         } else {
             return 0;
         }
+    }
+
+
+    @Scheduled(cron = "0 1 0 * * *")
+    public void updateGlamping() {
+
+        List<GlampingEntity> glampingEntities = glampingRepository.findAll();
+
+        for (GlampingEntity glampingEntity : glampingEntities) {
+
+            Double starAvg = glampingRepository.findStarPointAvgByGlampId(glampingEntity.getGlampId());
+            Long favoriteCount = favoriteGlampingRepository.countByGlamping(glampingEntity);
+
+            if (starAvg == null) { starAvg = 0.0; }
+            if (favoriteCount == null) { favoriteCount = 0L; }
+
+            Double recommendScore = (starAvg * 0.7) + (favoriteCount + 0.3);
+
+            glampingEntity.setRecommendScore(recommendScore);
+            glampingRepository.save(glampingEntity);
+
+        }
+
     }
 }
 

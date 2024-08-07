@@ -6,6 +6,7 @@ import com.green.glampick.dto.response.login.mail.PostMailCheckResponseDto;
 import com.green.glampick.dto.response.login.mail.PostMailSendResponseDto;
 import com.green.glampick.dto.response.login.sms.PostSmsCheckResponseDto;
 import com.green.glampick.dto.response.login.sms.PostSmsSendResponseDto;
+import com.green.glampick.dto.response.login.social.PostSnsSignUpResponseDto;
 import com.green.glampick.dto.response.login.token.GetAccessTokenResponseDto;
 import com.green.glampick.service.LoginService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,6 +51,15 @@ public class LoginController {
                 mediaType = "application/json", schema = @Schema(implementation = PostSignUpResponseDto.class)))
     public ResponseEntity<? super PostSignUpResponseDto> signUpUser(@RequestBody @Valid SignUpRequestDto dto) {
         return service.signUpUser(dto);
+    }
+
+    @PostMapping("/social/sign-up")
+    @Operation(summary = "소셜 회원가입 (김수찬)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostSnsSignUpResponseDto.class)))
+    public ResponseEntity<? super PostSnsSignUpResponseDto> signUpSnsUser(@RequestBody @Valid SignUpSnsRequestDto dto) {
+        return service.signUpSnsUser(dto);
     }
 
     @PostMapping("/owner/sign-up")
