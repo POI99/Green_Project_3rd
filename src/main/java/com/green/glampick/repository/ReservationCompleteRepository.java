@@ -3,8 +3,10 @@ package com.green.glampick.repository;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookCompleteCountResponseDto;
 import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.ReservationCompleteEntity;
+import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
 import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -64,7 +66,27 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
                             "LIMIT ?2 OFFSET ?3 ",
             nativeQuery = true
     )
-    List<GetReservationCompleteResultSet> getReservationCompleteByOwnerId(Long userId, int limit, int offset);
+    List<GetReservationCompleteResultSet> getReservationCompleteByOwnerId(@Param("ownerId") Long ownerId,int limit ,int offset );
+//@Query(  "SELECT " +
+//        "g.glampName AS glampName, " +
+//        "g.glampId AS glampId, " +
+//        "rc.bookId AS bookId, " +
+//        "r.roomName AS roomName, " +
+//        "rc.reservationId AS reservationId, " +
+//        "rc.checkInDate AS checkInDate, " +
+//        "rc.checkOutDate AS checkOutDate, "+
+//        "rc.checkInDate AS createdAt, " +
+//        "r.checkInTime AS checkInTime, " +
+//        "r.checkOutTime AS checkOutTime, " +
+//        "rc.status AS status, " +
+//        "r.roomId AS roomId " +
+//        "FROM ReservationCompleteEntity rc " +
+//        "JOIN rc.glamping g " +
+//        "JOIN rc.room r " +
+//        "WHERE g.owner.ownerId = :ownerId AND rc.checkInDate = :date " +
+//        "ORDER BY rc.checkInDate "
+//)
+//List<GetReservationCompleteResultSet> getReservationCompleteByOwnerId(@Param("ownerId") Long ownerId, Pageable pageable, @Param("date") LocalDate date);
 
     //@Transactional
     ReservationCompleteEntity findByReservationId(Long reservationId);

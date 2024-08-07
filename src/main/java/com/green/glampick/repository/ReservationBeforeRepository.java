@@ -4,6 +4,7 @@ import com.green.glampick.dto.response.owner.get.GetOwnerBookBeforeCountResponse
 import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.ReservationBeforeEntity;
 import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -40,29 +41,25 @@ public interface ReservationBeforeRepository extends JpaRepository<ReservationBe
             nativeQuery = true
     )
     List<GetReservationBeforeResultSet> getBook(Long userId);
-    @Query(
-     value =
-             "SELECT " +
-             "B.glamp_name AS glampName, " +
-             "B.glamp_id AS glampId, " +
-             "A.book_id AS bookId, " +
-             "C.room_name AS roomName, " +
-             "A.reservation_id AS reservationId, " +
-             "A.check_in_date AS checkInDate, " +
-             "A.check_out_date AS checkOutDate, "+
-             "A.created_at AS createdAt, " +
-             "C.check_in_time AS checkInTime, " +
-             "C.check_out_time AS checkOutTime, " +
-             "C.room_id AS roomId " +
-             "FROM reservation_before A " +
-             "INNER JOIN	glamping B ON A.glamp_id = B.glamp_id " +
-             "INNER JOIN room C ON A.room_id = C.room_id " +
-             "WHERE B.owner_id = ?1 " +
-             "ORDER BY A.check_in_date " +
-             "LIMIT ?2 OFFSET ?3 ",
-            nativeQuery = true
+    @Query(  "SELECT " +
+             "g.glampName AS glampName, " +
+             "g.glampId AS glampId, " +
+             "rb.bookId AS bookId, " +
+             "r.roomName AS roomName, " +
+             "rb.reservationId AS reservationId, " +
+             "rb.checkInDate AS checkInDate, " +
+             "rb.checkOutDate AS checkOutDate, "+
+             "rb.checkInDate AS createdAt, " +
+             "r.checkInTime AS checkInTime, " +
+             "r.checkOutTime AS checkOutTime, " +
+             "r.roomId AS roomId " +
+             "FROM  ReservationBeforeEntity rb " +
+             "JOIN	rb.glamping g " +
+             "JOIN  rb.room r " +
+             "WHERE g.owner.ownerId = :ownerId AND rb.checkInDate = :date " +
+             "ORDER BY rb.checkInDate "
     )
-    List<GetReservationBeforeResultSet> getReservationBeforeByOwnerId(Long userId, int limit, int offset);
+    List<GetReservationBeforeResultSet> getReservationBeforeByOwnerId(@Param("ownerId") Long ownerId, Pageable pageable, @Param("date") LocalDate date);
 
     boolean existsByReservationId(Long reservationId);
 

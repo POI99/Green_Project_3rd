@@ -7,6 +7,7 @@ import com.green.glampick.repository.resultset.GetReservationCancelResultSet;
 import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,23 +21,32 @@ import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 @Setter
 public class GetOwnerBookListResponseDto extends ResponseDto {
 
-    //    private List<GetReservationBeforeResultSet> before;
-//    private List<GetReservationCompleteResultSet> complete;
-//    private List<GetReservationCancelResultSet> cancel;
-    private List<OwnerBookCountListItem> countList;
+    private List<GetReservationBeforeResultSet> before;
+    private List<GetReservationCompleteResultSet> complete;
+    private List<GetReservationCancelResultSet> cancel;
+//    private List<OwnerBookCountListItem> countList;
 
-    public GetOwnerBookListResponseDto(List<OwnerBookCountListItem> countList) {
+    public GetOwnerBookListResponseDto(List<GetReservationBeforeResultSet> before,List<GetReservationCompleteResultSet> complete,List<GetReservationCancelResultSet> cancel) {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
-//        this.before = before;
-//        this.complete = complete;
-//        this.cancel = cancel;
-        this.countList = countList;
+        this.before = before;
+        this.complete = complete;
+        this.cancel = cancel;
+
     }
 
-
-    public ResponseEntity<ResponseDto> success(List<OwnerBookCountListItem> countList) {
-        GetOwnerBookListResponseDto result = new GetOwnerBookListResponseDto(countList);
+//    public GetOwnerBookListResponseDto(List<OwnerBookCountListItem> countList) {
+//        super(SUCCESS_CODE, SUCCESS_MESSAGE);
+//        this.countList = countList;
+//    }
+    public ResponseEntity<ResponseDto> success(List<GetReservationBeforeResultSet> before,
+                                               List<GetReservationCompleteResultSet> complete,
+                                               List<GetReservationCancelResultSet> cancel) {
+        GetOwnerBookListResponseDto result = new GetOwnerBookListResponseDto(before,complete,cancel);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+//    public ResponseEntity<ResponseDto> success(List<OwnerBookCountListItem> countList) {
+//        GetOwnerBookListResponseDto result = new GetOwnerBookListResponseDto(countList);
+//        return ResponseEntity.status(HttpStatus.OK).body(result);
+//    }
 
 }
