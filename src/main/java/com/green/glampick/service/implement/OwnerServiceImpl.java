@@ -123,6 +123,7 @@ public class OwnerServiceImpl implements OwnerService {
         if(req.getGlampCall() != null && !req.getGlampCall().isEmpty()){
             entity.setGlampCall(GlampingModule.glampingCall(req.getGlampCall()));
         }
+        entity.setExclusionStatus(0);
         entity.setGlampImage("img");
         entity.setGlampLocation(req.getGlampLocation());
         entity.setRegion(req.getRegion());
