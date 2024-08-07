@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -510,7 +512,13 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(CommonErrorCode.MNF);
         }
 
+        if (dto.getUserPw() == null || dto.getUserPw().isEmpty()) {
+            throw new CustomException(CommonErrorCode.VF);
+        }
+
         try {
+
+
 
             UserEntity userEntity = userRepository.findByUserId(dto.getUserId());
             if (dto.getUserId() == 0) {
@@ -518,11 +526,13 @@ public class UserServiceImpl implements UserService {
             }
 
             String userPw = dto.getUserPw();
+            String passwordRegex = "^(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+            Pattern patternPw = Pattern.compile(passwordRegex);
+            Matcher matcherPw = patternPw.matcher(userPw);
+            if (!matcherPw.matches()) { throw new CustomException(UserErrorCode.IP); }
             String encodingPw = userEntity.getUserPw();
             boolean matches = passwordEncoder.matches(userPw, encodingPw);
-            if (!matches) {
-                throw new CustomException(UserErrorCode.IP);
-            }
+            if (!matches) { throw new CustomException(UserErrorCode.NMP); }
 
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());

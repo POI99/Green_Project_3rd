@@ -2,6 +2,8 @@ package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.common.Role;
+import com.green.glampick.dto.request.admin.module.AdminModule;
+import com.green.glampick.dto.request.owner.module.RoomModule;
 import com.green.glampick.dto.response.admin.*;
 import com.green.glampick.entity.BannerEntity;
 import com.green.glampick.entity.GlampingEntity;
@@ -138,7 +140,7 @@ public class AdminServiceImpl implements AdminService {
                 customFileUtils.makeFolders(makeFolder);
                 String saveFileName = customFileUtils.makeRandomFileName(image);
                 String saveDbFileName = String.format("/pic/banner/%s",saveFileName);
-                String filePath = String.format("%s/%s", makeFolder, saveFileName);
+                String filePath = String.format("/%s/%s", makeFolder, saveFileName);
                 customFileUtils.transferTo(image, filePath);
 
                 BannerEntity bannerEntity = new BannerEntity();
@@ -164,6 +166,7 @@ public class AdminServiceImpl implements AdminService {
         try {
 
             BannerEntity bannerEntity = bannerRepository.findByBannerId(bannerId);
+            AdminModule.deleteImageOne(bannerId, bannerRepository, customFileUtils);
             bannerRepository.delete(bannerEntity);
 
         } catch (CustomException e) {
@@ -184,6 +187,7 @@ public class AdminServiceImpl implements AdminService {
     public ResponseEntity<? super GetBannerResponseDto> getBanner() {
 
         List<BannerEntity> list = bannerRepository.findAll();
+
 
         return GetBannerResponseDto.success(list);
 
