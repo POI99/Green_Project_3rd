@@ -69,11 +69,11 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
 //    )
 //
 //    List<GetReservationCompleteResultSet> getReservationCompleteByOwnerId(@Param("ownerId") Long ownerId,int limit ,int offset );
-@Query( "SELECT rc.inputName AS inputName,rc.personnel AS personnel, rc.checkInDate AS checkInDate, rc.checkOutDate AS checkOutDate, rc.payAmount AS payAmount, r.roomName AS roomName " +
-        "FROM ReservationCancelEntity rc " +
-        "JOIN rc.roomId r JOIN rc.glamping g " +
-        "WHERE rc.checkInDate = :date AND g.owner.ownerId = :ownerId ")
-List<OwnerBookItem> getReservationCompleteByOwnerId(@Param("ownerId") Long ownerId, Pageable pageable, @Param("date") LocalDate date);
+    @Query( "SELECT rc.inputName AS inputName,rc.personnel AS personnel, rc.checkInDate AS checkInDate, rc.checkOutDate AS checkOutDate, rc.payAmount AS payAmount, r.roomName AS roomName " +
+            "FROM ReservationCompleteEntity rc " +
+            "JOIN rc.room r JOIN rc.glamping g " +
+            "WHERE rc.checkInDate = :date AND g.owner.ownerId = :ownerId ")
+    List<OwnerBookItem> getReservationCompleteByOwnerId(@Param("ownerId") Long ownerId, Pageable pageable, @Param("date") LocalDate date);
     //@Transactional
     ReservationCompleteEntity findByReservationId(Long reservationId);
 

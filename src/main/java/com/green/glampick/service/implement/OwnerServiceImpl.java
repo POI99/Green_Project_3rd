@@ -564,19 +564,22 @@ public class OwnerServiceImpl implements OwnerService {
 
         //리뷰 데이터 추출
         try {
-            log.info("service p: {}", p);
 
+            //setting
             Long ownerId = p.getOwnerId();
             int limit = p.getLimit();
             int offset = p.getOffset();
             long typeNum = p.getTypeNum();
-
             List<GetUserReviewResultSet> reviewInfo = new ArrayList<>();
+            Long totalCount = 0L;
 
             if (typeNum == 0) {
                 reviewInfo = reviewRepository.getReviewForOwner(ownerId, limit, offset);
+                totalCount = reviewRepository.getTotalOwnersReviewsCount(ownerId);
+
             } else if (typeNum == 1) {
                 reviewInfo = reviewRepository.getReviewForOwnerExcludeComment(ownerId, limit, offset);
+                totalCount = reviewRepository.getTotalOwnersNoReviewsCount(ownerId);
             }
 
             //review PK 세팅
@@ -592,7 +595,6 @@ public class OwnerServiceImpl implements OwnerService {
             setReviewItem(reviewInfo, imageEntities, reviewListItem);
 
             //reviewTotalCount
-            Long totalCount = reviewRepository.getTotalOwnersReviewsCount(ownerId);
             return GetReviewResponseDto.success(reviewListItem,totalCount);
 
         } catch (CustomException e) {
