@@ -7,13 +7,15 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-
 import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
 
 @Getter
 public class GetGlampingInfoResponseDto extends ResponseDto {
     @Schema(example = "true", description = "글램핑 등록 완료 상태")
     private boolean state;
+
+    @Schema(example = "1")
+    private Long glampId;
 
     @Schema(example = "그린 글램핑")
     private String glampName;
@@ -51,7 +53,7 @@ public class GetGlampingInfoResponseDto extends ResponseDto {
 
 
     public static ResponseEntity<GetGlampingInfoResponseDto> success(boolean state, GetGlampingInfoResultSet resultSet) {
-        GetGlampingInfoResponseDto result = new GetGlampingInfoResponseDto(state, resultSet.getName(), resultSet.getCall()
+        GetGlampingInfoResponseDto result = new GetGlampingInfoResponseDto(state, resultSet.getGlampId(), resultSet.getName(), resultSet.getCall()
                 , resultSet.getImage(), resultSet.getLocation(), resultSet.getRegion(), resultSet.getCharge()
                 , resultSet.getIntro(), resultSet.getBasic(), resultSet.getNotice(), resultSet.getTraffic());
         return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -83,11 +85,12 @@ public class GetGlampingInfoResponseDto extends ResponseDto {
         this.exclusionStatus=exclusionStatus;
     }
 
-    public GetGlampingInfoResponseDto(boolean state, String glampName, String glampCall, String glampImage
+    public GetGlampingInfoResponseDto(boolean state, Long glampId, String glampName, String glampCall, String glampImage
             , String glampLocation, String region, Integer extraCharge, String glampIntro, String infoBasic
             , String infoNotice, String traffic){
         super(SUCCESS_CODE, "글램핑 정보 리스트를 불러왔습니다.");
         this.state=state;
+        this.glampId=glampId;
         this.glampName=glampName;
         this.glampCall=glampCall;
         this.glampImage=glampImage;

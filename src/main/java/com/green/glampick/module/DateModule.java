@@ -1,9 +1,7 @@
 package com.green.glampick.module;
 
-import com.green.glampick.security.AuthenticationFacade;
 
 import java.sql.Timestamp;
-import java.time.DayOfWeek;
 import java.util.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
