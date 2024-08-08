@@ -1,10 +1,11 @@
 package com.green.glampick.controller;
 
-import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.object.owner.OwnerBookCountListItem;
 import com.green.glampick.dto.object.owner.OwnerBookDetailListItem;
 import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
+import com.green.glampick.dto.response.owner.patch.PatchOwnerPeakResponseDto;
+import com.green.glampick.dto.response.owner.patch.PatchOwnerReviewInfoResponseDto;
 import com.green.glampick.module.GlampingModule;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
@@ -237,6 +238,24 @@ public class OwnerController {
         return service.getReview(dto);
     }
 
+    @PatchMapping("/room/{glampId}/peak")
+    @Operation(summary = "성수기 가격 설정(배강국)", description = "작성필요")
+    @ApiResponse(responseCode = "200", description = "작성필요",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PatchOwnerPeakResponseDto.class)))
+    public ResponseEntity<? super PatchOwnerPeakResponseDto> patchPeak(@PathVariable Long glampId, @ParameterObject @ModelAttribute PatchOwnerPeakRequestDto p) {
+
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
+        p.setOwnerId(ownerId);
+
+        service.patchPeak(glampId, p);
+
+
+        return null;
+    }
+
+
 //    @Operation(summary = "예약정보 취소 처리 하기",
 //            description =
 //                    "<strong> 변수명 </strong> reservationId : 예약 PK <p>  ex)21 </p>",
@@ -275,7 +294,7 @@ public class OwnerController {
         return dto.success(before, complete, cancel);
     }
 
-
+    /* 예약 카운트 */
     @GetMapping("/book/count")
     @Operation(summary = "예약 건수 불러오기 (배강국)", description = BOOK_COUNT_FROM_OWNER_GLAMPING_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = BOOK_COUNT_RESPONSE_DESCRIPTION,
@@ -287,13 +306,12 @@ public class OwnerController {
         GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
         p.setOwnerId(ownerId);
 
-        List<OwnerBookCountListItem> totalCount = service.getTotalCount("2024-08-06",p.getOwnerId());
-//        List<OwnerBookCountListItem> totalCount = service.getTotalCount(p.getDate(),p.getOwnerId());
+//        List<OwnerBookCountListItem> totalCount = service.getTotalCount("2024-08-06",p.getOwnerId());
+        List<OwnerBookCountListItem> totalCount = service.getTotalCount(p.getDate(),p.getOwnerId());
 
         GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(totalCount);
-        ResponseEntity<ResponseDto> success = dto.success(totalCount);
 
-        return success;
+        return dto.success(totalCount);
     }
 
 
