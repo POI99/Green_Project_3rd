@@ -57,7 +57,7 @@ public class OwnerServiceImpl implements OwnerService {
     private final AuthenticationFacade authenticationFacade;
     private final CustomFileUtils customFileUtils;
     private final PasswordEncoder passwordEncoder;
-    private final GlampingWaitRepository waitRepository;
+    private final GlampingWaitRepository glampingWaitRepository;
     private final GlampingRepository glampingRepository;
     private final OwnerRepository ownerRepository;
     private final RoomRepository roomRepository;
@@ -117,11 +117,11 @@ public class OwnerServiceImpl implements OwnerService {
         entity.setOwner(owner);
 
         // 사장님이 글램핑을 이미 가지고 있는가?
-        GlampingModule.hasGlamping(waitRepository, glampingRepository, owner);
+        GlampingModule.hasGlamping(glampingWaitRepository, glampingRepository, owner);
         // 이미지가 들어있는가?
         GlampingModule.imgExist(glampImg);
         // 글램핑 위치가 중복되는가?
-        GlampingModule.existingLocation(waitRepository, glampingRepository, req.getGlampLocation());
+        GlampingModule.existingLocation(glampingWaitRepository, glampingRepository, req.getGlampLocation());
 
         // 글램핑 아이디 받아오기
         entity.setGlampName(req.getGlampName());
@@ -140,12 +140,12 @@ public class OwnerServiceImpl implements OwnerService {
         entity.setInfoBasic(req.getBasic());
         entity.setInfoNotice(req.getNotice());
         entity.setTraffic(req.getTraffic());
-        waitRepository.save(entity);
+        glampingWaitRepository.save(entity);
         long glampId = entity.getGlampId();
 
         // 이미지 저장하기
         String fileName = GlampingModule.imageUpload(customFileUtils, glampImg, glampId, "glampingWait");
-        waitRepository.updateGlampImageByGlampId(fileName, glampId);
+        glampingWaitRepository.updateGlampImageByGlampId(fileName, glampId);
 
         return OwnerSuccessResponseDto.postInformation();
     }
@@ -172,7 +172,7 @@ public class OwnerServiceImpl implements OwnerService {
 
         // 위치정보 중복되는지 확인하기
         if (dto.getGlampLocation() != null && !dto.getGlampLocation().isEmpty()) {
-            GlampingModule.locationUpdate(dto.getGlampLocation(), waitRepository, glampingRepository, p.getGlampId());
+            GlampingModule.locationUpdate(dto.getGlampLocation(), glampingWaitRepository, glampingRepository, p.getGlampId());
         }
 
         // 입력되지 않은 데이터에는 기존 값 넣어주기
