@@ -148,4 +148,28 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
             nativeQuery = true
     )
     long findRoomCount(long ownerId);
+
+    -- 1. 임시 날짜 테이블 생성 (예: 2024년 7월 1일부터 7일까지)
+WITH RECURSIVE date_range AS (
+    SELECT '2024-07-01' AS check_in_date
+    UNION ALL
+    SELECT DATE_ADD(check_in_date, INTERVAL 1 DAY)
+    FROM date_range
+    WHERE check_in_date < '2024-07-07'
+)
+
+SELECT
+    IFNULL(COUNT(A.room_id), 0) AS roomId,
+    dr.check_in_date AS checkInDate,
+    IFNULL(B.glamp_id, 0) AS glampId
+FROM
+    date_range dr
+    LEFT JOIN reservation_complete A ON dr.check_in_date = A.check_in_date
+    LEFT JOIN glamping B ON A.glamp_id = B.glamp_id
+    LEFT JOIN room C ON C.room_id = A.room_id
+WHERE
+    dr.check_in_date = '2024-07-02'
+    AND (owner_id = 2 OR owner_id IS NULL) -- owner_id가 NULL인 경우도 고려
+GROUP BY
+    dr.check_in_date, B.glamp_id;
  */
