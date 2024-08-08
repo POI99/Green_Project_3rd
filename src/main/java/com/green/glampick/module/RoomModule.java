@@ -1,4 +1,4 @@
-package com.green.glampick.dto.request.owner.module;
+package com.green.glampick.module;
 
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.dto.request.owner.RoomPostRequestDto;
