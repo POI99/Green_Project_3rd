@@ -17,12 +17,13 @@ public class DateModule {
          return LocalDate.now();
     }
 
-    // 요일 (일~토 1~7)
-    public static int week(LocalDate localDate){
+    // 요일 (일~토 1~7) true = 주말(금 토) false = 평일 (일 ~ 목)
+    public static boolean week(LocalDate localDate){
         Date date = Timestamp.valueOf(localDate.atStartOfDay());
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        return calendar.get(Calendar.DAY_OF_WEEK);
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+        return day == 6 || day == 7;
     }
 
     public static boolean checkDate(String in, String out) {
