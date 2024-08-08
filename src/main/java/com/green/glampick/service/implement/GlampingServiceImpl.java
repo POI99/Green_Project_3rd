@@ -3,11 +3,10 @@ package com.green.glampick.service.implement;
 import com.green.glampick.dto.object.ReviewListItem;
 import com.green.glampick.dto.object.glamping.*;
 import com.green.glampick.dto.request.glamping.*;
+import com.green.glampick.module.DateModule;
 import com.green.glampick.dto.response.glamping.*;
 import com.green.glampick.dto.response.glamping.favorite.GetFavoriteGlampingResponseDto;
-import com.green.glampick.entity.GlampFavoriteEntity;
 import com.green.glampick.entity.GlampingEntity;
-import com.green.glampick.entity.ReviewEntity;
 import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.GlampingErrorCode;
@@ -19,7 +18,6 @@ import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.GlampingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.geolatte.geom.codec.WkbDecodeException;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
@@ -51,7 +48,7 @@ public class GlampingServiceImpl implements GlampingService {
     public ResponseEntity<? super GetSearchGlampingListResponseDto> searchGlamping(GlampingSearchRequestDto req) {
 
         // 날짜가 올바르게 들어가있나?
-        if (checkDate(req.getInDate(), req.getOutDate())) {
+        if (DateModule.checkDate(req.getInDate(), req.getOutDate())) {
             throw new CustomException(GlampingErrorCode.WD);
         }
 
@@ -144,8 +141,8 @@ public class GlampingServiceImpl implements GlampingService {
             List<GlampingDateItem> dateItems = mapper.selDate(p);
             for (GlampingDateItem dateItem : dateItems) {
                 //검색된 날짜와 예약상태의 객실들 데이터
-                HashMap<String, LocalDate> dateHashMap = parseDate(p.getInDate(), p.getOutDate(), dateItem.getCheckInDate(), dateItem.getCheckOutDate());
-                boolean k = checkOverlap(dateHashMap);
+                HashMap<String, LocalDate> dateHashMap = DateModule.parseDate(p.getInDate(), p.getOutDate(), dateItem.getCheckInDate(), dateItem.getCheckOutDate());
+                boolean k = DateModule.checkOverlap(dateHashMap);
 
                 if (k) {
                     item.setReservationAvailable(false);
@@ -292,46 +289,7 @@ public class GlampingServiceImpl implements GlampingService {
         }
     }
 
-    private boolean checkDate(String in, String out) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate inDate = LocalDate.parse(in, formatter);
-        LocalDate outDate = LocalDate.parse(out, formatter);
-        return outDate.isBefore(inDate); // 틀리면 true
-    }
 
-    private HashMap<String, LocalDate> parseDate(String in, String out, String dbCheckIn, String dbCheckOut) {
-        HashMap<String, LocalDate> date = new HashMap<>();
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        //Request check-in check-out
-        LocalDate inDate = LocalDate.parse(in, formatter);
-        LocalDate outDate = LocalDate.parse(out, formatter);
-        date.put("inDate", inDate);
-        date.put("outDate", outDate);
-
-        //비교 할 check-in check-out
-        LocalDate inDate2 = LocalDate.parse(dbCheckIn, formatter);
-        LocalDate outDate2 = LocalDate.parse(dbCheckOut, formatter);
-        date.put("inDate2", inDate2);
-        date.put("outDate2", outDate2);
-
-        return date;
-    }
-
-    private boolean checkOverlap(HashMap<String, LocalDate> dateHashMap) {
-        //get Req in out date
-        LocalDate start1 = dateHashMap.get("inDate");
-        LocalDate end1 = dateHashMap.get("outDate");
-        System.out.println("start1: " + start1);
-        System.out.println("end1: " + end1);
-        //get DB in out date
-        LocalDate start2 = dateHashMap.get("inDate2");
-        LocalDate end2 = dateHashMap.get("outDate2");
-        System.out.println("start2: " + start2);
-        System.out.println("end2: " + end2);
-        System.out.println(!start1.isAfter(end2) && !start2.isAfter(end1));
-        return !start1.isAfter(end2) && !start2.isAfter(end1); // 날짜가 겹치면 true
-    }
 
     private int getIsFavData(GetInfoRequestDto dto, long loginUserId) {
         if (loginUserId != 0) {
