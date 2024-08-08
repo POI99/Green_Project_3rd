@@ -1,6 +1,7 @@
 package com.green.glampick.service;
 
 import com.green.glampick.dto.object.owner.OwnerBookCountListItem;
+import com.green.glampick.dto.object.owner.OwnerBookDetailListItem;
 import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
@@ -10,9 +11,6 @@ import com.green.glampick.dto.response.owner.post.PostBusinessPaperResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PatchOwnerInfoResponseDto;
 import com.green.glampick.dto.response.user.GetReviewResponseDto;
-import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
-import com.green.glampick.repository.resultset.GetReservationCancelResultSet;
-import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -54,10 +52,10 @@ public interface OwnerService {
     ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(ReservationGetRequestDto p);
     ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p);
 
-    List<GetReservationBeforeResultSet> getReservationBeforeList(ReservationGetRequestDto p);
-    List<GetReservationCancelResultSet> getReservationCancelList(ReservationGetRequestDto p);
-    List<GetReservationCompleteResultSet> getReservationCompleteList(ReservationGetRequestDto p);
-  
+    List<OwnerBookDetailListItem> getReservationBeforeList(ReservationGetRequestDto p);
+    List<OwnerBookDetailListItem> getReservationCancelList(ReservationGetRequestDto p);
+    List<OwnerBookDetailListItem> getReservationCompleteList(ReservationGetRequestDto p);
+
     List<OwnerBookCountListItem> getTotalCount(String date,Long ownerId);
     ResponseEntity<? super GetReviewResponseDto> getReview(GetReviewRequestDto dto);
 }

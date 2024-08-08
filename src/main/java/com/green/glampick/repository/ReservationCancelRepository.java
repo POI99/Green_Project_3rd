@@ -1,5 +1,6 @@
 package com.green.glampick.repository;
 
+import com.green.glampick.dto.object.owner.OwnerBookItem;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookCancelCountResponseDto;
 import com.green.glampick.entity.ReservationCancelEntity;
 import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
@@ -64,25 +65,11 @@ public interface ReservationCancelRepository extends JpaRepository<ReservationCa
 //            nativeQuery = true
 //    )
 //    List<GetReservationCancelResultSet> getReservationCancelByOwnerId(Long userId, int limit, int offset);
-    @Query( "SELECT " +
-            "g.glampName AS glampName, " +
-            "g.glampId AS glampId, " +
-            "rc.bookId AS bookId, " +
-            "r.roomName AS roomName, " +
-            "rc.reservationId AS reservationId, " +
-            "rc.checkInDate AS checkInDate, " +
-            "rc.checkOutDate AS checkOutDate, "+
-            "rc.checkInDate AS createdAt, " +
-            "r.checkInTime AS checkInTime, " +
-            "r.checkOutTime AS checkOutTime, " +
-            "r.roomId AS roomId " +
-            "FROM  ReservationCancelEntity rc " +
-            "JOIN rc.glamping g " +
-            "JOIN rc.roomId r " +
-            "WHERE g.owner.ownerId = :ownerId AND rc.checkInDate = :date " +
-            "ORDER BY rc.checkInDate "
-    )
-    List<GetReservationCancelResultSet> getReservationCancelByOwnerId(@Param("ownerId") Long ownerId, Pageable pageable, @Param("date") LocalDate date);
+    @Query( "SELECT rc.inputName AS inputName,rc.personnel AS personnel, rc.checkInDate AS checkInDate, rc.checkOutDate AS checkOutDate, rc.payAmount AS payAmount, r.roomName AS roomName " +
+            "FROM ReservationCancelEntity rc " +
+            "JOIN rc.roomId r JOIN rc.glamping g " +
+            "WHERE rc.checkInDate = :date AND g.owner.ownerId = :ownerId ")
+    List<OwnerBookItem> getReservationCancelByOwnerId(@Param("ownerId") Long ownerId, Pageable pageable, @Param("date") LocalDate date);
 
     @Query("SELECT rc.checkInDate AS checkInDate, COUNT(rc.checkInDate) AS countCancel " +
             "FROM  ReservationCancelEntity rc " +

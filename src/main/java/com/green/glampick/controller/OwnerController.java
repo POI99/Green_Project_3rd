@@ -2,6 +2,7 @@ package com.green.glampick.controller;
 
 import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.dto.object.owner.OwnerBookCountListItem;
+import com.green.glampick.dto.object.owner.OwnerBookDetailListItem;
 import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.owner.module.GlampingModule;
@@ -12,9 +13,6 @@ import com.green.glampick.dto.response.owner.post.PostBusinessPaperResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PatchOwnerInfoResponseDto;
 import com.green.glampick.dto.response.user.GetReviewResponseDto;
-import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
-import com.green.glampick.repository.resultset.GetReservationCancelResultSet;
-import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.OwnerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -262,28 +260,24 @@ public class OwnerController {
     @ApiResponse(responseCode = "200", description = BOOK_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
+//    public List<OwnerBookDetailListItem>  getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
     public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
-        try {
-            long ownerId = GlampingModule.ownerId(authenticationFacade);
-            GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
-            p.setOwnerId(ownerId);
 
-            List<GetReservationBeforeResultSet> before = service.getReservationBeforeList(p);
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
+        p.setOwnerId(ownerId);
 
-            List<GetReservationCancelResultSet> cancel = service.getReservationCancelList(p);
-            List<GetReservationCompleteResultSet> complete = service.getReservationCompleteList(p);
+        List<OwnerBookDetailListItem> before = service.getReservationBeforeList(p);
 
-            GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(before, complete, cancel);
-            ResponseEntity<ResponseDto> success = dto.success(before, complete, cancel);
-            return success;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        List<OwnerBookDetailListItem> cancel = service.getReservationCancelList(p);
+        List<OwnerBookDetailListItem> complete = service.getReservationCompleteList(p);
 
+        GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(before, complete, cancel);
+
+        return dto.success(before, complete, cancel);
     }
 
-/*
+
     @GetMapping("/book/count")
     @Operation(summary = "예약 건수 불러오기 (배강국)", description = BOOK_COUNT_FROM_OWNER_GLAMPING_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = BOOK_COUNT_RESPONSE_DESCRIPTION,
@@ -304,6 +298,6 @@ public class OwnerController {
         return success;
     }
 
- */
+
 }
 

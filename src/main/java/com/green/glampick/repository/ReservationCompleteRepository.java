@@ -1,5 +1,6 @@
 package com.green.glampick.repository;
 
+import com.green.glampick.dto.object.owner.OwnerBookItem;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookCompleteCountResponseDto;
 import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.ReservationCompleteEntity;
@@ -43,51 +44,36 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
     )
     List<GetReservationCompleteResultSet> getBook(Long userId);
 
-    @Query(
-            value =
-                    "SELECT " +
-                            "B.glamp_name AS glampName, " +
-                            "B.glamp_id AS glampId, " +
-                            "A.book_id AS bookId, " +
-                            "C.room_name AS roomName, " +
-                            "A.reservation_id AS reservationId, " +
-                            "A.check_in_date AS checkInDate, " +
-                            "A.check_out_date AS checkOutDate, " +
-                            "A.created_at AS createdAt, " +
-                            "C.check_in_time AS checkInTime, " +
-                            "C.check_out_time AS checkOutTime, " +
-                            "A.status AS status, " +
-                            "C.room_id AS roomId " +
-                            "FROM reservation_complete A " +
-                            "INNER JOIN	glamping B ON A.glamp_id = B.glamp_id " +
-                            "INNER JOIN room C ON A.room_id = C.room_id " +
-                            "WHERE B.owner_id = ?1 " +
-                            "ORDER BY A.check_in_date " +
-                            "LIMIT ?2 OFFSET ?3 ",
-            nativeQuery = true
-    )
-    List<GetReservationCompleteResultSet> getReservationCompleteByOwnerId(@Param("ownerId") Long ownerId,int limit ,int offset );
-//@Query(  "SELECT " +
-//        "g.glampName AS glampName, " +
-//        "g.glampId AS glampId, " +
-//        "rc.bookId AS bookId, " +
-//        "r.roomName AS roomName, " +
-//        "rc.reservationId AS reservationId, " +
-//        "rc.checkInDate AS checkInDate, " +
-//        "rc.checkOutDate AS checkOutDate, "+
-//        "rc.checkInDate AS createdAt, " +
-//        "r.checkInTime AS checkInTime, " +
-//        "r.checkOutTime AS checkOutTime, " +
-//        "rc.status AS status, " +
-//        "r.roomId AS roomId " +
-//        "FROM ReservationCompleteEntity rc " +
-//        "JOIN rc.glamping g " +
-//        "JOIN rc.room r " +
-//        "WHERE g.owner.ownerId = :ownerId AND rc.checkInDate = :date " +
-//        "ORDER BY rc.checkInDate "
-//)
-//List<GetReservationCompleteResultSet> getReservationCompleteByOwnerId(@Param("ownerId") Long ownerId, Pageable pageable, @Param("date") LocalDate date);
-
+//    @Query(
+//            value =
+//                    "SELECT " +
+//                            "B.glamp_name AS glampName, " +
+//                            "B.glamp_id AS glampId, " +
+//                            "A.book_id AS bookId, " +
+//                            "C.room_name AS roomName, " +
+//                            "A.reservation_id AS reservationId, " +
+//                            "A.check_in_date AS checkInDate, " +
+//                            "A.check_out_date AS checkOutDate, " +
+//                            "A.created_at AS createdAt, " +
+//                            "C.check_in_time AS checkInTime, " +
+//                            "C.check_out_time AS checkOutTime, " +
+//                            "A.status AS status, " +
+//                            "C.room_id AS roomId " +
+//                            "FROM reservation_complete A " +
+//                            "INNER JOIN	glamping B ON A.glamp_id = B.glamp_id " +
+//                            "INNER JOIN room C ON A.room_id = C.room_id " +
+//                            "WHERE B.owner_id = ?1 " +
+//                            "ORDER BY A.check_in_date " +
+//                            "LIMIT ?2 OFFSET ?3 ",
+//            nativeQuery = true
+//    )
+//
+//    List<GetReservationCompleteResultSet> getReservationCompleteByOwnerId(@Param("ownerId") Long ownerId,int limit ,int offset );
+@Query( "SELECT rc.inputName AS inputName,rc.personnel AS personnel, rc.checkInDate AS checkInDate, rc.checkOutDate AS checkOutDate, rc.payAmount AS payAmount, r.roomName AS roomName " +
+        "FROM ReservationCancelEntity rc " +
+        "JOIN rc.roomId r JOIN rc.glamping g " +
+        "WHERE rc.checkInDate = :date AND g.owner.ownerId = :ownerId ")
+List<OwnerBookItem> getReservationCompleteByOwnerId(@Param("ownerId") Long ownerId, Pageable pageable, @Param("date") LocalDate date);
     //@Transactional
     ReservationCompleteEntity findByReservationId(Long reservationId);
 
