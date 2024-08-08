@@ -142,7 +142,7 @@ public class BookServiceImpl implements BookService {
     }
 
     //  스케줄 실행 - 체크아웃 날짜가 지나면, 이용완료 테이블로 이동  //
-    @Scheduled(fixedRate = 600000)
+    @Scheduled(cron = "0 1 0 * * *")
     public void cleanUpExpiredCodes() {
 
         LocalDate currentDateTime = LocalDate.now();

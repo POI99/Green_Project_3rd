@@ -8,8 +8,7 @@ import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.request.owner.module.GlampingModule;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
-import com.green.glampick.dto.response.owner.get.GetOwnerBookListResponseDto;
-import com.green.glampick.dto.response.owner.get.OwnerInfoResponseDto;
+import com.green.glampick.dto.response.owner.get.*;
 import com.green.glampick.dto.response.owner.post.PostBusinessPaperResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PatchOwnerInfoResponseDto;
@@ -76,7 +75,7 @@ public class OwnerController {
 // 민지 =================================================================================================================
 
     //  사장님 페이지 - 글램핑 정보 등록하기  //
-    @PostMapping(value = "glamping")//, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "glamping", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "글램핑 정보 등록 (김민지)", description = POST_GLAMPING_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = POST_GLAMPING_RESPONSE_ERROR_CODE,
             content = @Content(
@@ -107,7 +106,7 @@ public class OwnerController {
     }
 
     //  사장님 페이지 - 객실 정보 등록하기  //
-    @PostMapping(value = "room")//, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "room", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "객실 정보 등록 (김민지)", description = POST_ROOM_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = POST_ROOM_RESPONSE_ERROR_CODE,
             content = @Content(
@@ -135,6 +134,37 @@ public class OwnerController {
                     mediaType = "application/json", schema = @Schema(implementation = OwnerSuccessResponseDto.class)))
     public ResponseEntity<? super OwnerSuccessResponseDto> deleteRoom(@PathVariable("room_id") Long roomId) {
         return service.deleteRoom(roomId);
+    }
+
+    // 글램핑 get
+    @GetMapping("glamping")
+    @Operation(summary = "글램핑 정보 불러오기 (김민지)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetGlampingInfoResponseDto.class)))
+    public ResponseEntity<? super GetGlampingInfoResponseDto> getGlamping() {
+        return service.getGlamping();
+    }
+
+    // 객실 list get
+    @GetMapping("room/{glamp_id}")
+    @Operation(summary = "객실 정보 리스트 불러오기 (김민지)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetRoomListResponseDto.class)))
+    public ResponseEntity<? super GetRoomListResponseDto> getRoomList(@PathVariable("glamp_id") Long glampId) {
+        return service.getRoomList(glampId);
+    }
+
+    // 객실 상세보기
+    @GetMapping("room/{glamp_id}/{room_id}")
+    @Operation(summary = "객실 정보 상세 불러오기 (김민지)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetRoomInfoResponseDto.class)))
+    public ResponseEntity<? super GetRoomInfoResponseDto> getRoomOne(@PathVariable("glamp_id") Long glampId
+            , @PathVariable("room_id") Long roomId) {
+        return service.getRoomOne(glampId, roomId);
     }
 
     // 비밀번호 확인

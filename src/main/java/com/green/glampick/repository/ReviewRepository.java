@@ -1,5 +1,6 @@
 package com.green.glampick.repository;
 
+import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.ReviewEntity;
 import com.green.glampick.repository.resultset.GetUserReviewResultSet;
 import jakarta.transaction.Transactional;
@@ -161,6 +162,8 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
             nativeQuery = true)
     void fin(long reservationId);
 
+
     @Query("SELECT COUNT(r.reviewId) FROM ReviewEntity r JOIN r.glampId g JOIN g.owner o WHERE o.ownerId = :ownerId")
     Long getTotalOwnersReviewsCount(@Param("ownerId") Long ownerId);
+
 }

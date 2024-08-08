@@ -15,6 +15,8 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.green.glampick.common.GlobalConst.ROOM_IMAGE_MAX;
+
 
 public class RoomModule {
 
@@ -22,6 +24,9 @@ public class RoomModule {
     public static void imgExist(List<MultipartFile> image) {
         if(image == null || image.get(0).isEmpty()){
             throw new CustomException(OwnerErrorCode.NF);
+        }
+        if(image.size() > ROOM_IMAGE_MAX){
+            throw new CustomException(OwnerErrorCode.TI);
         }
     }
 
