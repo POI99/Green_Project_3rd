@@ -86,18 +86,33 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
 
     @Query(
             value =
-                    "SELECT SUM(sub.pay) AS total_count " +
-                            ", DATE(sub.createdAt) AS times " +
-                            ", sub.roomNam AS roomName " +
-                            "FROM (SELECT A.glamp_id, SUM(A.pay_amount) AS pay " +
-                            ", date(A.created_at ) AS createdAt " +
-                            ", C.room_name AS roomNam " +
+
+                    "WITH DateRoom AS ( " +
+                            "SELECT DATE(ADDDATE(:startDayId, INTERVAL seq DAY)) AS date, D.room_name, E.owner_id " +
+                            "FROM (SELECT @rownum := @rownum + 1 AS seq " +
+                            "FROM (SELECT 0 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a, " +
+                            "(SELECT 0 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b, " +
+                            "(SELECT @rownum := -1) r) seq " +
+                            "CROSS JOIN room D " +
+                            "JOIN glamping E ON D.glamp_id = E.glamp_id " +
+                            "WHERE DATE(ADDDATE(:startDayId, INTERVAL seq DAY)) BETWEEN :startDayId AND :endDayId " +
+                            "AND E.owner_id = :ownerId) " +
+                            ", SubQuery AS (SELECT A.glamp_id, " +
+                            "SUM(A.pay_amount) AS pay, " +
+                            "DATE(A. check_in_date) AS  checkInDate, " +
+                            "C.room_name AS roomNam " +
                             "FROM reservation_complete A " +
                             "JOIN glamping B ON A.glamp_id = B.glamp_id " +
                             "JOIN room C ON A.room_id = C.room_id " +
-                            "WHERE B.owner_id = :ownerId AND A.created_at BETWEEN :startDayId AND :endDayId " +
-                            "GROUP BY A.created_at, C.room_name) AS sub " +
-                            "GROUP BY times, roomName ",
+                            "WHERE B.owner_id = :ownerId AND A. check_in_date BETWEEN :startDayId AND :endDayId " +
+                            "GROUP BY A. check_in_date, C.room_name) " +
+                            "SELECT IFNULL(SUM(sub.pay), 0) AS total_count, " +
+                            "DR.date AS times, " +
+                            "DR.room_name AS roomName " +
+                            "FROM DateRoom DR " +
+                            "LEFT JOIN SubQuery sub ON DR.date = sub. checkInDate AND DR.room_name = sub.roomNam " +
+                            "GROUP BY DR.date, DR.room_name " +
+                            "ORDER BY DR.date, DR.room_name ",
             nativeQuery = true
     )
     List<GetRevenue> findRevenue(long ownerId, long startDayId, long endDayId);
