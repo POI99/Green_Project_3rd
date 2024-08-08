@@ -1,5 +1,6 @@
 package com.green.glampick.repository;
 
+import com.green.glampick.dto.object.owner.OwnerRoomPriceItem;
 import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.RoomEntity;
 import com.green.glampick.repository.resultset.GetRoomInfoResultSet;
@@ -22,4 +23,5 @@ public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
             ", r.checkInTime AS inTime, r.checkOutTime AS outTime" +
             " from RoomEntity r where r.roomId = :roomId")
     GetRoomInfoResultSet getRoomInfo(Long roomId);
+
 }

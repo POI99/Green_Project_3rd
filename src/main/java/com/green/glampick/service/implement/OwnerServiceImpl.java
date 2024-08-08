@@ -8,6 +8,8 @@ import com.green.glampick.dto.object.owner.OwnerBookCountListItem;
 import com.green.glampick.dto.object.owner.OwnerBookDetailListItem;
 import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
+import com.green.glampick.dto.response.owner.patch.PatchOwnerPeakResponseDto;
+import com.green.glampick.dto.response.owner.patch.PatchOwnerReviewInfoResponseDto;
 import com.green.glampick.module.GlampingModule;
 import com.green.glampick.module.RoomModule;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
@@ -69,6 +71,7 @@ public class OwnerServiceImpl implements OwnerService {
     private final ReservationBeforeRepository reservationBeforeRepository;
     private final ReservationCancelRepository reservationCancelRepository;
     private final ReservationCompleteRepository reservationCompleteRepository;
+    private final RoomPriceRepository roomPriceRepository;
 
 // 수찬 =================================================================================================================
 
@@ -560,7 +563,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override //리뷰 리스트 불러오기
-    public ResponseEntity<? super GetReviewResponseDto> getReview(@ParameterObject @ModelAttribute GetReviewRequestDto p) {
+    public ResponseEntity<? super GetReviewResponseDto> getReview(GetReviewRequestDto p) {
 
         //리뷰 데이터 추출
         try {
@@ -682,8 +685,11 @@ public class OwnerServiceImpl implements OwnerService {
         return null;
     }
 
-    @Override
-    public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(ReservationGetRequestDto p) {
+
+    public ResponseEntity<? super PatchOwnerPeakResponseDto> patchPeak(Long glampId, PatchOwnerPeakRequestDto p) {
+        roomPriceRepository.getRoomPriceList(glampId);
+
+
         return null;
     }
 
