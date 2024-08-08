@@ -260,7 +260,6 @@ public class OwnerController {
     @ApiResponse(responseCode = "200", description = BOOK_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
-//    public List<OwnerBookDetailListItem>  getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
     public ResponseEntity<? super GetOwnerBookListResponseDto> getOwnerReservation(@ParameterObject @ModelAttribute ReservationGetRequestDto p) {
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
@@ -268,7 +267,6 @@ public class OwnerController {
         p.setOwnerId(ownerId);
 
         List<OwnerBookDetailListItem> before = service.getReservationBeforeList(p);
-
         List<OwnerBookDetailListItem> cancel = service.getReservationCancelList(p);
         List<OwnerBookDetailListItem> complete = service.getReservationCompleteList(p);
 

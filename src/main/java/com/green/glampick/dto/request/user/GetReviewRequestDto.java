@@ -13,12 +13,15 @@ import static com.green.glampick.common.GlobalConst.PAGING_SIZE;
 @Getter
 @ToString
 public class GetReviewRequestDto extends Paging {
-    @Schema(example = "0||1")
+    @Schema(example = "0")
     private long typeNum;
 
     @JsonIgnore private Long reviewId;
     @JsonIgnore private long userId;
     @JsonIgnore private Long ownerId;
+
+    String firstDate;
+    String finishDate;
 
     public GetReviewRequestDto(Integer page) {
         super(page, PAGING_SIZE);

@@ -166,4 +166,6 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
     @Query("SELECT COUNT(r.reviewId) FROM ReviewEntity r JOIN r.glampId g JOIN g.owner o WHERE o.ownerId = :ownerId")
     Long getTotalOwnersReviewsCount(@Param("ownerId") Long ownerId);
 
+    @Query("SELECT COUNT(r.reviewId) FROM ReviewEntity r JOIN r.glampId g JOIN g.owner o WHERE o.ownerId = :ownerId AND r.reviewComment IS NULL")
+    Long getTotalOwnersNoReviewsCount(@Param("ownerId") Long ownerId);
 }
