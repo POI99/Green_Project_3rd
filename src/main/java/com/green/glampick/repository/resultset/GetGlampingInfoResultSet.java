@@ -1,6 +1,7 @@
 package com.green.glampick.repository.resultset;
 
 public interface GetGlampingInfoResultSet {
+    Long getGlampId();
     String getName();
     String getCall();
     String getImage();

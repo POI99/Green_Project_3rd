@@ -423,12 +423,12 @@ public class OwnerServiceImpl implements OwnerService {
                 return PatchOwnerInfoResponseDto.noUpdate();
             }
             // 폰번호만 바뀜
-            owner.setOwnerPhone(dto.getPhoneNum());
+            owner.setOwnerPhone(GlampingModule.glampingCall(dto.getPhoneNum()));
             ownerRepository.save(owner);
             return PatchOwnerInfoResponseDto.success();
         }
         if(dto.getPhoneNum() != null && !dto.getPhoneNum().isEmpty()){
-            owner.setOwnerPhone(dto.getPhoneNum());
+            owner.setOwnerPhone(GlampingModule.glampingCall(dto.getPhoneNum()));
         }
         owner.setOwnerPw(passwordEncoder.encode(dto.getOwnerPw()));
         ownerRepository.save(owner);
