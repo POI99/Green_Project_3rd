@@ -478,7 +478,10 @@ public class OwnerServiceImpl implements OwnerService {
 
     @Override // 예약 중 리스트 불러오기
     public List<OwnerBookDetailListItem> getReservationBeforeList(ReservationGetRequestDto p) {
+
         try {
+            log.info("p: {}", p);
+
             List<OwnerBookItem> reservationBeforeResultSetList;
             Long ownerId = p.getOwnerId();
             int limit = p.getLimit(); // size
