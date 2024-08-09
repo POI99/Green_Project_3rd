@@ -1,6 +1,7 @@
 package com.green.glampick.repository;
 
 import com.green.glampick.dto.object.owner.OwnerRoomPriceItem;
+import com.green.glampick.entity.ReviewEntity;
 import com.green.glampick.entity.RoomPriceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +16,7 @@ public interface RoomPriceRepository extends JpaRepository<RoomPriceEntity, Long
             "where r.glamp.glampId = :glampId "
     )
     List<OwnerRoomPriceItem> getRoomPriceList(@Param("glampId") Long glampId);
+
+    @Query("SELECT rp FROM RoomPriceEntity rp WHERE rp.room.roomId = :roomId")
+    RoomPriceEntity findRoomPriceByRoomId(@Param("roomId") Long roomId);
 }

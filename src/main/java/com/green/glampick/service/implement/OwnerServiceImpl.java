@@ -42,10 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -704,7 +701,10 @@ public class OwnerServiceImpl implements OwnerService {
             weekdayPrice += (int)(weekdayPrice * percent);
             weekendPrice += (int)(weekendPrice * percent);
 
-            List<GetRoomPriceItem> abc = new ArrayList<>();
+            RoomPriceEntity entity = roomPriceRepository.findRoomPriceByRoomId(item.getRoomId());
+            entity.setWeekdayPrice(weekdayPrice);
+            entity.setWeekendPrice(weekendPrice);
+            roomPriceRepository.save(entity);
         }
 
         return null;
