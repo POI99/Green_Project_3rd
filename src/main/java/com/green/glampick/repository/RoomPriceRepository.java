@@ -9,10 +9,10 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface RoomPriceRepository extends JpaRepository<RoomPriceEntity, Long> {
-    @Query( "select rp.weekdayPrice AS weekdayPrice, rp.weekendPrice AS weekendPrice " +
+    @Query( "select rp.room.roomId AS roomId, rp.weekdayPrice AS weekdayPrice, rp.weekendPrice AS weekendPrice " +
             "from RoomPriceEntity rp " +
             "join rp.room r " +
-            "where r.glamp.glampId = :glampId"
+            "where r.glamp.glampId = :glampId "
     )
     List<OwnerRoomPriceItem> getRoomPriceList(@Param("glampId") Long glampId);
 }
