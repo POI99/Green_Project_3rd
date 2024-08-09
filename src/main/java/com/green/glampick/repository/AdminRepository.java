@@ -20,7 +20,7 @@ public interface AdminRepository extends Repository<AdminEntity, Long> {
             "from owner oe inner join glamping_wait ge on oe.owner_id = ge.owner_id", nativeQuery = true )
     List<GetAccessGlampingListResultSet> getAccessGlampingList();
 
-    @Query( value = "select oe.ownerId AS ownerId, oe.ownerName AS ownerName from OwnerEntity oe WHERE oe.role = 'RESERVE_OWNER' " )
+    @Query( value = "select oe.ownerId AS ownerId, oe.ownerName AS ownerName from OwnerEntity oe WHERE oe.role = 'ROLE_RESERVE_OWNER' " )
     List<GetAccessOwnerSignUpListResultSet> getAccessOwnerSignUpList();
 
 }
