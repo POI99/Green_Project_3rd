@@ -198,5 +198,46 @@ GROUP BY
     )
     List<GetRevenue> findRevenue(long ownerId, long startDayId, long endDayId);
 
+SELECT
+    COALESCE(A.check_in_date, '20240702') AS check_in_date,
+    IFNULL(COUNT(A.check_in_date), 0) AS reservation_count
+FROM
+    glamping B
+RIGHT JOIN
+    room C ON B.glamp_id = C.glamp_id
+LEFT JOIN
+    reservation_complete A ON A.room_id = C.room_id
+        AND A.check_in_date = '20240703'
+WHERE
+    B.owner_id = 2
+GROUP BY
+    COALESCE(A.check_in_date, '20240702') -- 날짜별로 그룹화
+ORDER BY
+    check_in_date;
 
+
+
+WITH RECURSIVE date_range AS (
+    SELECT '2024-07-01' AS check_in_date
+    UNION ALL
+    SELECT DATE_ADD(check_in_date, INTERVAL 1 DAY)
+    FROM date_range
+    WHERE check_in_date < '2024-07-31'
+)
+SELECT
+    date_range.check_in_date,
+    IFNULL(COUNT(A.check_in_date), 0) AS reservation_count
+FROM
+    date_range
+LEFT JOIN
+    reservation_complete A ON A.check_in_date = date_range.check_in_date
+LEFT JOIN
+    room C ON A.room_id = C.room_id
+LEFT JOIN
+    glamping B ON B.glamp_id = C.glamp_id
+        AND B.owner_id = 2
+GROUP BY
+    date_range.check_in_date
+ORDER BY
+    date_range.check_in_date;
  */
