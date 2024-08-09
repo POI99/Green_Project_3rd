@@ -2,10 +2,7 @@ package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.dto.object.UserReviewListItem;
-import com.green.glampick.dto.object.owner.GetRoomItem;
-import com.green.glampick.dto.object.owner.OwnerBookItem;
-import com.green.glampick.dto.object.owner.OwnerBookCountListItem;
-import com.green.glampick.dto.object.owner.OwnerBookDetailListItem;
+import com.green.glampick.dto.object.owner.*;
 import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.response.owner.patch.PatchOwnerPeakResponseDto;
@@ -45,10 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -691,13 +685,47 @@ public class OwnerServiceImpl implements OwnerService {
 
 
     public ResponseEntity<? super PatchOwnerPeakResponseDto> patchPeak(Long glampId, PatchOwnerPeakRequestDto p) {
-        roomPriceRepository.getRoomPriceList(glampId);
+        log.info("service: {}", p);
+        //가격정보 찾아오기
+        List<OwnerRoomPriceItem> priceResultSet = roomPriceRepository.getRoomPriceList(glampId);
+        List<GetRoomPriceItem> priceItems = new ArrayList<>();
+
+        setPriceList(priceResultSet, priceItems);
+
+        double percent = p.getPeakCost() * 0.01;
+
+
+        for (GetRoomPriceItem item : priceItems) {
+            Integer weekdayPrice = item.getWeekdayPrice();
+            Integer weekendPrice = item.getWeekendPrice();
+
+            weekdayPrice += (int)(weekdayPrice * percent);
+            weekendPrice += (int)(weekendPrice * percent);
+
+            RoomPriceEntity entity = roomPriceRepository.findRoomPriceByRoomId(item.getRoomId());
+            entity.setWeekdayPrice(weekdayPrice);
+            entity.setWeekendPrice(weekendPrice);
+            roomPriceRepository.save(entity);
+        }
+
 
 
         return null;
     }
 
-    //===========================================================================================================
+    //========================================= < PRIVATE METHOD > =========================================================//
+
+    private static void setPriceList(List<OwnerRoomPriceItem> priceResultSet, List<GetRoomPriceItem> priceItems) {
+        for (OwnerRoomPriceItem resultSet : priceResultSet) {
+            GetRoomPriceItem item = new GetRoomPriceItem();
+
+            item.setRoomId(resultSet.getRoomId());
+            item.setWeekdayPrice(resultSet.getWeekdayPrice());
+            item.setWeekendPrice(resultSet.getWeekendPrice());
+
+            priceItems.add(item);
+        }
+    }
     private static void setBookDetailList(List<OwnerBookItem> reservationResultSetList, List<OwnerBookDetailListItem> bookDetailListItems) {
         for (OwnerBookItem resultSet : reservationResultSetList) {
             OwnerBookDetailListItem item = new OwnerBookDetailListItem();

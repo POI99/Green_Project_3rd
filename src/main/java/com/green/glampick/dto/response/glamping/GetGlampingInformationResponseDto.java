@@ -42,8 +42,10 @@ public class GetGlampingInformationResponseDto extends ResponseDto {
         private String infoNotice;
         @Schema(example = "1329명", description = "리뷰 평가자 숫자")
         private int countReviewUsers;
-        @Schema(example = "0 and 1", description = "좋아요 on/off")
+        @Schema(example = "0 or 1", description = "좋아요 on/off")
         private int isFav;
+        @Schema(example = "1 or -1")
+        private int activateStatus;
 
 
         private HashSet<String> roomService;
