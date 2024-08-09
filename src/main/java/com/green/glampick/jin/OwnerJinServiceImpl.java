@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -157,9 +158,9 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.MNF);
         }
-        List<GetRevenue> revenue = ownerRepository.findRevenue(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
+        List<GetRevenue> revenue = new ArrayList<>();
         try {
-            ownerRepository.findRevenue(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
+            revenue = ownerRepository.findRevenue(dto.getOwnerId(), dto.getStartDayId());
             if (dto.getOwnerId() == 0) {
                 throw new CustomException(OwnerErrorCode.NMG);
             }
