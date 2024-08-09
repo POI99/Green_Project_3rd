@@ -1,6 +1,7 @@
 package com.green.glampick.controller;
 
 import com.green.glampick.dto.request.admin.DeleteBannerRequestDto;
+import com.green.glampick.dto.request.admin.exclusionGlampingRequestDto;
 import com.green.glampick.dto.request.admin.exclusionSignUpRequestDto;
 import com.green.glampick.dto.response.admin.*;
 import com.green.glampick.service.AdminService;
@@ -79,8 +80,8 @@ public class AdminController {
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = PatchAccessOwnerSignUpResponseDto.class)
             ))
-    public ResponseEntity<? super DeleteExclusionOwnerSignUpResponseDto> exclusionSignUp(@RequestParam Long ownerId) {
-        return service.exclutionSignUp(ownerId);
+    public ResponseEntity<? super DeleteExclusionOwnerSignUpResponseDto> exclusionSignUp(@RequestBody exclusionSignUpRequestDto dto) {
+        return service.exclutionSignUp(dto);
     }
 
     //  관리자 페이지 - 메인 화면 배너 추가하기  //
@@ -156,8 +157,8 @@ public class AdminController {
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GlampingExclutionResponseDto.class)
             ))
-    public ResponseEntity<? super GlampingExclutionResponseDto> exclutionGlamping(@RequestParam Long glampId) {
-        return service.exclutionGlamping(glampId);
+    public ResponseEntity<? super GlampingExclutionResponseDto> exclutionGlamping(@RequestBody exclusionGlampingRequestDto dto) {
+        return service.exclutionGlamping(dto);
     }
 
     //  관리자 페이지 - 회원탈퇴 대기 사장님 리스트 불러오기  //
@@ -171,9 +172,9 @@ public class AdminController {
         return service.deleteOwnerList();
     }
 
-    //  관리자 페이지 - 사장님 회원탈퇴 승인 처리하기  //
+    //  관리자 페이지 - 사장님 회원탈퇴 승인 처리하기 - 완료  //
     @PatchMapping("/delete/owner")
-    @Operation(summary = "사장님 회원탈퇴 처리하기 (김수찬)", description = "")
+    @Operation(summary = "사장님 회원탈퇴 처리하기 (김수찬) - 완료", description = "")
     @ApiResponse(responseCode = "200", description = "",
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = PatchDeleteOwnerResponseDto.class)

@@ -86,7 +86,7 @@ public class OwnerServiceImpl implements OwnerService {
             String makeFolder = String.format("businessInfo/%d", ownerId);
             customFileUtils.makeFolders(makeFolder);
             String saveFileName = customFileUtils.makeRandomFileName(file);
-            String saveDbFileName = String.format("/pic/businessInfo/%s", saveFileName);
+            String saveDbFileName = String.format("/pic/businessInfo/%d/%s", ownerId, saveFileName);
             String filePath = String.format("%s/%s", makeFolder, saveFileName);
             customFileUtils.transferTo(file, filePath);
 

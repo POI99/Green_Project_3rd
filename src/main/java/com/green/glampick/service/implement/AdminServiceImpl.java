@@ -3,6 +3,7 @@ package com.green.glampick.service.implement;
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.common.Role;
 import com.green.glampick.dto.request.admin.DeleteBannerRequestDto;
+import com.green.glampick.dto.request.admin.exclusionGlampingRequestDto;
 import com.green.glampick.dto.request.admin.exclusionSignUpRequestDto;
 import com.green.glampick.dto.request.admin.module.AdminModule;
 import com.green.glampick.dto.response.admin.*;
@@ -22,11 +23,15 @@ import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.internet.MimeMessage;
 import java.util.List;
 
 import static com.green.glampick.common.GlobalConst.MAX_BANNER_SIZE;
@@ -35,13 +40,14 @@ import static com.green.glampick.common.GlobalConst.MAX_BANNER_SIZE;
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
-    private final AuthenticationFacade authenticationFacade;
     private final OwnerRepository ownerRepository;
     private final BannerRepository bannerRepository;
     private final GlampingRepository glampingRepository;
     private final GlampingWaitRepository glampingWaitRepository;
     private final AdminRepository adminRepository;
     private final CustomFileUtils customFileUtils;
+
+    private final JavaMailSender mailSender;
 
     //  관리자 페이지 - 사장님 회원가입 정보 확인하기  //
     @Override
@@ -90,6 +96,44 @@ public class AdminServiceImpl implements AdminService {
         try {
 
             ownerRepository.updateOwnerRole(Role.ROLE_OWNER, ownerId);
+            OwnerEntity ownerEntity = ownerRepository.findByOwnerId(ownerId);
+
+            //  MimeMessage 객체를 만든다.  //
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+            //  MimeMessage 에 받아온 유저 이메일과, Text, Code 에 대한 값을 넣는다.  //
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(ownerEntity.getOwnerEmail());
+            helper.setSubject("[글램픽] 신청하신 사장님 회원가입 심사 처리 내용입니다.");
+
+            String htmlContent = "<!DOCTYPE html>" +
+                    "<html>" +
+                    "<head>" +
+                    "<style>" +
+                    "@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');" +
+                    "body {font-family: 'Pretendard-Regular', sans-serif;}" +
+                    ".container {padding: 20px; text-align: center;}" +
+                    ".message {font-size: 16px; color: #34495e; margin-top: 20px;}" +
+                    ".code {font-size: 24px; font-weight: bold; color: #2c3e50; margin-top: 10px;}" +
+                    "</style>" +
+                    "</head>" +
+                    "<body>" +
+                    "<div class='container'>" +
+                    "<img src='cid:mailImage' alt='메일 이미지' class='background-image'>" +
+                    "<p class='message'>안녕하세요, 글램픽 관리자 입니다.</p>" +
+                    "<p class='message'>신청하신 사장님 회원가입 신청이 승인되었습니다.</p>" +
+                    "<p class='message'>승인된 시점으로부터 글램핑 등록이 가능합니다.</p>" +
+                    "<p class='message'>글램핑 등록, 수정시에는 등록 심사를 받아야하니 이용에 참고 부탁드립니다.</p>" +
+                    "<p class='message'>항상 사장님들의 건승을 기원드립니다.</p>" +
+                    "<p class='message'>감사합니다.</p>" +
+                    "</div>" +
+                    "</body>" +
+                    "</html>";
+            helper.setText(htmlContent, true);
+            helper.addInline("mailImage", new ClassPathResource("mailImage/main-big.png"));
+
+            //  위에서 정의한 MimeMessage 를 전송한다.  //
+            mailSender.send(mimeMessage);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,12 +146,50 @@ public class AdminServiceImpl implements AdminService {
     //  관리자 페이지 - 사장님 회원가입 반려 처리하기 - 완료  //
     @Override
     @Transactional
-    public ResponseEntity<? super DeleteExclusionOwnerSignUpResponseDto> exclutionSignUp(Long ownerId) {
+    public ResponseEntity<? super DeleteExclusionOwnerSignUpResponseDto> exclutionSignUp(exclusionSignUpRequestDto dto) {
 
         try {
 
-            OwnerEntity ownerEntity = ownerRepository.findByOwnerId(ownerId);
+            OwnerEntity ownerEntity = ownerRepository.findByOwnerId(dto.getOwnerId());
             if (ownerEntity.getRole() != Role.ROLE_RESERVE_OWNER) { throw new CustomException(UserErrorCode.NEP); }
+
+            //  MimeMessage 객체를 만든다.  //
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+            //  MimeMessage 에 받아온 유저 이메일과, Text, Code 에 대한 값을 넣는다.  //
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(ownerEntity.getOwnerEmail());
+            helper.setSubject("[글램픽] 신청하신 사장님 회원가입 심사 처리 내용입니다.");
+
+            String htmlContent = "<!DOCTYPE html>" +
+                    "<html>" +
+                    "<head>" +
+                    "<style>" +
+                    "@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');" +
+                    "body {font-family: 'Pretendard-Regular', sans-serif;}" +
+                    ".container {padding: 20px; text-align: center;}" +
+                    ".message {font-size: 16px; color: #34495e; margin-top: 20px;}" +
+                    ".code {font-size: 24px; font-weight: bold; color: #2c3e50; margin-top: 10px;}" +
+                    ".highlight {color: #000000;}" + // 이미지 색상과 조화로운 색상
+                    "</style>" +
+                    "</head>" +
+                    "<body>" +
+                    "<div class='container'>" +
+                    "<img src='cid:mailImage' alt='메일 이미지' class='background-image'>" +
+                    "<p class='message'>안녕하세요, 글램픽 관리자 입니다.</p>" +
+                    "<p class='message'>신청하신 사장님 회원가입 신청이 반려되었습니다.</p>" +
+                    "<p class='message'>반려된 사유는 아래와 같습니다.</p>" +
+                    "<p class='code highlight'>" + dto.getExclusionComment() + "</p>" +
+                    "<p class='message'>반려처리와 함께 회원가입은 취소처리 되오니, 사유를 다시 확인 하시고 승인 신청 부탁드립니다.</p>" +
+                    "</div>" +
+                    "</body>" +
+                    "</html>";
+            helper.setText(htmlContent, true);
+            helper.addInline("mailImage", new ClassPathResource("mailImage/main-big.png"));
+
+            //  위에서 정의한 MimeMessage 를 전송한다.  //
+            mailSender.send(mimeMessage);
+
             ownerRepository.delete(ownerEntity);
 
         } catch (CustomException e) {
@@ -167,7 +249,7 @@ public class AdminServiceImpl implements AdminService {
             if (bannerId == null) { throw new CustomException(AdminErrorCode.NFB); }
 
             BannerEntity bannerEntity = bannerRepository.findByBannerId(bannerId);
-            AdminModule.deleteImageOne(bannerId, bannerRepository, customFileUtils);
+            AdminModule.deleteBannerImage(bannerId, bannerRepository, customFileUtils);
             bannerRepository.delete(bannerEntity);
 
         } catch (CustomException e) {
@@ -186,10 +268,16 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     public ResponseEntity<? super GetBannerResponseDto> getBanner() {
 
-        List<BannerEntity> list = bannerRepository.findAll();
+        try {
 
+            List<BannerEntity> list = bannerRepository.findAll();
+            return GetBannerResponseDto.success(list);
 
-        return GetBannerResponseDto.success(list);
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            throw new CustomException(CommonErrorCode.DBE);
+        }
 
     }
 
@@ -198,9 +286,16 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     public ResponseEntity<? super GetAccessGlampingListResponseDto> getAccessGlampingList() {
 
-        List<GetAccessGlampingListResultSet> list = adminRepository.getAccessGlampingList();
+        try {
 
-        return GetAccessGlampingListResponseDto.success(list);
+            List<GetAccessGlampingListResultSet> list = adminRepository.getAccessGlampingList();
+            return GetAccessGlampingListResponseDto.success(list);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            throw new CustomException(CommonErrorCode.DBE);
+        }
 
     }
 
@@ -233,42 +328,138 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public ResponseEntity<? super PatchGlampingAccessResponseDto> accessGlamping(Long glampId) {
+
         GlampingWaitEntity glampingWaitEntity = glampingWaitRepository.findByGlampId(glampId);
+        OwnerEntity ownerEntity = ownerRepository.findByOwnerId(glampingWaitEntity.getOwner().getOwnerId());
 
-        GlampingEntity glampingEntity = new GlampingEntity();
-        glampingEntity.setOwner(glampingWaitEntity.getOwner());
-        glampingEntity.setGlampName(glampingWaitEntity.getGlampName());
-        glampingEntity.setGlampCall(glampingWaitEntity.getGlampCall());
-        glampingEntity.setRecommendScore(0D);
-        glampingEntity.setGlampImage(glampingWaitEntity.getGlampImage());
-        glampingEntity.setStarPointAvg(0D);
-        glampingEntity.setReviewCount(0);
-        glampingEntity.setGlampLocation(glampingWaitEntity.getGlampLocation());
-        glampingEntity.setLocation(glampingWaitEntity.getLocation());
-        glampingEntity.setRegion(glampingWaitEntity.getRegion());
-        glampingEntity.setExtraCharge(glampingWaitEntity.getExtraCharge());
-        glampingEntity.setGlampIntro(glampingWaitEntity.getGlampIntro());
-        glampingEntity.setInfoBasic(glampingWaitEntity.getInfoBasic());
-        glampingEntity.setInfoNotice(glampingWaitEntity.getInfoNotice());
-        glampingEntity.setTraffic(glampingWaitEntity.getTraffic());
-        glampingEntity.setActivateStatus(1);
+        try {
 
-        glampingRepository.save(glampingEntity);
-        glampingWaitRepository.delete(glampingWaitEntity);
+            ownerEntity.setGlampingStatus(1);
+            ownerRepository.save(ownerEntity);
 
+            GlampingEntity glampingEntity = new GlampingEntity();
+            glampingEntity.setOwner(glampingWaitEntity.getOwner());
+            glampingEntity.setGlampName(glampingWaitEntity.getGlampName());
+            glampingEntity.setGlampCall(glampingWaitEntity.getGlampCall());
+            glampingEntity.setRecommendScore(0D);
+            glampingEntity.setGlampImage(glampingWaitEntity.getGlampImage());
+            glampingEntity.setStarPointAvg(0D);
+            glampingEntity.setReviewCount(0);
+            glampingEntity.setGlampLocation(glampingWaitEntity.getGlampLocation());
+            glampingEntity.setLocation(glampingWaitEntity.getLocation());
+            glampingEntity.setRegion(glampingWaitEntity.getRegion());
+            glampingEntity.setExtraCharge(glampingWaitEntity.getExtraCharge());
+            glampingEntity.setGlampIntro(glampingWaitEntity.getGlampIntro());
+            glampingEntity.setInfoBasic(glampingWaitEntity.getInfoBasic());
+            glampingEntity.setInfoNotice(glampingWaitEntity.getInfoNotice());
+            glampingEntity.setTraffic(glampingWaitEntity.getTraffic());
+            glampingEntity.setActivateStatus(1);
+
+            //  MimeMessage 객체를 만든다.  //
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+            //  MimeMessage 에 받아온 유저 이메일과, Text, Code 에 대한 값을 넣는다.  //
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(ownerEntity.getOwnerEmail());
+            helper.setSubject("[글램픽] 신청하신 사장님 글램핑 등록심사 처리 내용입니다.");
+
+            String htmlContent = "<!DOCTYPE html>" +
+                    "<html>" +
+                    "<head>" +
+                    "<style>" +
+                    "@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');" +
+                    "body {font-family: 'Pretendard-Regular', sans-serif;}" +
+                    ".container {padding: 20px; text-align: center;}" +
+                    ".message {font-size: 16px; color: #34495e; margin-top: 20px;}" +
+                    ".code {font-size: 24px; font-weight: bold; color: #2c3e50; margin-top: 10px;}" +
+                    "</style>" +
+                    "</head>" +
+                    "<body>" +
+                    "<div class='container'>" +
+                    "<img src='cid:mailImage' alt='메일 이미지' class='background-image'>" +
+                    "<p class='message'>안녕하세요, 글램픽 관리자 입니다.</p>" +
+                    "<p class='message'>신청하신 사장님 글램핑 등록 신청이 승인되었습니다.</p>" +
+                    "<p class='message'>승인된 시점으로부터 객실 등록이 가능합니다.</p>" +
+                    "<p class='message'>글램핑 수정시에는 등록 심사를 받아야하니 이용에 참고 부탁드립니다.</p>" +
+                    "<p class='message'>이용에 불편함이 있으면 고객센터로 문의 부탁드립니다.</p>" +
+                    "<p class='message'>감사합니다.</p>" +
+                    "</div>" +
+                    "</body>" +
+                    "</html>";
+            helper.setText(htmlContent, true);
+            helper.addInline("mailImage", new ClassPathResource("mailImage/main-big.png"));
+
+            //  위에서 정의한 MimeMessage 를 전송한다.  //
+            mailSender.send(mimeMessage);
+
+            glampingRepository.save(glampingEntity);
+            glampingWaitRepository.delete(glampingWaitEntity);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
         return PatchGlampingAccessResponseDto.success();
+
     }
 
     //  관리자 페이지 - 글램핑 등록 반려 처리하기  //
     @Override
     @Transactional
-    public ResponseEntity<? super GlampingExclutionResponseDto> exclutionGlamping(Long glampId) {
+    public ResponseEntity<? super GlampingExclutionResponseDto> exclutionGlamping(exclusionGlampingRequestDto dto) {
 
-        GlampingWaitEntity glampingWaitEntity = glampingWaitRepository.findByGlampId(glampId);
+        try {
 
-        glampingWaitEntity.setExclusionStatus(-1);
+            GlampingWaitEntity glampingWaitEntity = glampingWaitRepository.findByGlampId(dto.getGlampId());
 
-        glampingWaitRepository.save(glampingWaitEntity);
+            glampingWaitEntity.setExclusionStatus(-1);
+
+            //  MimeMessage 객체를 만든다.  //
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+            //  MimeMessage 에 받아온 유저 이메일과, Text, Code 에 대한 값을 넣는다.  //
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(glampingWaitEntity.getOwner().getOwnerEmail());
+            helper.setSubject("[글램픽] 신청하신 사장님 글램핑 등록심사 처리 내용입니다.");
+
+            String htmlContent = "<!DOCTYPE html>" +
+                    "<html>" +
+                    "<head>" +
+                    "<style>" +
+                    "@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');" +
+                    "body {font-family: 'Pretendard-Regular', sans-serif;}" +
+                    ".container {padding: 20px; text-align: center;}" +
+                    ".message {font-size: 16px; color: #34495e; margin-top: 20px;}" +
+                    ".code {font-size: 24px; font-weight: bold; color: #2c3e50; margin-top: 10px;}" +
+                    ".highlight {color: #000000;}" + // 이미지 색상과 조화로운 색상
+                    "</style>" +
+                    "</head>" +
+                    "<body>" +
+                    "<div class='container'>" +
+                    "<img src='cid:mailImage' alt='메일 이미지' class='background-image'>" +
+                    "<p class='message'>안녕하세요, 글램픽 관리자 입니다.</p>" +
+                    "<p class='message'>신청하신 글램핑장 등록 신청이 반려되었습니다.</p>" +
+                    "<p class='message'>반려된 사유는 아래와 같습니다.</p>" +
+                    "<p class='code highlight'>" + dto.getExclusionComment() + "</p>" +
+                    "<p class='message'>사유를 다시 확인 하시고 승인 신청 부탁드립니다.</p>" +
+                    "</div>" +
+                    "</body>" +
+                    "</html>";
+            helper.setText(htmlContent, true);
+            helper.addInline("mailImage", new ClassPathResource("mailImage/main-big.png"));
+
+            //  위에서 정의한 MimeMessage 를 전송한다.  //
+            mailSender.send(mimeMessage);
+
+            glampingWaitRepository.save(glampingWaitEntity);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            throw new CustomException(CommonErrorCode.DBE);
+        }
 
         return GlampingExclutionResponseDto.success();
 
@@ -279,25 +470,106 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     public ResponseEntity<? super getDeleteOwnerListResponseDto> deleteOwnerList() {
 
-        List<GetDeleteOwnerListResultSet> list = ownerRepository.getDeleteOwnerList();
+        try {
 
-        return getDeleteOwnerListResponseDto.success(list);
+            List<GetDeleteOwnerListResultSet> list = ownerRepository.getDeleteOwnerList();
+            return getDeleteOwnerListResponseDto.success(list);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            throw new CustomException(CommonErrorCode.DBE);
+        }
 
     }
 
-    //  관리자 페이지 - 사장님 회원탈퇴 승인 처리하기  //
+    //  관리자 페이지 - 사장님 회원탈퇴 승인 처리하기 - 완료  //
     @Transactional
     @Override
     public ResponseEntity<? super PatchDeleteOwnerResponseDto> deleteOwner(Long ownerId) {
 
-        OwnerEntity ownerEntity = ownerRepository.findByOwnerId(ownerId);
-        GlampingEntity glampingEntity = glampingRepository.findByOwner(ownerEntity);
+        try {
 
-        glampingEntity.setActivateStatus(-1);
-        ownerEntity.setActivateStatus(-1);
+            OwnerEntity ownerEntity = ownerRepository.findByOwnerId(ownerId);
 
+            //  MimeMessage 객체를 만든다.  //
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+            //  MimeMessage 에 받아온 유저 이메일과, Text, Code 에 대한 값을 넣는다.  //
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(ownerEntity.getOwnerEmail());
+            helper.setSubject("[글램픽] 신청하신 사장님 회원탈퇴 심사 처리 내용입니다.");
+
+            String htmlContent = "<!DOCTYPE html>" +
+                    "<html>" +
+                    "<head>" +
+                    "<style>" +
+                    "@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');" +
+                    "body {font-family: 'Pretendard-Regular', sans-serif;}" +
+                    ".container {padding: 20px; text-align: center;}" +
+                    ".message {font-size: 16px; color: #34495e; margin-top: 20px;}" +
+                    ".code {font-size: 24px; font-weight: bold; color: #2c3e50; margin-top: 10px;}" +
+                    "</style>" +
+                    "</head>" +
+                    "<body>" +
+                    "<div class='container'>" +
+                    "<img src='cid:mailImage' alt='메일 이미지' class='background-image'>" +
+                    "<p class='message'>안녕하세요, 글램픽 관리자 입니다.</p>" +
+                    "<p class='message'>신청하신 사장님 회원탈퇴 신청이 승인되었습니다.</p>" +
+                    "<p class='message'>가입하신 이메일은 재사용이 불가하오니, 추후 재가입 시 참고 부탁드립니다.</p>" +
+                    "<p class='message'>가입을 다시 신청하실 때는 심사를 다시 받아 이용 가능합니다.</p>" +
+                    "<p class='message'>더욱 노력하는 글램픽이 되겠습니다.</p>" +
+                    "<p class='message'>감사합니다.</p>" +
+                    "</div>" +
+                    "</body>" +
+                    "</html>";
+            helper.setText(htmlContent, true);
+            helper.addInline("mailImage", new ClassPathResource("mailImage/main-big.png"));
+
+            //  위에서 정의한 MimeMessage 를 전송한다.  //
+            mailSender.send(mimeMessage);
+
+
+            if (ownerEntity.getActivateStatus() != 0) {
+                throw new CustomException(AdminErrorCode.NWO);
+            }
+
+            ownerEntity.setActivateStatus(-1);
+            ownerEntity.setBusinessNumber("null");
+            ownerEntity.setOwnerPw(null);
+            ownerEntity.setOwnerName("null");
+            ownerEntity.setOwnerPhone("null");
+            ownerEntity.setRole(null);
+            ownerEntity.setBusinessPaperImage(null);
+            if (ownerEntity.getBusinessPaperImage() != null) {
+                AdminModule.deleteBusinessImage(ownerId, ownerRepository, customFileUtils);
+            }
+            ownerRepository.save(ownerEntity);
+
+            GlampingEntity glampingEntity = glampingRepository.findByOwner(ownerEntity);
+            if (glampingEntity == null) { return PatchDeleteOwnerResponseDto.success(); }
+
+            glampingEntity.setActivateStatus(-1);
+            glampingEntity.setGlampCall(null);
+            glampingEntity.setGlampLocation("탈퇴한 회원입니다.");
+            glampingEntity.setGlampIntro("탈퇴한 회원입니다.");
+            glampingEntity.setInfoBasic("탈퇴한 회원입니다.");
+            glampingEntity.setTraffic("탈퇴한 회원입니다.");
+            glampingEntity.setInfoNotice("탈퇴한 회원입니다.");
+            glampingEntity.setRegion("null");
+            glampingEntity.setRecommendScore(0D);
+            glampingEntity.setStarPointAvg(0D);
+            glampingEntity.setReviewCount(0);
+            glampingEntity.setExtraCharge(0);
+            glampingRepository.save(glampingEntity);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
         return PatchDeleteOwnerResponseDto.success();
-
     }
 
 }

@@ -325,6 +325,8 @@ public class LoginServiceImpl implements LoginService {
             ownerEntity.setOwnerPhone(dto.getOwnerPhone());
             ownerEntity.setRole(dto.getRole());
             ownerEntity.setActivateStatus(1);
+            ownerEntity.setGlampingStatus(0);
+
             //  바로 위에서 만든 객체를 JPA 를 통해서 DB에 저장한다.  //
             OwnerEntity savedUser = ownerRepository.save(ownerEntity);
 
