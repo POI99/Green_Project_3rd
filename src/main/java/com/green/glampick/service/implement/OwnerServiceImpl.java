@@ -45,6 +45,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.green.glampick.module.DateModule.parseToLocalDate;
+
 
 @Slf4j
 @Service
@@ -66,6 +68,7 @@ public class OwnerServiceImpl implements OwnerService {
     private final ReservationCancelRepository reservationCancelRepository;
     private final ReservationCompleteRepository reservationCompleteRepository;
     private final RoomPriceRepository roomPriceRepository;
+    private final GlampPeakRepository glampPeakRepository;
 
 // 수찬 =================================================================================================================
 
@@ -687,33 +690,69 @@ public class OwnerServiceImpl implements OwnerService {
     public ResponseEntity<? super PatchOwnerPeakResponseDto> patchPeak(Long glampId, PatchOwnerPeakRequestDto p) {
         log.info("service: {}", p);
         //가격정보 찾아오기
-        List<OwnerRoomPriceItem> priceResultSet = roomPriceRepository.getRoomPriceList(glampId);
-        List<GetRoomPriceItem> priceItems = new ArrayList<>();
+        try{
+            //리스트 그릇 세팅
+            List<OwnerRoomPriceItem> priceResultSet = roomPriceRepository.getRoomPriceList(glampId);
+            List<GetRoomPriceItem> priceItems = new ArrayList<>();
 
-        setPriceList(priceResultSet, priceItems);
+            double percent = p.getPeakCost() * 0.01; // percent 값 추출
+            setPriceList(priceResultSet, priceItems); // 프록시 데이터를 실물 데이터 세팅(새그릇으로 옮김)
+            putPriceData(glampId, p, priceItems, percent); // 데이터 insert or update
 
-        double percent = p.getPeakCost() * 0.01;
+            return PatchOwnerPeakResponseDto.success();
 
-
-        for (GetRoomPriceItem item : priceItems) {
-            Integer weekdayPrice = item.getWeekdayPrice();
-            Integer weekendPrice = item.getWeekendPrice();
-
-            weekdayPrice += (int)(weekdayPrice * percent);
-            weekendPrice += (int)(weekendPrice * percent);
-
-            RoomPriceEntity entity = roomPriceRepository.findRoomPriceByRoomId(item.getRoomId());
-            entity.setWeekdayPrice(weekdayPrice);
-            entity.setWeekendPrice(weekendPrice);
-            roomPriceRepository.save(entity);
+        } catch (CustomException e) {
+            e.printStackTrace();
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
         }
 
 
 
-        return null;
     }
 
+
     //========================================= < PRIVATE METHOD > =========================================================//
+    private void putPriceData(Long glampId, PatchOwnerPeakRequestDto p, List<GetRoomPriceItem> priceItems, double percent) {
+        for (GetRoomPriceItem item : priceItems) {
+            // 리스트에서 가격정보 받아옴
+            Integer weekdayPrice = item.getWeekdayPrice();
+            Integer weekendPrice = item.getWeekendPrice();
+            //가격 인상 적용
+            weekdayPrice += (int)(weekdayPrice * percent);
+            weekendPrice += (int)(weekendPrice * percent);
+            //세팅 된 가격 DB insert
+            RoomPriceEntity entity = roomPriceRepository.findRoomPriceByRoomId(item.getRoomId());
+            if (entity != null) {
+                entity.setPeakWeekdayPrice(weekdayPrice);
+                entity.setPeakWeekendPrice(weekendPrice);
+                roomPriceRepository.save(entity);
+            } else {
+                throw new CustomException(CommonErrorCode.DBE);
+            }
+
+            Optional<GlampPeakEntity> peakEntity = glampPeakRepository.findById(glampId);
+            LocalDate startDay = parseToLocalDate(p.getPeakStartDay());
+            LocalDate endDay = parseToLocalDate(p.getPeakEndDay());
+
+            if (peakEntity.isEmpty()) { // 값이 존재하지 않으면 insert
+                GlampPeakEntity g = new GlampPeakEntity();
+                GlampingEntity glampEntity = glampingRepository.findByGlampId(glampId);
+                g.setPeakStart(startDay);
+                g.setPeakEnd(endDay);
+                g.setGlamp(glampEntity);
+
+                glampPeakRepository.save(g);
+            } else { // 있다면 update
+                peakEntity.get().setPeakStart(startDay);
+                peakEntity.get().setPeakEnd(endDay);
+
+                glampPeakRepository.save(peakEntity.get());
+            }
+        }
+    }
 
     private static void setPriceList(List<OwnerRoomPriceItem> priceResultSet, List<GetRoomPriceItem> priceItems) {
         for (OwnerRoomPriceItem resultSet : priceResultSet) {
@@ -775,11 +814,7 @@ public class OwnerServiceImpl implements OwnerService {
         }).toList();
         return reviewEntityList;
     }
-    private LocalDate parseToLocalDate(String date) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate result = LocalDate.parse(date, dateTimeFormatter);
-        return result;
-    }
+
 
 
 }

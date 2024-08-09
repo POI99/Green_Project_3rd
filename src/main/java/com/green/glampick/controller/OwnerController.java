@@ -267,10 +267,7 @@ public class OwnerController {
         GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
         p.setOwnerId(ownerId);
 
-        service.patchPeak(glampId, p);
-
-
-        return null;
+        return service.patchPeak(glampId, p);
     }
 
 
