@@ -10,5 +10,5 @@ public class ReviewGetRevenueRequestDto {
     @JsonIgnore
     private long ownerId;
     private long startDayId;
-    private long endDayId;
+//    private long endDayId;
 }

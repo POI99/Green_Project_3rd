@@ -284,7 +284,7 @@ public class OwnerController {
         long ownerId = GlampingModule.ownerId(authenticationFacade);
         GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
         p.setOwnerId(ownerId);
-
+        log.info("controller p: ", p);
         List<OwnerBookDetailListItem> before = service.getReservationBeforeList(p);
         List<OwnerBookDetailListItem> cancel = service.getReservationCancelList(p);
         List<OwnerBookDetailListItem> complete = service.getReservationCompleteList(p);

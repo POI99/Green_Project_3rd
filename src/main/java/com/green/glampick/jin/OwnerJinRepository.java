@@ -87,6 +87,46 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
     @Query(
             value =
 
+
+                    "SELECT C.room_name as roomName, C.room_id as roomId, A.check_in_date as startDayId, IFNULL(SUM(A.pay_amount), 0) AS pay " +
+                            "FROM glamping B RIGHT JOIN " +
+                            "room C ON B.glamp_id = C.glamp_id " +
+                            "LEFT JOIN " +
+                            "reservation_complete A ON A.room_id = C.room_id " +
+                            "AND A.check_in_date = :startDayId " +
+                            "WHERE " +
+                            "B.owner_id = :ownerId " +
+                            "GROUP BY " +
+                            "C.room_name, " +
+                            "C.room_id, " +
+                            "A.check_in_date " +
+                            "ORDER BY " +
+                            "C.room_id ",
+            nativeQuery = true
+    )
+    List<GetRevenue> findRevenue(long ownerId, long startDayId);
+
+
+    @Query(
+            value =
+                    "SELECT COUNT(A.room_id) as counts" +
+                            ", C.owner_id " +
+                            ", B.room_name as roomName" +
+                            ", DATE(A.created_at) " +
+                            "FROM reservation_cancel A " +
+                            "JOIN room B ON A.room_id = B.room_id " +
+                            "JOIN glamping C ON B.glamp_id = C.glamp_id " +
+                            "WHERE C.owner_id = :ownerId AND A.created_at BETWEEN :startDayId AND :endDayId " +
+                            "GROUP BY B.room_name ",
+            nativeQuery = true
+    )
+    List<GetCancelDto> findRoomCount(long ownerId, long startDayId, long endDayId);
+}
+
+/*
+    @Query(
+            value =
+
                     "WITH DateRoom AS ( " +
                             "SELECT DATE(ADDDATE(:startDayId, INTERVAL seq DAY)) AS date, D.room_name, E.owner_id " +
                             "FROM (SELECT @rownum := @rownum + 1 AS seq " +
@@ -117,35 +157,4 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
     )
     List<GetRevenue> findRevenue(long ownerId, long startDayId, long endDayId);
 
-
-    @Query(
-            value =
-                    "SELECT COUNT(A.room_id) as counts" +
-                            ", C.owner_id " +
-                            ", B.room_name as roomName" +
-                            ", DATE(A.created_at) " +
-                            "FROM reservation_cancel A " +
-                            "JOIN room B ON A.room_id = B.room_id " +
-                            "JOIN glamping C ON B.glamp_id = C.glamp_id " +
-                            "WHERE C.owner_id = :ownerId AND A.created_at BETWEEN :startDayId AND :endDayId " +
-                            "GROUP BY B.room_name ",
-            nativeQuery = true
-    )
-    List<GetCancelDto> findRoomCount(long ownerId, long startDayId, long endDayId);
-}
-
-/*
-    @Query(
-            value =
-                    "SELECT COUNT(A.room_id) as counts" +
-            ", C.owner_id " +
-            ", B.room_name as roomName" +
-            "FROM reservation_cancel A " +
-            "JOIN room B ON A.room_id = B.room_id " +
-            "JOIN glamping C ON B.glamp_id = C.glamp_id " +
-            "GROUP BY B.room_name " +
-            "having C.owner_id = :ownerId ",
-            nativeQuery = true
-    )
-    long findRoomCount(long ownerId);
  */
