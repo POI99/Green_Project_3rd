@@ -707,6 +707,8 @@ public class OwnerServiceImpl implements OwnerService {
             roomPriceRepository.save(entity);
         }
 
+
+
         return null;
     }
 
