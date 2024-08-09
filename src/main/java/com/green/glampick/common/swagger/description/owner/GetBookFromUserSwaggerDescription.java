@@ -17,7 +17,8 @@ public class GetBookFromUserSwaggerDescription {
 
             "<strong>발생 가능한 에러코드</strong>" +
             "<p>RN - 예약된 내역이 존재하지 않음 (400)</p>" +
-            "<p>DBE - 데이터베이스 에러 (500)</p>"
+            "<p>DBE - 데이터베이스 에러 (500)</p>" +
+            "<p>INVALID_ENTITY - PK 입력 오류 (400)</p>"
             ;
 
 }
