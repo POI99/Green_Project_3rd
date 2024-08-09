@@ -17,6 +17,7 @@ public class OwnerSignUpRequestDto {
     private String ownerPw;
     private String ownerName;
     private String ownerPhone;
+    @JsonIgnore private int glampingStatus;
     @JsonIgnore private Role role;
     @JsonIgnore private int activateStatus;
 

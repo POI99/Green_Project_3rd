@@ -96,7 +96,7 @@ public class LoginServiceImpl implements LoginService {
         CodeExpiryMap.entrySet().removeIf(entry -> now > entry.getValue());
     }
 
-    //  이메일 회원가입 처리  //
+    //  로그인 및 회원가입 페이지 - 이메일 회원가입 처리  //
     @Override
     @Transactional
     public ResponseEntity<? super PostSignUpResponseDto> signUpUser(SignUpRequestDto dto) {
@@ -201,7 +201,7 @@ public class LoginServiceImpl implements LoginService {
 
     }
 
-    //  소셜 회원가입 처리  //
+    //  로그인 및 회원가입 페이지 - 소셜 회원가입 처리  //
     @Override
     @Transactional
     public ResponseEntity<? super PostSnsSignUpResponseDto> signUpSnsUser(SignUpSnsRequestDto dto) {
@@ -259,7 +259,7 @@ public class LoginServiceImpl implements LoginService {
 
     }
 
-    //  사장님 회원가입 처리  //
+    //  로그인 및 회원가입 페이지 - 사장님 회원가입 처리  //
     @Override
     @Transactional
     public ResponseEntity<? super PostOwnerSignUpResponseDto> signUpOwner(OwnerSignUpRequestDto dto) {
@@ -325,6 +325,8 @@ public class LoginServiceImpl implements LoginService {
             ownerEntity.setOwnerPhone(dto.getOwnerPhone());
             ownerEntity.setRole(dto.getRole());
             ownerEntity.setActivateStatus(1);
+            ownerEntity.setGlampingStatus(0);
+
             //  바로 위에서 만든 객체를 JPA 를 통해서 DB에 저장한다.  //
             OwnerEntity savedUser = ownerRepository.save(ownerEntity);
 
@@ -340,7 +342,7 @@ public class LoginServiceImpl implements LoginService {
 
     }
 
-    //  이메일 로그인 처리  //
+    //  로그인 및 회원가입 페이지 - 이메일 로그인 처리  //
     @Override
     @Transactional
     public ResponseEntity<? super PostSignInResponseDto> signInUser(HttpServletResponse res, SignInRequestDto dto) {
@@ -403,7 +405,7 @@ public class LoginServiceImpl implements LoginService {
 
     }
 
-    //  사장님 로그인 처리  //
+    //  로그인 및 회원가입 페이지 - 사장님 로그인 처리  //
     @Override
     @Transactional
     public ResponseEntity<? super PostOwnerSignInResponseDto> signInOwner(HttpServletResponse res, OwnerSignInRequestDto dto) {
@@ -466,7 +468,7 @@ public class LoginServiceImpl implements LoginService {
 
     }
 
-    //  관리자 로그인 처리  //
+    //  로그인 및 회원가입 페이지 - 관리자 로그인 처리  //
     @Override
     @Transactional
     public ResponseEntity<? super PostAdminSignInResponseDto> signInAdmin(HttpServletResponse res, AdminSignInRequestDto dto) {
@@ -574,7 +576,7 @@ public class LoginServiceImpl implements LoginService {
         return PostSignOutResponseDto.success();
     }
 
-    //  휴대폰 인증 문자 보내기  //
+    //  로그인 및 회원가입 페이지 - 유저 휴대폰 인증 문자 보내기  //
     @Override
     @Transactional
     public ResponseEntity<? super PostSmsSendResponseDto> sendOne(String userPhone) {
@@ -617,7 +619,7 @@ public class LoginServiceImpl implements LoginService {
 
     }
 
-    //  휴대폰 인증코드 체크하기  //
+    //  로그인 및 회원가입 페이지 - 유저 휴대폰 인증코드 체크하기  //
     @Override
     @Transactional
     public ResponseEntity<? super PostSmsCheckResponseDto> checkPhone(String userPhone, int phoneKey) {
@@ -658,7 +660,7 @@ public class LoginServiceImpl implements LoginService {
 
     }
 
-    //  이메일 인증 보내기  //
+    //  로그인 및 회원가입 페이지 - 유저 이메일 인증 보내기  //
     @Override
     @Transactional
     public ResponseEntity<? super PostMailSendResponseDto> sendAuthCode(String userEmail) {
@@ -737,7 +739,7 @@ public class LoginServiceImpl implements LoginService {
         }
     }
 
-    //  이메일 코드 체크하기  //
+    //  로그인 및 회원가입 페이지 - 유저 이메일 코드 체크하기  //
     @Override
     @Transactional
     public ResponseEntity<? super PostMailCheckResponseDto> checkCode(String userEmail, int emailKey) {
@@ -759,6 +761,209 @@ public class LoginServiceImpl implements LoginService {
                 //  인증 성공 시, Map 에 저장되어 있는 코드와 유효시간을 삭제한다.  //
                 CodeMap.remove(userEmail);
                 CodeExpiryMap.remove(userEmail);
+
+                return PostMailCheckResponseDto.success();
+
+            } else {
+
+                //  인증코드가 틀리다면 틀린 인증번호에 대한 응답을 보낸다.  //
+                throw new CustomException(CommonErrorCode.IC);
+
+            }
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+    }
+
+    //  로그인 및 회원가입 페이지 - 사장님 휴대폰 인증 문자 보내기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostSmsSendResponseDto> sendOneOwner(String ownerPhone) {
+
+        int verificationCode;
+
+        try {
+
+            String phoneRegex = "^(01[016789]-?\\d{3,4}-?\\d{4})|(0[2-9][0-9]-?\\d{3,4}-?\\d{4})$";
+            Pattern patternPhone = Pattern.compile(phoneRegex);
+            Matcher matcherPhone = patternPhone.matcher(ownerPhone);
+            if (!matcherPhone.matches()) {
+                throw new CustomException(UserErrorCode.IPH);
+            }
+            boolean existedPhone = ownerRepository.existsByOwnerPhone(ownerPhone);
+            if (existedPhone) {
+                throw new CustomException(UserErrorCode.DT);
+            }
+            //  받아온 유저 휴대폰 번호의 "-" 부분을 없앤다. (010-1234-5678 -> 01012345678)  //
+            ownerPhone.replaceAll("-", "");
+
+            //  변수에 랜덤으로 생성되는 6자리의 숫자를 넣는다.  //
+            verificationCode = createKey();
+
+            //  Map 객체에 유저 휴대폰 번호와 위에서 생성한 코드를 추가하고, 유효시간은 5분으로 지정한다. (5분뒤 삭제) //
+            CodeMap.put(ownerPhone, verificationCode);
+            CodeExpiryMap.put(ownerPhone, System.currentTimeMillis() + 300000);
+
+            //  Cool SMS 를 통하여, 받아온 유저 휴대폰 번호에 코드를 보낸다.  //
+            smsUtils.sendOne(ownerPhone, verificationCode);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return PostSmsSendResponseDto.success(verificationCode);
+
+    }
+
+    //  로그인 및 회원가입 페이지 - 사장님 휴대폰 인증코드 체크하기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostSmsCheckResponseDto> checkPhoneOwner(String ownerPhone, int phoneKey) {
+
+        try {
+            //  이메일과 인증코드가 Map 에 저장되어 있는 인증코드와 같다면  //
+            if (CodeMap.containsKey(ownerPhone) && CodeMap.get(ownerPhone).equals(phoneKey)) {
+
+                //  Map 에 저장되어 있는 인증코드의 유효시간이 지났다면  //
+                if (System.currentTimeMillis() > CodeExpiryMap.get(ownerPhone)) {
+
+                    //  Map 에 저장되어 있는 정보를 삭제하고, 유효시간이 만료된 응답을 보낸다.  //
+                    CodeMap.remove(ownerPhone);
+                    CodeExpiryMap.remove(ownerPhone);
+                    throw new CustomException(CommonErrorCode.EF);
+
+                }
+
+                //  인증 성공 시, Map 에 저장되어 있는 코드와 유효시간을 삭제한다.  //
+                CodeMap.remove(ownerPhone);
+                CodeExpiryMap.remove(ownerPhone);
+
+                return PostSmsCheckResponseDto.success();
+
+            } else {
+
+                //  인증코드가 틀리다면 틀린 인증번호에 대한 응답을 보낸다.  //
+                throw new CustomException(CommonErrorCode.IC);
+
+            }
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+    }
+
+    //  로그인 및 회원가입 페이지 - 사장님 이메일 인증 보내기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostMailSendResponseDto> sendAuthCodeOwner(String ownerEmail) {
+
+        try {
+
+            //  입력받은 이메일이 비어있는 값이면, 빈 값에 대한 응답을 보낸다.  //
+            if (ownerEmail == null || ownerEmail.isEmpty()) {
+                throw new CustomException(UserErrorCode.EE);
+            }
+
+            //  입력받은 이메일이 정규표현식을 통하여 이메일 형식에 맞지 않으면, 이메일 형식 오류에 대한 응답을 보낸다.  //
+            String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+            Pattern patternEmail = Pattern.compile(emailRegex);
+            Matcher matcherEmail = patternEmail.matcher(ownerEmail);
+            if (!matcherEmail.matches()) {
+                throw new CustomException(UserErrorCode.IE);
+            }
+
+            //  입력받은 이메일이 유저 테이블에 이미 있는 이메일 이라면, 중복 이메일에 대한 응답을 보낸다.  //
+            boolean existedEmail = ownerRepository.existsByOwnerEmail(ownerEmail);
+            if (existedEmail) {
+                throw new CustomException(UserErrorCode.DE);
+            }
+
+            //  변수에 랜덤으로 생성되는 6자리의 숫자를 넣는다.  //
+            int mailCode = createKey();
+
+            //  Map 객체에 유저 이메일과 위에서 생성한 코드를 추가하고, 유효시간은 5분으로 지정한다. (5분뒤 삭제) //
+            CodeMap.put(ownerEmail, mailCode);
+            CodeExpiryMap.put(ownerEmail, System.currentTimeMillis() + 300000);
+
+            //  MimeMessage 객체를 만든다.  //
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+            //  MimeMessage 에 받아온 유저 이메일과, Text, Code 에 대한 값을 넣는다.  //
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(ownerEmail);
+            helper.setSubject("글램픽 인증 코드");
+
+            String htmlContent = "<!DOCTYPE html>" +
+                    "<html>" +
+                    "<head>" +
+                    "<style>" +
+                    "@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');" +
+                    "body {font-family: 'Pretendard-Regular', sans-serif;}" +
+                    ".container {padding: 20px; text-align: center;}" +
+                    ".message {font-size: 16px; color: #34495e; margin-top: 20px;}" +
+                    ".code {font-size: 24px; font-weight: bold; color: #2c3e50; margin-top: 10px;}" +
+                    ".highlight {color: #355179;}" + // 이미지 색상과 조화로운 색상
+                    "</style>" +
+                    "</head>" +
+                    "<body>" +
+                    "<div class='container'>" +
+                    "<img src='cid:mailImage' alt='메일 이미지' class='background-image'>" +
+                    "<p class='message'>안녕하세요.</p>" +
+                    "<p class='message'>글램픽 인증 코드는 다음과 같습니다.</p>" +
+                    "<p class='code highlight'>" + mailCode + "</p>" +
+                    "<p class='message'>글램픽을 이용해 주셔서 감사합니다 !</p>" +
+                    "</div>" +
+                    "</body>" +
+                    "</html>";
+            helper.setText(htmlContent, true);
+            helper.addInline("mailImage", new ClassPathResource("mailImage/main-big.png"));
+
+            //  위에서 정의한 MimeMessage 를 전송한다.  //
+            mailSender.send(mimeMessage);
+
+            return PostMailSendResponseDto.success(mailCode);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+    }
+
+    //  로그인 및 회원가입 페이지 - 사장님 이메일 코드 체크하기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostMailCheckResponseDto> checkCodeOwner(String ownerEmail, int emailKey) {
+
+        try {
+            //  이메일과 인증코드가 Map 에 저장되어 있는 인증코드와 같다면  //
+            if (CodeMap.containsKey(ownerEmail) && CodeMap.get(ownerEmail).equals(emailKey)) {
+
+                //  Map 에 저장되어 있는 인증코드의 유효시간이 지났다면  //
+                if (System.currentTimeMillis() > CodeExpiryMap.get(ownerEmail)) {
+
+                    //  Map 에 저장되어 있는 정보를 삭제하고, 유효시간이 만료된 응답을 보낸다.  //
+                    CodeMap.remove(ownerEmail);
+                    CodeExpiryMap.remove(ownerEmail);
+                    throw new CustomException(CommonErrorCode.EF);
+
+                }
+
+                //  인증 성공 시, Map 에 저장되어 있는 코드와 유효시간을 삭제한다.  //
+                CodeMap.remove(ownerEmail);
+                CodeExpiryMap.remove(ownerEmail);
 
                 return PostMailCheckResponseDto.success();
 
