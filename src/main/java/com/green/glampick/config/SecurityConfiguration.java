@@ -43,14 +43,14 @@ public class SecurityConfiguration {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                         .accessDeniedHandler(new JwtAuthenticationAccessDeniedHandler()))
-//                .oauth2Login( oauth2 -> oauth2.authorizationEndpoint(
-//                                        auth -> auth.baseUri("/oauth2/authorization")
-//                                                .authorizationRequestRepository(repository))
-//                                .redirectionEndpoint( redirection -> redirection.baseUri("/*/oauth2/code/*"))
-//                                .userInfoEndpoint(userInfo -> userInfo.userService(service))
-//                                .successHandler(oAuth2AuthenticationSuccessHandler)
-//                                .failureHandler(oAuth2AuthenticationFailureHandler)
-//                )
+                .oauth2Login( oauth2 -> oauth2.authorizationEndpoint(
+                                        auth -> auth.baseUri("/oauth2/authorization")
+                                                .authorizationRequestRepository(repository))
+                                .redirectionEndpoint( redirection -> redirection.baseUri("/*/oauth2/code/*"))
+                                .userInfoEndpoint(userInfo -> userInfo.userService(service))
+                                .successHandler(oAuth2AuthenticationSuccessHandler)
+                                .failureHandler(oAuth2AuthenticationFailureHandler)
+                )
                 .build();
     }
 
