@@ -13,10 +13,11 @@ public class PatchOwnerPeakResponseDto extends ResponseDto {
     private int result;
     private PatchOwnerPeakResponseDto() {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
+        result = 1;
     }
 
-    public static ResponseEntity<ResponseDto> success() {
-        ResponseDto result = new ResponseDto(SUCCESS_CODE, SUCCESS_MESSAGE);
+    public static ResponseEntity<PatchOwnerPeakResponseDto> success() {
+        PatchOwnerPeakResponseDto result = new PatchOwnerPeakResponseDto();
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
