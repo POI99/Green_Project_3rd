@@ -34,5 +34,8 @@ public interface OwnerRepository extends JpaRepository<OwnerEntity, Long> {
             ", o.ownerPhone AS ownerPhone from OwnerEntity o where o.activateStatus = 0 " )
     List<GetDeleteOwnerListResultSet> getDeleteOwnerList();
 
+    boolean existsByOwnerPhone(String ownerPhone);
+    boolean existsByOwnerEmail(String ownerEmail);
+
 
 }

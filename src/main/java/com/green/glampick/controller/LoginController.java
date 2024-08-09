@@ -117,7 +117,7 @@ public class LoginController {
     }
 
     @PostMapping("/send-sms")
-    @Operation(summary = "휴대폰 인증 문자 보내기 (김수찬)", description = SEND_SMS_DESCRIPTION)
+    @Operation(summary = "유저 휴대폰 인증 문자 보내기 (김수찬)", description = SEND_SMS_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = SEND_SMS_RESPONSE_ERROR_CODE,
         content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = PostSmsSendResponseDto.class)))
@@ -126,7 +126,7 @@ public class LoginController {
     }
 
     @PostMapping("/check-sms")
-    @Operation(summary = "휴대폰 인증코드 체크 (김수찬)", description = CHECK_SMS_DESCRIPTION)
+    @Operation(summary = "유저 휴대폰 인증코드 체크 (김수찬)", description = CHECK_SMS_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = CHECK_SMS_RESPONSE_ERROR_CODE,
         content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = PostSmsCheckResponseDto.class)))
@@ -137,7 +137,7 @@ public class LoginController {
     }
 
     @PostMapping("/mail-send")
-    @Operation(summary = "이메일 인증 보내기 (김수찬)", description = SEND_MAIL_DESCRIPTION)
+    @Operation(summary = "유저 이메일 인증 보내기 (김수찬)", description = SEND_MAIL_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = SEND_MAIL_RESPONSE_ERROR_CODE,
         content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = PostMailSendResponseDto.class)))
@@ -146,7 +146,7 @@ public class LoginController {
     }
 
     @PostMapping("/mail-check")
-    @Operation(summary = "이메일 인증확인 (김수찬)", description = CHECK_MAIL_DESCRIPTION)
+    @Operation(summary = "유저 이메일 인증확인 (김수찬)", description = CHECK_MAIL_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = CHECK_MAIL_RESPONSE_ERROR_CODE,
         content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = PostMailCheckResponseDto.class)))
@@ -154,6 +154,46 @@ public class LoginController {
             @RequestParam String userEmail, @RequestParam int emailKey)
     {
         return service.checkCode(userEmail, emailKey);
+    }
+
+    @PostMapping("/owner/send-sms")
+    @Operation(summary = "사장님 휴대폰 인증 문자 보내기 (김수찬)", description = SEND_SMS_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = SEND_SMS_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostSmsSendResponseDto.class)))
+    public ResponseEntity<? super PostSmsSendResponseDto> sendOneOwner(@RequestParam String ownerPhone) {
+        return service.sendOne(ownerPhone);
+    }
+
+    @PostMapping("/owner/check-sms")
+    @Operation(summary = "사장님 휴대폰 인증코드 체크 (김수찬)", description = CHECK_SMS_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = CHECK_SMS_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostSmsCheckResponseDto.class)))
+    public ResponseEntity<? super PostSmsCheckResponseDto> smsCheckOwner(
+            @RequestParam String ownerPhone, @RequestParam int phoneKey)
+    {
+        return service.checkPhone(ownerPhone, phoneKey);
+    }
+
+    @PostMapping("/owner/mail-send")
+    @Operation(summary = "사장님 이메일 인증 보내기 (김수찬)", description = SEND_MAIL_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = SEND_MAIL_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostMailSendResponseDto.class)))
+    public ResponseEntity<? super PostMailSendResponseDto> sendMailOwner(@RequestParam String ownerEmail) {
+        return service.sendAuthCode(ownerEmail);
+    }
+
+    @PostMapping("/owner/mail-check")
+    @Operation(summary = "사장님 이메일 인증확인 (김수찬)", description = CHECK_MAIL_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = CHECK_MAIL_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostMailCheckResponseDto.class)))
+    public ResponseEntity<? super PostMailCheckResponseDto> mailCheckOwner(
+            @RequestParam String ownerEmail, @RequestParam int emailKey)
+    {
+        return service.checkCode(ownerEmail, emailKey);
     }
 
 }
