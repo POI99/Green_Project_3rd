@@ -1,6 +1,7 @@
 package com.green.glampick.jin;
 
 import com.green.glampick.common.CustomFileUtils;
+import com.green.glampick.dto.object.GetPopularRoomListItem;
 import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.OwnerErrorCode;
@@ -8,6 +9,7 @@ import com.green.glampick.jin.object.*;
 import com.green.glampick.jin.request.*;
 import com.green.glampick.jin.response.*;
 import com.green.glampick.mapper.OwnerMapper;
+import com.green.glampick.repository.ReservationCompleteRepository;
 import com.green.glampick.security.AuthenticationFacade;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ import java.util.Map;
 public class OwnerJinServiceImpl implements OwnerJinService {
     private final AuthenticationFacade authenticationFacade;
     private final OwnerJinRepository ownerRepository;
+    private final ReservationCompleteRepository reservationCompleteRepository;
 
 
     @Override// 이용 완료된 객실별 예약수
@@ -43,11 +46,17 @@ public class OwnerJinServiceImpl implements OwnerJinService {
         }
         List<GetPopularRoom> popRoom = new ArrayList<>();
 
-        HashMap<String, String> dsdf;
+        HashMap<String, List<String>> hashMapRoom = new HashMap<>();
         try {
-            popRoom = ownerRepository.findPopularRoom(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
-            if (dto.getOwnerId() == 0) {
-                throw new CustomException(OwnerErrorCode.NMG);
+            popRoom = reservationCompleteRepository.findPopularRoom(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
+            for (GetPopularRoom item : popRoom){
+                String roomCounts = item.getRoomCounts();
+                String days = item.getDays();
+                hashMapRoom.put(days, new ArrayList<>());
+                hashMapRoom.get(days).add(roomCounts);
+
+//                return 1;
+//                throw new CustomException(OwnerErrorCode.NMG);
             }
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());

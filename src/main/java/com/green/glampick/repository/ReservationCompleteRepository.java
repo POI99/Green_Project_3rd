@@ -4,6 +4,7 @@ import com.green.glampick.dto.object.owner.OwnerBookItem;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookCompleteCountResponseDto;
 import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.ReservationCompleteEntity;
+import com.green.glampick.jin.object.GetPopularRoom;
 import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
 import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
 import jakarta.transaction.Transactional;
@@ -83,5 +84,24 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
             "WHERE FUNCTION('MONTH', rc.checkInDate) = :month AND o.ownerId = :ownerId " +
             "GROUP BY rc.checkInDate")
     List<GetOwnerBookCompleteCountResponseDto> getCountFromReservationComplete(@Param("month")int month, @Param("ownerId")Long ownerId);
+    @Query(
+            value =
+                    "SELECT  sub.roomcounts as roomCounts" +
+                            ", DATE(sub.createdAt) AS days " +
+                            "FROM (SELECT C.room_name as roomName " +
+                            ", COUNT(A.room_id) as roomcounts " +
+                            ", B.owner_id AS owners " +
+                            ", DATE(A.created_at) as createdAt " +
+                            "FROM reservation_complete A " +
+                            "left JOIN glamping B " +
+                            "ON A.glamp_id = B.glamp_id " +
+                            "JOIN room C " +
+                            "ON C.room_id = A.room_id " +
+                            "WHERE B.owner_id = ?1 AND A.created_at BETWEEN ?2 AND ?3 " +
+                            "GROUP BY A.created_at) AS sub " +
+                            "GROUP BY days ",
+            nativeQuery = true
+    )
+    List<GetPopularRoom> findPopularRoom(@Param("ownerId") long ownerId, @Param("startDayId") long startDayId, @Param("endDayId")long endDayId);
 
 }
