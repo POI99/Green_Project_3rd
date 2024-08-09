@@ -32,12 +32,26 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static com.green.glampick.common.swagger.description.owner.CheckOwnerPasswordSwaggerDescription.CHECK_OWNER_PASSWORD_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.CheckOwnerPasswordSwaggerDescription.CHECK_OWNER_PASSWORD_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.DeleteRoomSwaggerDescription.DELETE_ROOM_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.DeleteRoomSwaggerDescription.DELETE_ROOM_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.GetBookFromUserSwaggerDescription.BOOK_FROM_USER_REVIEW_VIEW_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetBookFromUserSwaggerDescription.BOOK_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.GetGlampingBookCountDescription.BOOK_COUNT_FROM_OWNER_GLAMPING_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetGlampingBookCountDescription.BOOK_COUNT_RESPONSE_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetGlampingFromUserReviewSwaggerDescription.GLAMPING_FROM_USER_REVIEW_VIEW_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetGlampingFromUserReviewSwaggerDescription.GLAMPING_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.GetGlampingInfoSwaggerDescription.GET_GLAMPING_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetGlampingInfoSwaggerDescription.GET_GLAMPING_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.GetOwnerInfoSwaggerDescription.GET_OWNER_INFO_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetOwnerInfoSwaggerDescription.GET_OWNER_INFO_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.GetRoomInfoSwaggerDescription.GET_ROOM_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetRoomInfoSwaggerDescription.GET_ROOM_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.GetRoomListSwaggerDescription.GET_ROOM_LIST_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetRoomListSwaggerDescription.GET_ROOM_LIST_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.PatchOwnerInfoSwaggerDescription.PATCH_OWNER_INFO_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.PatchOwnerInfoSwaggerDescription.PATCH_OWNER_INFO_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.PostGlampingSwaggerDescription.POST_GLAMPING_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.PostGlampingSwaggerDescription.POST_GLAMPING_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.PostOwnerReviewSwaggerDescription.POST_OWNER_REVIEW_DESCRIPTION;
@@ -48,6 +62,10 @@ import static com.green.glampick.common.swagger.description.owner.PutGlampingIma
 import static com.green.glampick.common.swagger.description.owner.PutGlampingImageSwaggerDescription.UPDATE_GLAMPING_IMAGE_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.PutGlampingSwaggerDescription.UPDATE_GLAMPING_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.PutGlampingSwaggerDescription.UPDATE_GLAMPING_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.PutRoomSwaggerDescription.PUT_ROOM_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.PutRoomSwaggerDescription.PUT_ROOM_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.WithdrawOwnerSwaggerDescription.WITHDRAW_OWNER_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.WithdrawOwnerSwaggerDescription.WITHDRAW_OWNER_RESPONSE_ERROR_CODE;
 
 
 @Slf4j
@@ -119,8 +137,8 @@ public class OwnerController {
 
     //  사장님 페이지 - 객실 정보 수정하기  //
     @PutMapping("room")
-    @Operation(summary = "객실 정보 수정 (김민지)", description = "")
-    @ApiResponse(responseCode = "200", description = "",
+    @Operation(summary = "객실 정보 수정 (김민지)", description = PUT_ROOM_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = PUT_ROOM_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = OwnerSuccessResponseDto.class)))
     public ResponseEntity<? super OwnerSuccessResponseDto> updateRoom(@RequestPart List<MultipartFile> addImg, @RequestPart RoomPutRequestDto req) {
@@ -129,8 +147,8 @@ public class OwnerController {
 
     //  사장님 페이지 - 객실 삭제하기  //
     @DeleteMapping("room/{room_id}")
-    @Operation(summary = "객실 삭제 (김민지)", description = "")
-    @ApiResponse(responseCode = "200", description = "",
+    @Operation(summary = "객실 삭제 (김민지)", description = DELETE_ROOM_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = DELETE_ROOM_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = OwnerSuccessResponseDto.class)))
     public ResponseEntity<? super OwnerSuccessResponseDto> deleteRoom(@PathVariable("room_id") Long roomId) {
@@ -139,8 +157,8 @@ public class OwnerController {
 
     // 글램핑 get
     @GetMapping("glamping")
-    @Operation(summary = "글램핑 정보 불러오기 (김민지)", description = "")
-    @ApiResponse(responseCode = "200", description = "",
+    @Operation(summary = "글램핑 정보 불러오기 (김민지)", description = GET_GLAMPING_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = GET_GLAMPING_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetGlampingInfoResponseDto.class)))
     public ResponseEntity<? super GetGlampingInfoResponseDto> getGlamping() {
@@ -149,8 +167,8 @@ public class OwnerController {
 
     // 객실 list get
     @GetMapping("room/{glamp_id}")
-    @Operation(summary = "객실 정보 리스트 불러오기 (김민지)", description = "")
-    @ApiResponse(responseCode = "200", description = "",
+    @Operation(summary = "객실 정보 리스트 불러오기 (김민지)", description = GET_ROOM_LIST_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = GET_ROOM_LIST_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetRoomListResponseDto.class)))
     public ResponseEntity<? super GetRoomListResponseDto> getRoomList(@PathVariable("glamp_id") Long glampId) {
@@ -159,8 +177,8 @@ public class OwnerController {
 
     // 객실 상세보기
     @GetMapping("room/{glamp_id}/{room_id}")
-    @Operation(summary = "객실 정보 상세 불러오기 (김민지)", description = "")
-    @ApiResponse(responseCode = "200", description = "",
+    @Operation(summary = "객실 정보 상세 불러오기 (김민지)", description = GET_ROOM_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = GET_ROOM_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetRoomInfoResponseDto.class)))
     public ResponseEntity<? super GetRoomInfoResponseDto> getRoomOne(@PathVariable("glamp_id") Long glampId
@@ -170,8 +188,8 @@ public class OwnerController {
 
     // 비밀번호 확인
     @PostMapping("info")
-    @Operation(summary = "사장님 비밀번호 확인 (김민지)", description = "")
-    @ApiResponse(responseCode = "200", description = "",
+    @Operation(summary = "사장님 비밀번호 확인 (김민지)", description = CHECK_OWNER_PASSWORD_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = CHECK_OWNER_PASSWORD_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = OwnerSuccessResponseDto.class)))
     public ResponseEntity<? super OwnerSuccessResponseDto> checkOwnerPassword(@RequestBody @Valid CheckPasswordRequestDto dto) {
@@ -180,8 +198,8 @@ public class OwnerController {
 
     // get - 사장님 정보 불러오기
     @GetMapping("info")
-    @Operation(summary = "사장님 정보 불러오기 (김민지)", description = "")
-    @ApiResponse(responseCode = "200", description = "",
+    @Operation(summary = "사장님 정보 불러오기 (김민지)", description = GET_OWNER_INFO_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = GET_OWNER_INFO_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = OwnerInfoResponseDto.class)))
     public ResponseEntity<? super OwnerInfoResponseDto> getOwnerInfo() {
@@ -190,8 +208,8 @@ public class OwnerController {
 
     // patch - 사장님 정보 수정
     @PatchMapping("info")
-    @Operation(summary = "사장님 정보 수정 (김민지)", description = "")
-    @ApiResponse(responseCode = "200", description = "",
+    @Operation(summary = "사장님 정보 수정 (김민지)", description = PATCH_OWNER_INFO_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = PATCH_OWNER_INFO_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = PatchOwnerInfoResponseDto.class)))
     public ResponseEntity<? super PatchOwnerInfoResponseDto> updateOwnerInfo(@ModelAttribute @ParameterObject @Valid PatchOwnerInfoRequestDto dto) {
@@ -200,8 +218,8 @@ public class OwnerController {
 
     // patch - 탈퇴 승인 요청
     @PatchMapping("withdraw/{glamp_id}")
-    @Operation(summary = "사장님 탈퇴 승인 요청 (김민지)", description = "")
-    @ApiResponse(responseCode = "200", description = "",
+    @Operation(summary = "사장님 탈퇴 승인 요청 (김민지)", description = WITHDRAW_OWNER_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = WITHDRAW_OWNER_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = OwnerSuccessResponseDto.class)))
     public ResponseEntity<? super OwnerSuccessResponseDto> withdrawOwner(@PathVariable("glamp_id") Long glampId) {

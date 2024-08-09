@@ -7,14 +7,15 @@ public class PostRoomSwaggerDescription {
             "<strong>로그인한 사장이 객실 정보를 등록합니다.</strong>" +
             "<p>로그인이 필요한 기능입니다. 상단 Authorize 에 토큰값을 입력 후 이용해주세요.</p>" +
             "<p>-------------------------------------------------</p>" +
-            "<p>glampId : 글램핑 PK</p>" +
-            "<p>roomName : 객실명</p>" +
-            "<p>price : 객실 가격</p>" +
-            "<p>peopleNum : 기준 인원</p>" +
-            "<p>peopleMax : 최대 인원</p>" +
-            "<p>inTime : 입실 시간</p>" +
-            "<p>outTime : 퇴실 시간</p>" +
+            "<p>glampId : 글램핑 PK (필수)</p>" +
+            "<p>roomName : 객실명 (필수)</p>" +
+            "<p>price : 객실 가격 (필수)</p>" +
+            "<p>peopleNum : 기준 인원 (필수)</p>" +
+            "<p>peopleMax : 최대 인원 (필수)</p>" +
+            "<p>inTime : 입실 시간 (필수)</p>" +
+            "<p>outTime : 퇴실 시간 (필수)</p>" +
             "<p>service : 객실 서비스</p>" +
+            "<p>roomImg : 객실 이미지 (필수)</p>" +
             "<p>-------------------------------------------------</p>" +
             "<strong>객실 서비스 항목은 [1,2,3] 형태로 작성해야 합니다.</strong>" +
             "<p>[1] : 물놀이</p>" +
@@ -36,7 +37,9 @@ public class PostRoomSwaggerDescription {
             "<p>NF - 사진 첨부 오류 (400)</p>" +
             "<p>PE - 잘못된 인원 선택 (400)</p>" +
             "<p>FE - 사진 등록 오류 (400)</p>" +
-            "<p>DBE - 데이터베이스 오류 (500)</p>"
+            "<p>DBE - 데이터베이스 오류 (500)</p>" +
+            "<p>INVALID_PARAMETER - 입력 오류 (500)</p>" +
+            "<p>INVALID_ENTITY - PK 입력 오류 (400)</p>"
             ;
 
 }

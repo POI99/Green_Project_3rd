@@ -344,6 +344,7 @@ public class OwnerServiceImpl implements OwnerService {
         // 사장님 PK 불러오기
         long ownerId = GlampingModule.ownerId(authenticationFacade);
         OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
+        GlampingModule.roleCheck(owner.getRole());
 
         GetGlampingInfoResultSet resultSet = null;
         if(owner.getGlampingStatus() == 0) {
