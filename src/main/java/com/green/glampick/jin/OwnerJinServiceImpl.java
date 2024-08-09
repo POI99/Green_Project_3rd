@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -39,7 +41,9 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.MNF);
         }
-        List<GetPopularRoom> popRoom = null;
+        List<GetPopularRoom> popRoom = new ArrayList<>();
+
+        HashMap<String, String> dsdf;
         try {
             popRoom = ownerRepository.findPopularRoom(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
             if (dto.getOwnerId() == 0) {
