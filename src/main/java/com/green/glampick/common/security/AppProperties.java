@@ -1,17 +1,20 @@
 package com.green.glampick.common.security;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
 import java.util.List;
 
 @Getter
 @ConfigurationProperties(prefix = "app")
+@RequiredArgsConstructor
 public class AppProperties {
 
-    private final Jwt jwt = new Jwt();
-    private final Oauth2 oauth2 = new Oauth2();
+    private final Jwt jwt;
+    private final Oauth2 oauth2;
 
     @Getter
     @Setter
@@ -24,10 +27,17 @@ public class AppProperties {
         private String refreshTokenCookieName;
         private int refreshTokenCookieMaxAge;
 
-        public void setRefreshTokenExpiry(long refreshTokenExpiry) {
+        @ConstructorBinding
+        public Jwt(String secret, String headerSchemaName, String tokenType, long accessTokenExpiry, long refreshTokenExpiry, String refreshTokenCookieName) {
+            this.secret = secret;
+            this.headerSchemaName = headerSchemaName;
+            this.tokenType = tokenType;
+            this.accessTokenExpiry = accessTokenExpiry;
             this.refreshTokenExpiry = refreshTokenExpiry;
-            this.refreshTokenCookieMaxAge = (int)(refreshTokenExpiry * 0.001);
+            this.refreshTokenCookieName = refreshTokenCookieName;
+            this.refreshTokenCookieMaxAge = (int)(refreshTokenExpiry * 0.001); // ms > s 변환
         }
+
     }
 
     @Getter

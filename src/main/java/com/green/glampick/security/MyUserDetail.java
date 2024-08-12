@@ -16,7 +16,8 @@ import java.util.Map;
 @NoArgsConstructor
 @Setter
 @Getter
-public class MyUserDetail implements UserDetails, OAuth2User {
+public class
+MyUserDetail implements UserDetails, OAuth2User {
 
     private MyUser myUser;
 
@@ -37,7 +38,7 @@ public class MyUserDetail implements UserDetails, OAuth2User {
 
     @Override
     public String getUsername() {
-        return null;
+        return myUser == null ? "GUEST" : String.valueOf(myUser.getUserId());
     }
 
     @Override
