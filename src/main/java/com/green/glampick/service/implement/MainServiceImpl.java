@@ -1,5 +1,7 @@
 package com.green.glampick.service.implement;
 
+import com.green.glampick.dto.object.GlampingPriceItem;
+import com.green.glampick.dto.object.Repository;
 import com.green.glampick.dto.object.main.MainGlampingItem;
 import com.green.glampick.dto.response.admin.GetBannerResponseDto;
 import com.green.glampick.dto.response.main.GetMainGlampingListResponseDto;
@@ -9,6 +11,7 @@ import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.mapper.MainMapper;
 import com.green.glampick.module.DateModule;
+import com.green.glampick.module.GlampingModule;
 import com.green.glampick.module.RoomModule;
 import com.green.glampick.repository.BannerRepository;
 import com.green.glampick.repository.GlampPeakRepository;
@@ -34,6 +37,11 @@ public class MainServiceImpl implements MainService {
     private final RoomRepository roomRepository;
     private final MainMapper mapper;
 
+    private Repository repository() {
+        return Repository.builder().glampPeakRepository(glampPeakRepository)
+                .roomPriceRepository(roomPriceRepository)
+                .roomRepository(roomRepository).build();
+    }
     //  메인 페이지 - 글램핑 리스트 불러오기  //
     @Override
     @Transactional
@@ -48,9 +56,9 @@ public class MainServiceImpl implements MainService {
             List<MainGlampingItem> petFriendly = mapper.petFriendly();
             List<MainGlampingItem> mountainView = mapper.mountainView();
             // 가격 넣기
-            popular = setRoomPrice(popular, weekend);
-            petFriendly = setRoomPrice(petFriendly, weekend);
-            mountainView = setRoomPrice(mountainView, weekend);
+            popular = GlampingModule.setRoomPrice(popular, weekend, repository());
+            petFriendly = GlampingModule.setRoomPrice(petFriendly, weekend, repository());
+            mountainView = GlampingModule.setRoomPrice(mountainView, weekend, repository());
 
             return GetMainGlampingListResponseDto.success(popular, petFriendly, mountainView);
 
@@ -60,16 +68,6 @@ public class MainServiceImpl implements MainService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.DBE);
         }
-    }
-    private List<MainGlampingItem> setRoomPrice(List<MainGlampingItem> items, boolean weekend) {
-        for (MainGlampingItem item : items) {
-            GetPeakDateResultSet peakResult = glampPeakRepository.getPeak(item.getGlampId());
-            List<RoomEntity> room = RoomModule.getRoomEntity(item.getGlampId(), roomRepository);
-            int price = RoomModule.getRoomPrice(room, weekend,
-                    !(peakResult == null || !DateModule.isPeak(peakResult)), roomPriceRepository);
-            item.setPrice(price);
-        }
-        return items;
     }
 
     //  메인 페이지 - 메인 화면 배너 불러오기  //

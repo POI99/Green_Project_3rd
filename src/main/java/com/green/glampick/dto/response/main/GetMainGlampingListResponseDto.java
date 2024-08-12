@@ -1,6 +1,7 @@
 package com.green.glampick.dto.response.main;
 
 import com.green.glampick.dto.ResponseDto;
+import com.green.glampick.dto.object.GlampingPriceItem;
 import com.green.glampick.dto.object.main.MainGlampingItem;
 import lombok.Getter;
 import lombok.Setter;
