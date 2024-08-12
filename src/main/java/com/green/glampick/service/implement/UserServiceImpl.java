@@ -2,6 +2,7 @@ package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.dto.object.UserReviewListItem;
+import com.green.glampick.dto.object.main.PopularGlampingItem;
 import com.green.glampick.dto.request.user.*;
 import com.green.glampick.dto.response.user.*;
 import com.green.glampick.entity.*;
@@ -9,6 +10,8 @@ import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.GlampingErrorCode;
 import com.green.glampick.exception.errorCode.UserErrorCode;
+import com.green.glampick.module.DateModule;
+import com.green.glampick.module.RoomModule;
 import com.green.glampick.repository.*;
 import com.green.glampick.repository.resultset.*;
 import com.green.glampick.security.AuthenticationFacade;
@@ -45,6 +48,8 @@ public class UserServiceImpl implements UserService {
     private final ReviewImageRepository reviewImageRepository;
     private final GlampingRepository glampingRepository;
     private final OwnerRepository ownerRepository;
+    private final GlampPeakRepository glampPeakRepository;
+
 
     //  마이페이지 - 예약 내역 불러오기  //
     @Override
@@ -335,7 +340,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public ResponseEntity<? super GetFavoriteGlampingResponseDto> getFavoriteGlamping(GetFavoriteGlampingRequestDto dto) {
 
+        boolean weekend = DateModule.isWeekend();
+//        boolean peak = DateModule.isPeak();
         try {
+
             dto.setUserId(authenticationFacade.getLoginUserId());
             if (dto.getUserId() <= 0) {
                 throw new RuntimeException();
@@ -345,9 +353,13 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(CommonErrorCode.MNF);
         }
 
-        List<GetFavoriteGlampingResultSet> resultSets;
+        List<GetFavoriteGlampingResultSet> resultSets = new ArrayList<>();
+        GetPeakDateResultSet peak = null;
 
         try {
+            peak = glampPeakRepository.getPeak(resultSets.get((int) dto.getUserId()).getGlampId());
+
+//            if (weekend !=peak)
             resultSets = favoriteGlampingRepository.getFavoriteGlamping(dto.getUserId());
             if (resultSets == null) {
                 throw new CustomException(GlampingErrorCode.NG);

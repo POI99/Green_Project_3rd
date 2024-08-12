@@ -38,7 +38,7 @@ public class DateModule {
 
     // 성수기인지 아닌지 판단 (맞으면 true 틀리면 false)
     public static boolean isPeak(LocalDate date, LocalDate peakStart, LocalDate peakEnd) {
-        return !(date.isAfter(peakStart) || !peakEnd.isAfter(date));    // 겹치면 성수기, 겹치면 true
+        return !(date.isBefore(peakStart) || date.isAfter(peakEnd));    // 겹치면 성수기, 겹치면 true
     }
     // 1. 현재 날짜 기준
     public static boolean isPeak(GetPeakDateResultSet peak) {
