@@ -70,7 +70,7 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
 //    )
 //
 //    List<GetReservationCompleteResultSet> getReservationCompleteByOwnerId(@Param("ownerId") Long ownerId,int limit ,int offset );
-    @Query("SELECT rc.inputName AS inputName,rc.personnel AS personnel, rc.checkInDate AS checkInDate, rc.checkOutDate AS checkOutDate, rc.payAmount AS payAmount, r.roomName AS roomName, " +
+    @Query( "SELECT rc.inputName AS inputName,rc.personnel AS personnel, rc.checkInDate AS checkInDate, rc.checkOutDate AS checkOutDate, rc.payAmount AS payAmount, r.roomName AS roomName, " +
             "rc.pg AS pg, rc.createdAt AS createdAt, u.userPhone AS userPhone " +
             "FROM ReservationCompleteEntity rc " +
             "JOIN rc.room r JOIN rc.glamping g JOIN rc.user u " +
