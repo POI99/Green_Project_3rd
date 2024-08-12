@@ -288,11 +288,6 @@ public class GlampingServiceImpl implements GlampingService {
     }
 
     // =========================================================================================================
-    private void isNull(String text) {
-        if (text == null || text.isEmpty()) {
-            throw new RuntimeException();
-        }
-    }
 
 
 

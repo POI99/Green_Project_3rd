@@ -167,12 +167,12 @@
         <if test="sortType == 3">
             ORDER BY reviewCount DESC
         </if>
-        <if test="sortType == 4">
-            ORDER BY price
-        </if>
-        <if test="sortType == 5">
-            ORDER BY price DESC
-        </if>
+<!--        <if test="sortType == 4">-->
+<!--            ORDER BY price-->
+<!--        </if>-->
+<!--        <if test="sortType == 5">-->
+<!--            ORDER BY price DESC-->
+<!--        </if>-->
     </sql>
 
 <!--  필터, 날짜, 인원수  -->

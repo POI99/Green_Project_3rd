@@ -222,7 +222,6 @@ public class RoomModule {
             if(!peak && week) priceList.add(price.getWeekendPrice());
             if(!peak && !week)priceList.add(price.getWeekdayPrice());
         }
-        System.out.println("+++++++++++ price" + priceList);
         Collections.sort(priceList);
         return priceList.get(0);
     }

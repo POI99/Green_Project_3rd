@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MountainViewGlampingItem {
+public class MainGlampingItem {
     @Schema(example = "1", description = "글램핑 PK")
     private long glampId;
     @Schema(example = "뉴욕 카라반", description = "글램핑장의 이름")
