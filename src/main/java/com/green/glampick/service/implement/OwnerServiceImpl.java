@@ -479,7 +479,7 @@ public class OwnerServiceImpl implements OwnerService {
 
         try {
             log.info("p: {}", p);
-
+            //data setting
             List<OwnerBookItem> reservationBeforeResultSetList;
             Long ownerId = p.getOwnerId();
             int limit = p.getLimit(); // size
@@ -487,8 +487,7 @@ public class OwnerServiceImpl implements OwnerService {
             String date = p.getDate(); // Date
 
             Pageable pageable = PageRequest.of(offset,limit);
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate localDate = LocalDate.parse(date, dateTimeFormatter);
+            LocalDate localDate = parseToLocalDate(date);
 
             List<OwnerBookDetailListItem> bookDetailListItems = new ArrayList<>();
 
@@ -515,8 +514,7 @@ public class OwnerServiceImpl implements OwnerService {
 
             Pageable pageable = PageRequest.of(offset,limit);
 
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate localDate = LocalDate.parse(date, dateTimeFormatter);
+            LocalDate localDate = parseToLocalDate(date);
 
             List<OwnerBookDetailListItem> bookDetailListItems = new ArrayList<>();
 
@@ -544,8 +542,8 @@ public class OwnerServiceImpl implements OwnerService {
             String date = p.getDate();
 
             Pageable pageable = PageRequest.of(offset,limit);
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate localDate = LocalDate.parse(date, dateTimeFormatter);
+
+            LocalDate localDate = parseToLocalDate(date);
 
             List<OwnerBookDetailListItem> bookDetailListItems = new ArrayList<>();
 

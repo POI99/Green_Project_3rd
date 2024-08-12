@@ -22,5 +22,7 @@ public class GetInfoRequestDto {
     private long roomId;
     @JsonIgnore
     private long userId;
+    @JsonIgnore
+    private Long priceType;
 
 }
