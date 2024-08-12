@@ -49,6 +49,7 @@ public class UserServiceImpl implements UserService {
     private final GlampingRepository glampingRepository;
     private final OwnerRepository ownerRepository;
     private final GlampPeakRepository glampPeakRepository;
+    private final RoomPriceRepository roomPriceRepository;
 
 
     //  마이페이지 - 예약 내역 불러오기  //
@@ -352,14 +353,15 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.MNF);
         }
-
+        RoomPriceEntity roomPriceEntity = new RoomPriceEntity();
         List<GetFavoriteGlampingResultSet> resultSets = new ArrayList<>();
         GetPeakDateResultSet peak = null;
+//        day = glampPeakRepository.findById()
 
         try {
             peak = glampPeakRepository.getPeak(resultSets.get((int) dto.getUserId()).getGlampId());
 
-//            if (weekend !=peak)
+//            if (peak != )
             resultSets = favoriteGlampingRepository.getFavoriteGlamping(dto.getUserId());
             if (resultSets == null) {
                 throw new CustomException(GlampingErrorCode.NG);
