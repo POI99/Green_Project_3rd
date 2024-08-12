@@ -3,11 +3,11 @@ package com.green.glampick.repository.resultset;
 
 public interface GetFavoriteGlampingResultSet {
     String getGlampImage();
-    String getGlampLocation();
+    String getRegion();
     String getGlampName();
-    String getStarPoint();
-    String getPrice();
-    String getReviewCount();
-    long getGlampId();
+    Double getStarPoint();
+    Integer getPrice();
+    Integer getReviewCount();
+    Long getGlampId();
 
 }
