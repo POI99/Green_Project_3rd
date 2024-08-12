@@ -1,6 +1,7 @@
 package com.green.glampick.module;
 
 import com.green.glampick.common.CustomFileUtils;
+import com.green.glampick.dto.object.Repository;
 import com.green.glampick.dto.request.owner.RoomPostRequestDto;
 import com.green.glampick.entity.*;
 import com.green.glampick.exception.CustomException;
@@ -23,28 +24,29 @@ public class RoomModule {
 
     // 이미지가 들어있는가?
     public static void imgExist(List<MultipartFile> image) {
-        if(image == null || image.get(0).isEmpty()){
+        if (image == null || image.get(0).isEmpty()) {
             throw new CustomException(OwnerErrorCode.NF);
         }
-        if(image.size() > ROOM_IMAGE_MAX){
+        if (image.size() > ROOM_IMAGE_MAX) {
             throw new CustomException(OwnerErrorCode.TI);
         }
     }
 
     // 인원 정보가 올바른가?
-    public static void personnel(int standard, int max){
+    public static void personnel(int standard, int max) {
         if ((max - standard) < 0) {
             throw new CustomException(OwnerErrorCode.PE);
         }
     }
-    public static void personnelUpdate(Integer standard, Integer max){
-        if(standard != null && max != null){
+
+    public static void personnelUpdate(Integer standard, Integer max) {
+        if (standard != null && max != null) {
             personnel(standard, max);
         }
-        if(standard != null && (standard < 2 || standard > 6)) {
+        if (standard != null && (standard < 2 || standard > 6)) {
             throw new CustomException(OwnerErrorCode.PUE);
         }
-        if(max != null && (max < 2 || max > 6)) {
+        if (max != null && (max < 2 || max > 6)) {
             throw new CustomException(OwnerErrorCode.PUE);
         }
     }
@@ -57,17 +59,19 @@ public class RoomModule {
             String path = makeFolder(glampId, roomId, customFileUtils);
             // 파일 저장
             imgName = makeImgName(image, path, customFileUtils);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new CustomException(OwnerErrorCode.FE);
         }
         return imgName;
     }
-    private static String makeFolder(long glampId, long roomId, CustomFileUtils customFileUtils){
+
+    private static String makeFolder(long glampId, long roomId, CustomFileUtils customFileUtils) {
         String path = String.format("glamping/%s/room/%s", glampId, roomId);
         customFileUtils.makeFolders(path);
         return path;
     }
-    private static List<String> makeImgName(List<MultipartFile> image, String roomPath, CustomFileUtils customFileUtils) throws Exception{
+
+    private static List<String> makeImgName(List<MultipartFile> image, String roomPath, CustomFileUtils customFileUtils) throws Exception {
         List<String> roomImg = new ArrayList<>();
         for (MultipartFile file : image) {
             String imgName = customFileUtils.makeRandomFileName(file);
@@ -80,7 +84,7 @@ public class RoomModule {
     }
 
     // 객실 이미지 엔티티 리스트로 저장
-    public static List<RoomImageEntity> saveImage(List<String> roomImgName, RoomEntity roomId){
+    public static List<RoomImageEntity> saveImage(List<String> roomImgName, RoomEntity roomId) {
         List<RoomImageEntity> list = new ArrayList<>();
         for (String img : roomImgName) {
             RoomImageEntity item = new RoomImageEntity();
@@ -92,7 +96,7 @@ public class RoomModule {
     }
 
     // 객실 서비스 엔티티 리스트로 저장
-    public static List<RoomServiceEntity> saveService(List<Long> roomService, RoomEntity roomId, ServiceRepository serviceRepository){
+    public static List<RoomServiceEntity> saveService(List<Long> roomService, RoomEntity roomId, ServiceRepository serviceRepository) {
         List<RoomServiceEntity> list = new ArrayList<>();
         for (Long service : roomService) {
             RoomServiceEntity item = new RoomServiceEntity();
@@ -129,14 +133,14 @@ public class RoomModule {
     }
 
     // 사용자가 가진 글램핑과 입력받은 룸 pk 가 일치하는지 확인
-    public static void isRoomIdOk(RoomRepository roomRepository, GlampingRepository glampingRepository,
+    public static void isRoomIdOk(Repository repository,
                                   OwnerEntity owner, long roomId) {
         GlampingEntity readGlamp = null;
         GlampingEntity glamp = null;
         RoomEntity room = null;
         try {
-            readGlamp = glampingRepository.findByOwner(owner);
-            room = roomRepository.findByRoomId(roomId);
+            readGlamp = repository.getGlampingRepository().findByOwner(owner);
+            room = repository.getRoomRepository().findByRoomId(roomId);
             glamp = room.getGlamp();
         } finally {
             if (room == null || readGlamp != glamp) {
@@ -147,69 +151,69 @@ public class RoomModule {
 
     // 서비스 수정
     public static void updateService(List<Long> roomService, List<Long> inputService, RoomEntity room,
-                                     RoomServiceRepository roomServiceRepository, ServiceRepository serviceRepository) {
-        if(roomService.isEmpty()) {
+                                     Repository repository) {
+        if (roomService.isEmpty()) {
             // 원래 서비스가 없었다.
-            if(inputService != null) {
-                roomServiceRepository.saveAll(saveService(inputService, room, serviceRepository));
+            if (inputService != null) {
+                repository.getRoomServiceRepository().saveAll(saveService(inputService, room, repository.getServiceRepository()));
             }
             return;
         }
         // 원래 서비스가 있다.
         if (inputService == null) {
-            roomServiceRepository.deleteAllByRoom(room);
+            repository.getRoomServiceRepository().deleteAllByRoom(room);
             return;
         }
         List<Long> matchList = roomService.stream().filter(o -> inputService.stream()
                 .anyMatch(Predicate.isEqual(o))).toList();
-        for(Long service : matchList) {
+        for (Long service : matchList) {
             roomService.remove(service);
             inputService.remove(service);
         }
-        for(Long service : roomService) {
+        for (Long service : roomService) {
             RoomServiceEntity deleteEntity =
-                    roomServiceRepository.findByServiceAndRoom(serviceRepository.getReferenceById(service), room);
-            roomServiceRepository.delete(deleteEntity);
+                    repository.getRoomServiceRepository().findByServiceAndRoom(repository.getServiceRepository().getReferenceById(service), room);
+            repository.getRoomServiceRepository().delete(deleteEntity);
         }
         List<RoomServiceEntity> saveEntity = new ArrayList<>();
         for (Long service : inputService) {
             RoomServiceEntity entity = new RoomServiceEntity();
-            entity.setService(serviceRepository.getReferenceById(service));
+            entity.setService(repository.getServiceRepository().getReferenceById(service));
             entity.setRoom(room);
             saveEntity.add(entity);
         }
-        roomServiceRepository.saveAll(saveEntity);
+        repository.getRoomServiceRepository().saveAll(saveEntity);
     }
 
     // 시간 형식 확인
     public static void isValidTime(String time) {
-        String timePatter  = "^(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d$";
+        String timePatter = "^(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d$";
         Pattern pattern = Pattern.compile(timePatter);
         Matcher matcher = pattern.matcher(time);
-        if( !matcher.matches()) {
+        if (!matcher.matches()) {
             throw new CustomException(OwnerErrorCode.IT);
         }
     }
 
     // 해당 객실의 사진이 맞는지 확인
-    public static void checkImgId(RoomEntity roomEntity, RoomImageEntity imageEntity){
-        if(imageEntity.getRoomId() != roomEntity) {
+    public static void checkImgId(RoomEntity roomEntity, RoomImageEntity imageEntity) {
+        if (imageEntity.getRoomId() != roomEntity) {
             throw new CustomException(OwnerErrorCode.CFI);
         }
     }
 
     // 파일 삭제
-    public static void deleteImageOne(Long imgId, RoomImageRepository roomImageRepository, CustomFileUtils customFileUtils) {
-        RoomImageEntity entity = roomImageRepository.getReferenceById(imgId);
+    public static void deleteImageOne(Long imgId, Repository repository) {
+        RoomImageEntity entity = repository.getRoomImageRepository().getReferenceById(imgId);
         String dbName = entity.getRoomImageName();
         try {
             String filePath = dbName.substring(5);
-            File file = new File(String.format("%s%s", customFileUtils.uploadPath, filePath));
+            File file = new File(String.format("%s%s", repository.getCustomFileUtils().uploadPath, filePath));
             file.delete();
         } catch (Exception e) {
             throw new CustomException(OwnerErrorCode.CF);
         }
-        roomImageRepository.delete(entity);
+        repository.getRoomImageRepository().delete(entity);
     }
 
     // 성수기/비수기 주말 조건에 맞춰서 객실 최저가 불러오기
@@ -217,18 +221,17 @@ public class RoomModule {
         List<Integer> priceList = new ArrayList<>();
         for (RoomEntity roomEntity : room) {
             RoomPriceEntity price = roomPriceRepository.findByRoom(roomEntity);
-            if(peak && week) priceList.add(price.getPeakWeekendPrice());
-            if(peak && !week) priceList.add(price.getPeakWeekdayPrice());
-            if(!peak && week) priceList.add(price.getWeekendPrice());
-            if(!peak && !week)priceList.add(price.getWeekdayPrice());
+            if (peak && week) priceList.add(price.getPeakWeekendPrice());
+            if (peak && !week) priceList.add(price.getPeakWeekdayPrice());
+            if (!peak && week) priceList.add(price.getWeekendPrice());
+            if (!peak && !week) priceList.add(price.getWeekdayPrice());
         }
-        System.out.println("+++++++++++ price" + priceList);
         Collections.sort(priceList);
         return priceList.get(0);
     }
 
     // 해당 글램핑에 포함된 룸entity 가져오기
-    public static List<RoomEntity> getRoomEntity(Long glampId, RoomRepository repository){
+    public static List<RoomEntity> getRoomEntity(Long glampId, RoomRepository repository) {
         return repository.findByGlampId(glampId);
     }
 

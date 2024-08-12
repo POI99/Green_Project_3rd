@@ -2,18 +2,17 @@ package com.green.glampick.module;
 
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.common.Role;
+import com.green.glampick.dto.object.GlampingPriceItem;
+import com.green.glampick.dto.object.Repository;
+import com.green.glampick.dto.object.glamping.GlampingListItem;
+import com.green.glampick.dto.object.main.MainGlampingItem;
 import com.green.glampick.dto.request.owner.GlampingPostRequestDto;
-import com.green.glampick.entity.GlampingEntity;
-import com.green.glampick.entity.GlampingWaitEntity;
-import com.green.glampick.entity.OwnerEntity;
-import com.green.glampick.entity.ReservationBeforeEntity;
+import com.green.glampick.entity.*;
 import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.OwnerErrorCode;
-import com.green.glampick.repository.GlampingRepository;
-import com.green.glampick.repository.GlampingWaitRepository;
-import com.green.glampick.repository.OwnerRepository;
-import com.green.glampick.repository.ReservationBeforeRepository;
+import com.green.glampick.repository.*;
+import com.green.glampick.repository.resultset.GetPeakDateResultSet;
 import com.green.glampick.security.AuthenticationFacade;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,10 +40,9 @@ public class GlampingModule {
     }
 
     // 글램핑을 이미 가지고 있는가?
-    public static void hasGlamping(GlampingWaitRepository waitRepository,
-                                   GlampingRepository glampingRepository, OwnerEntity owner) {
-        GlampingWaitEntity glamping1 = waitRepository.findByOwner(owner);
-        GlampingEntity glamping2 = glampingRepository.findByOwner(owner);
+    public static void hasGlamping(Repository repository, OwnerEntity owner) {
+        GlampingWaitEntity glamping1 = repository.getGlampingWaitRepository().findByOwner(owner);
+        GlampingEntity glamping2 = repository.getGlampingRepository().findByOwner(owner);
 
         if (glamping1 != null || glamping2 != null) {
             throw new CustomException(OwnerErrorCode.AH);
@@ -59,20 +57,18 @@ public class GlampingModule {
     }
 
     // 글램핑 위치가 중복되는가?
-    public static void existingLocation(GlampingWaitRepository waitRepository,
-                                        GlampingRepository glampingRepository, String location) {
-        GlampingWaitEntity glamping1 = waitRepository.findByGlampLocation(location);
-        GlampingEntity glamping2 = glampingRepository.findByGlampLocation(location);
+    public static void existingLocation(Repository repository, String location) {
+        GlampingWaitEntity glamping1 = repository.getGlampingWaitRepository().findByGlampLocation(location);
+        GlampingEntity glamping2 = repository.getGlampingRepository().findByGlampLocation(location);
         if (glamping1 != null || glamping2 != null) {
             throw new CustomException(OwnerErrorCode.DL);
         }
     }
 
     // 글램핑 위치가 중복되는가? (위치정보 수정할 때)
-    public static void locationUpdate(String location, GlampingWaitRepository waitRepository,
-                                      GlampingRepository glampingRepository, long glampId) {
-        GlampingWaitEntity glamping1 = waitRepository.findByGlampLocation(location);
-        GlampingEntity glamping2 = glampingRepository.findByGlampLocation(location);
+    public static void locationUpdate(String location, Repository repository, long glampId) {
+        GlampingWaitEntity glamping1 = repository.getGlampingWaitRepository().findByGlampLocation(location);
+        GlampingEntity glamping2 = repository.getGlampingRepository().findByGlampLocation(location);
         if ((glamping1 != null && glamping1.getGlampId() != glampId) ||
                 (glamping2 != null && glamping2.getGlampId() != glampId)) {
             throw new CustomException(OwnerErrorCode.DL);
@@ -123,7 +119,7 @@ public class GlampingModule {
         try {
             GlampingEntity glamp = glampingRepository.findByOwner(owner);
             readGlampId = glamp.getGlampId();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (readGlampId == null || readGlampId != glampId) {
@@ -171,5 +167,20 @@ public class GlampingModule {
         }
     }
 
+    // 객실 가격 넣기
+    // <T extends GlampingPriceItem> : GlampingPriceItem 를 상속받은 모든 타입
+    public static <T extends GlampingPriceItem> List<T> setRoomPrice(List<T> items, boolean weekend, Repository repository) {
+        for (T item : items) {
+            // 성수기 날짜 가져옴
+            GetPeakDateResultSet peakResult = repository.getGlampPeakRepository().getPeak(item.getGlampId());
+            // 해당 글램핑에 해당하는 모든 객실
+            List<RoomEntity> room = RoomModule.getRoomEntity(item.getGlampId(), repository.getRoomRepository());
+            // 성수기인지, 주말인지 판단하고 그 중 최저가를 골라와서 set 해줌
+            int price = RoomModule.getRoomPrice(room, weekend,
+                    !(peakResult == null || !DateModule.isPeak(peakResult)), repository.getRoomPriceRepository());
+            item.setPrice(price);
+        }
+        return items;
+    }
 
 }

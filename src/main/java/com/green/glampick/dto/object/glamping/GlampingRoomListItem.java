@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
+
 @Data
 public class GlampingRoomListItem implements Comparable<GlampingRoomListItem> {
 

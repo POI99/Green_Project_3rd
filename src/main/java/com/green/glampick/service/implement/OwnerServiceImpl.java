@@ -1,6 +1,7 @@
 package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
+import com.green.glampick.dto.object.Repository;
 import com.green.glampick.dto.object.UserReviewListItem;
 import com.green.glampick.dto.object.owner.*;
 import com.green.glampick.dto.request.owner.*;
@@ -70,6 +71,14 @@ public class OwnerServiceImpl implements OwnerService {
     private final RoomPriceRepository roomPriceRepository;
     private final GlampPeakRepository glampPeakRepository;
 
+    private Repository repository() {
+        return new Repository(authenticationFacade, customFileUtils, passwordEncoder,
+                glampingWaitRepository, glampingRepository, ownerRepository, roomRepository,
+                roomImageRepository, serviceRepository, roomServiceRepository, reviewRepository,
+                reviewImageRepository, reservationBeforeRepository, reservationCancelRepository,
+                reservationCompleteRepository, roomPriceRepository, glampPeakRepository);
+    }
+
 // 수찬 =================================================================================================================
 
     //  사장님 페이지 - 사업자 등록증 첨부하기  //
@@ -117,11 +126,11 @@ public class OwnerServiceImpl implements OwnerService {
         entity.setOwner(owner);
 
         // 사장님이 글램핑을 이미 가지고 있는가?
-        GlampingModule.hasGlamping(glampingWaitRepository, glampingRepository, owner);
+        GlampingModule.hasGlamping(repository(), owner);
         // 이미지가 들어있는가?
         GlampingModule.imgExist(glampImg);
         // 글램핑 위치가 중복되는가?
-        GlampingModule.existingLocation(glampingWaitRepository, glampingRepository, req.getGlampLocation());
+        GlampingModule.existingLocation(repository(), req.getGlampLocation());
 
         // 글램핑 아이디 받아오기
         entity.setGlampName(req.getGlampName());
@@ -172,7 +181,7 @@ public class OwnerServiceImpl implements OwnerService {
 
         // 위치정보 중복되는지 확인하기
         if (dto.getGlampLocation() != null && !dto.getGlampLocation().isEmpty()) {
-            GlampingModule.locationUpdate(dto.getGlampLocation(), glampingWaitRepository, glampingRepository, p.getGlampId());
+            GlampingModule.locationUpdate(dto.getGlampLocation(), repository(), p.getGlampId());
         }
 
         // 입력되지 않은 데이터에는 기존 값 넣어주기
@@ -263,7 +272,7 @@ public class OwnerServiceImpl implements OwnerService {
         GlampingModule.roleCheck(owner.getRole());
 
         // 로그인 유저와 룸 Id가 매치되는가?
-        RoomModule.isRoomIdOk(roomRepository, glampingRepository, owner, p.getRoomId());
+        RoomModule.isRoomIdOk(repository(), owner, p.getRoomId());
 
         // 입력된 인원 정보가 올바른지 확인
         RoomModule.personnelUpdate(dto.getPeopleNum(), dto.getPeopleMax());
@@ -289,7 +298,7 @@ public class OwnerServiceImpl implements OwnerService {
         // 서비스 수정
         List<Long> roomService = serviceRepository.findRoomServiceIdByRoom(room);
         List<Long> inputService = dto.getService();
-        RoomModule.updateService(roomService, inputService, room, roomServiceRepository, serviceRepository);
+        RoomModule.updateService(roomService, inputService, room, repository());
 
         // 삭제되는 사진이 있다면 삭제
         if (p.getRemoveImg() != null && !p.getRemoveImg().isEmpty()) {
@@ -298,7 +307,7 @@ public class OwnerServiceImpl implements OwnerService {
                 RoomImageEntity imageEntity = roomImageRepository.getReferenceById(img);
                 RoomModule.checkImgId(room, imageEntity);
                 // 삭제
-                RoomModule.deleteImageOne(img, roomImageRepository, customFileUtils);
+                RoomModule.deleteImageOne(img, repository());
             }
         }
 
@@ -321,7 +330,7 @@ public class OwnerServiceImpl implements OwnerService {
         OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
         GlampingModule.roleCheck(owner.getRole());
         // 사장님이 해당 객실을 가지고있는지 확인
-        RoomModule.isRoomIdOk(roomRepository, glampingRepository, owner, roomId);
+        RoomModule.isRoomIdOk(repository(), owner, roomId);
 
         // 삭제
         RoomEntity entity = roomRepository.getReferenceById(roomId);
