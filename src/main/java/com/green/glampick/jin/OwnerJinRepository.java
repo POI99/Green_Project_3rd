@@ -58,7 +58,7 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
                             "AND check_in_date BETWEEN :startDayId AND :endDayId) AS counts ",
             nativeQuery = true
     )
-    long findTotalCount(@Param("ownerId") long ownerId, @Param("startDayId") String startDayId, @Param("endDayId") String endDayId);
+    Long findTotalCount(@Param("ownerId") long ownerId, @Param("startDayId") String startDayId, @Param("endDayId") String endDayId);
 
     @Query(
             value =
@@ -69,7 +69,7 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
                             "HAVING check_in_date BETWEEN :startDayId AND :endDayId) AS counts ",
             nativeQuery = true
     )
-    long findCancelCount(@Param("ownerId") long ownerId, @Param("startDayId") String startDayId, @Param("endDayId") String endDayId);
+    Long findCancelCount(@Param("ownerId") long ownerId, @Param("startDayId") String startDayId, @Param("endDayId") String endDayId);
 
 //    @Query(
 //            value =

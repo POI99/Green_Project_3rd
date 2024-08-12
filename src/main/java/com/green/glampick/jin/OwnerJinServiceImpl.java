@@ -140,8 +140,10 @@ public class OwnerJinServiceImpl implements OwnerJinService {
         String formEnd = dto.getEndDayId().format(formatter);
         try {
             room = ownerRepository.findRoomCount(dto.getOwnerId(), formStart, formEnd);
-            long total = ownerRepository.findTotalCount(dto.getOwnerId(), formStart, formEnd);
-            long cancel = ownerRepository.findCancelCount(dto.getOwnerId(), formStart, formEnd);
+            Long total = ownerRepository.findTotalCount(dto.getOwnerId(), formStart, formEnd);
+            total = total == null ? 0L : total;
+            Long cancel = ownerRepository.findCancelCount(dto.getOwnerId(), formStart, formEnd);
+            cancel = cancel == null ? 0L : cancel;
             if (dto.getOwnerId() == 0) {
                 throw new CustomException(OwnerErrorCode.NMG);
             }
