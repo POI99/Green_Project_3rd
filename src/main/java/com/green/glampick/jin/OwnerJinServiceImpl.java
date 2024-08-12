@@ -7,16 +7,16 @@ import com.green.glampick.exception.errorCode.OwnerErrorCode;
 import com.green.glampick.jin.object.*;
 import com.green.glampick.jin.request.*;
 import com.green.glampick.jin.response.*;
-import com.green.glampick.mapper.OwnerMapper;
 import com.green.glampick.repository.ReservationCompleteRepository;
 import com.green.glampick.security.AuthenticationFacade;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,18 +44,16 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             throw new CustomException(CommonErrorCode.MNF);
         }
         List<GetPopularRoom> popRoom = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        HashMap<String, List<String>> hashMapRoom = new HashMap<>();
+        String formStart = dto.getStartDayId().format(formatter);
+        String formEnd = dto.getEndDayId().format(formatter);
         try {
-            popRoom = reservationCompleteRepository.findPopularRoom(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
-            for (GetPopularRoom item : popRoom){
-                String roomCounts = item.getRoomCounts();
-                String days = item.getDays();
-                hashMapRoom.put(days, new ArrayList<>());
-                hashMapRoom.get(days).add(roomCounts);
 
-//                return 1;
-//                throw new CustomException(OwnerErrorCode.NMG);
+
+            popRoom = reservationCompleteRepository.findPopularRoom(dto.getOwnerId(), formStart, formEnd);
+            if (dto.getOwnerId() == 0) {
+                throw new CustomException(OwnerErrorCode.NMG);
             }
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
@@ -136,12 +134,17 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.MNF);
         }
-        String formattedResult;
-
-        List<GetCancelDto> room = ownerRepository.findRoomCount(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
+        String formattedResult = null;
+        List<GetCancelDto> room = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formStart = dto.getStartDayId().format(formatter);
+        String formEnd = dto.getEndDayId().format(formatter);
         try {
-            long total = ownerRepository.findTotalCount(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
-            long cancel = ownerRepository.findCancelCount(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
+            room = ownerRepository.findRoomCount(dto.getOwnerId(), formStart, formEnd);
+            Long total = ownerRepository.findTotalCount(dto.getOwnerId(), formStart, formEnd);
+            total = total == null ? 0L : total;
+            Long cancel = ownerRepository.findCancelCount(dto.getOwnerId(), formStart, formEnd);
+            cancel = cancel == null ? 0L : cancel;
             if (dto.getOwnerId() == 0) {
                 throw new CustomException(OwnerErrorCode.NMG);
             }
@@ -172,7 +175,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
         }
         List<GetRevenue> revenue = new ArrayList<>();
         try {
-            revenue = ownerRepository.findRevenue(dto.getOwnerId(), dto.getStartDayId());
+            revenue = ownerRepository.findRevenue(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
             if (dto.getOwnerId() == 0) {
                 throw new CustomException(OwnerErrorCode.NMG);
             }

@@ -45,7 +45,7 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
     )
     List<GetReservationCompleteResultSet> getBook(Long userId);
 
-//    @Query(
+    //    @Query(
 //            value =
 //                    "SELECT " +
 //                            "B.glamp_name AS glampName, " +
@@ -70,11 +70,12 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
 //    )
 //
 //    List<GetReservationCompleteResultSet> getReservationCompleteByOwnerId(@Param("ownerId") Long ownerId,int limit ,int offset );
-    @Query( "SELECT rc.inputName AS inputName,rc.personnel AS personnel, rc.checkInDate AS checkInDate, rc.checkOutDate AS checkOutDate, rc.payAmount AS payAmount, r.roomName AS roomName " +
+    @Query("SELECT rc.inputName AS inputName,rc.personnel AS personnel, rc.checkInDate AS checkInDate, rc.checkOutDate AS checkOutDate, rc.payAmount AS payAmount, r.roomName AS roomName " +
             "FROM ReservationCompleteEntity rc " +
             "JOIN rc.room r JOIN rc.glamping g " +
             "WHERE rc.checkInDate = :date AND g.owner.ownerId = :ownerId ")
     List<OwnerBookItem> getReservationCompleteByOwnerId(@Param("ownerId") Long ownerId, Pageable pageable, @Param("date") LocalDate date);
+
     //@Transactional
     ReservationCompleteEntity findByReservationId(Long reservationId);
 
@@ -83,25 +84,31 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
             "JOIN rc.glamping g JOIN g.owner o " +
             "WHERE FUNCTION('MONTH', rc.checkInDate) = :month AND o.ownerId = :ownerId " +
             "GROUP BY rc.checkInDate")
-    List<GetOwnerBookCompleteCountResponseDto> getCountFromReservationComplete(@Param("month")int month, @Param("ownerId")Long ownerId);
+    List<GetOwnerBookCompleteCountResponseDto> getCountFromReservationComplete(@Param("month") int month, @Param("ownerId") Long ownerId);
+
     @Query(
             value =
-                    "SELECT  sub.roomcounts as roomCounts" +
-                            ", DATE(sub.createdAt) AS days " +
-                            "FROM (SELECT C.room_name as roomName " +
-                            ", COUNT(A.room_id) as roomcounts " +
-                            ", B.owner_id AS owners " +
-                            ", DATE(A.created_at) as createdAt " +
+                    "WITH RECURSIVE date_range AS ( " +
+                            "SELECT :startDayId AS check_in_date " +
+                            "UNION ALL " +
+                            "SELECT DATE_ADD(check_in_date, INTERVAL 1 DAY) " +
+                            "FROM date_range " +
+                            "WHERE check_in_date < :endDayId) " +
+                            "SELECT " +
+                            "date_range.check_in_date as checkInDate, " +
+                            "IFNULL(COUNT(filtered_reservations.check_in_date), 0) AS reservationCount " +
+                            "FROM date_range " +
+                            "LEFT JOIN ( " +
+                            "SELECT A.check_in_date " +
                             "FROM reservation_complete A " +
-                            "left JOIN glamping B " +
-                            "ON A.glamp_id = B.glamp_id " +
-                            "JOIN room C " +
-                            "ON C.room_id = A.room_id " +
-                            "WHERE B.owner_id = ?1 AND A.created_at BETWEEN ?2 AND ?3 " +
-                            "GROUP BY A.created_at) AS sub " +
-                            "GROUP BY days ",
+                            "JOIN room C ON A.room_id = C.room_id " +
+                            "JOIN glamping B ON B.glamp_id = C.glamp_id " +
+                            "WHERE B.owner_id = :ownerId " +
+                            ") AS filtered_reservations ON filtered_reservations.check_in_date = date_range.check_in_date " +
+                            "GROUP BY date_range.check_in_date " +
+                            "ORDER BY date_range.check_in_date ",
             nativeQuery = true
     )
-    List<GetPopularRoom> findPopularRoom(@Param("ownerId") long ownerId, @Param("startDayId") long startDayId, @Param("endDayId")long endDayId);
+    List<GetPopularRoom> findPopularRoom(@Param("ownerId") long ownerId, @Param("startDayId") String startDayId, @Param("endDayId") String endDayId);
 
 }
