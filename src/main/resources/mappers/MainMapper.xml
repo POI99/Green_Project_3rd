@@ -9,14 +9,8 @@
             , A.region
             , A.star_point_avg AS starPoint
             , A.review_count AS reviewCount
-            , B.room_price AS price
             , A.glamp_image AS glampingImg
         FROM glamping A
-        JOIN room B
-        ON A.glamp_id = B.glamp_id
-        AND B.room_price = ( SELECT MIN(room_price)
-                            FROM room
-                            WHERE glamp_id = A.glamp_id )
         ORDER BY recommend_score DESC
         LIMIT 3
     </select>
@@ -27,7 +21,6 @@
                 , A.region
                 , A.star_point_avg AS starPoint
                 , A.review_count AS reviewCount
-                , C.room_price AS price
                 , A.glamp_image AS glampingImg
         FROM glamping A
         JOIN (
@@ -38,11 +31,6 @@
                 GROUP BY A.glamp_id
         ) B
         ON A.glamp_id = B.glamp_id
-        JOIN room C
-        ON A.glamp_id = C.glamp_id
-        AND C.room_price = ( SELECT MIN(room_price)
-                        FROM room
-                        WHERE glamp_id = A.glamp_id )
         ORDER BY recommend_score DESC
         LIMIT 3
     </select>
@@ -53,7 +41,6 @@
             , A.region
             , A.star_point_avg AS starPoint
             , A.review_count AS reviewCount
-            , C.room_price AS price
             , A.glamp_image AS glampingImg
         FROM glamping A
         JOIN (
@@ -64,11 +51,6 @@
             GROUP BY A.glamp_id
         ) B
         ON A.glamp_id = B.glamp_id
-        JOIN room C
-        ON A.glamp_id = C.glamp_id
-        AND C.room_price = ( SELECT MIN(room_price)
-                            FROM room
-                            WHERE glamp_id = A.glamp_id )
         ORDER BY recommend_score DESC
         LIMIT 3
     </select>

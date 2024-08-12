@@ -4,7 +4,9 @@ import com.green.glampick.entity.OwnerEntity;
 import com.green.glampick.jin.object.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
@@ -42,71 +44,141 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
 
     @Query(
             value =
-                    "SELECT SUM(glamp_count) AS total_count " +
-                            ", date(created_at) " +
-                            "FROM (SELECT COUNT(glamp_id) AS glamp_count , created_at FROM reservation_before WHERE glamp_id = :glampId " +
-                            "AND created_at BETWEEN :startDayId AND :endDayId " +
+                    "SELECT SUM(glamp_count) AS totalCount " +
+                            "FROM (SELECT COUNT(A.glamp_id) AS glamp_count , A.check_in_date as checkInDate " +
+                            "FROM reservation_before A join glamping B ON A.glamp_id = B.glamp_id WHERE B.owner_id = :ownerId " +
+                            "AND check_in_date BETWEEN :startDayId AND :endDayId " +
                             "UNION ALL " +
-                            "SELECT COUNT(glamp_id) AS glamp_count , created_at FROM reservation_cancel WHERE glamp_id = :glampId " +
-                            "AND created_at BETWEEN :startDayId AND :endDayId " +
+                            "SELECT COUNT(C.glamp_id) AS glamp_count , C.check_in_date as checkInDate " +
+                            "FROM reservation_cancel C join glamping B ON C.glamp_id = B.glamp_id WHERE B.owner_id = :ownerId " +
+                            "AND check_in_date BETWEEN :startDayId AND :endDayId " +
                             "UNION ALL " +
-                            "SELECT COUNT(glamp_id) AS glamp_count , created_at FROM reservation_complete WHERE glamp_id = :glampId " +
-                            "AND created_at BETWEEN :startDayId AND :endDayId) AS counts ",
+                            "SELECT COUNT(D.glamp_id) AS glamp_count , D.check_in_date as checkInDate " +
+                            "FROM reservation_complete D join glamping B ON D.glamp_id = B.glamp_id WHERE B.owner_id = :ownerId " +
+                            "AND check_in_date BETWEEN :startDayId AND :endDayId) AS counts ",
             nativeQuery = true
     )
-    long findTotalCount(long glampId, long startDayId, long endDayId);
+    Long findTotalCount(@Param("ownerId") long ownerId, @Param("startDayId") String startDayId, @Param("endDayId") String endDayId);
 
     @Query(
             value =
                     "SELECT SUM(glampId) FROM( " +
-                            "SELECT COUNT(glamp_id) AS glampId, DATE(created_at) AS createdAt FROM reservation_cancel WHERE glamp_id = :glampId " +
-                            "Group BY DATE(created_at) " +
-                            "HAVING createdAt BETWEEN :startDayId AND :endDayId) AS counts ",
+                            "SELECT COUNT(A.glamp_id) AS glampId, A.check_in_date AS checkInDate " +
+                            "FROM reservation_cancel A join glamping B ON A.glamp_id = B.glamp_id WHERE B.owner_id = :ownerId " +
+                            "Group BY check_in_date " +
+                            "HAVING check_in_date BETWEEN :startDayId AND :endDayId) AS counts ",
             nativeQuery = true
     )
-    long findCancelCount(long glampId, long startDayId, long endDayId);
+    Long findCancelCount(@Param("ownerId") long ownerId, @Param("startDayId") String startDayId, @Param("endDayId") String endDayId);
+
+//    @Query(
+//            value =
+//
+//
+//                    "SELECT C.room_name as roomName, C.room_id as roomId, A.check_in_date as :startDayId, IFNULL(SUM(A.pay_amount), 0) AS pay " +
+//                            "FROM glamping B RIGHT JOIN " +
+//                            "room C ON B.glamp_id = C.glamp_id " +
+//                            "LEFT JOIN " +
+//                            "reservation_complete A ON A.room_id = C.room_id " +
+//                            "AND A.check_in_date = :startDayId " +
+//                            "WHERE " +
+//                            "B.owner_id = :ownerId " +
+//                            "GROUP BY " +
+//                            "C.room_name, " +
+//                            "C.room_id, " +
+//                            "A.check_in_date " +
+//                            "ORDER BY " +
+//                            "C.room_id ",
+//            nativeQuery = true
+//    )
+//    List<GetRevenue> findRevenue(long ownerId, long startDayId);
 
     @Query(
             value =
 
-
-                    "SELECT C.room_name as roomName, C.room_id as roomId, A.check_in_date as startDayId, IFNULL(SUM(A.pay_amount), 0) AS pay " +
-                            "FROM glamping B RIGHT JOIN " +
-                            "room C ON B.glamp_id = C.glamp_id " +
-                            "LEFT JOIN " +
-                            "reservation_complete A ON A.room_id = C.room_id " +
-                            "AND A.check_in_date = :startDayId " +
-                            "WHERE " +
-                            "B.owner_id = :ownerId " +
-                            "GROUP BY " +
-                            "C.room_name, " +
-                            "C.room_id, " +
-                            "A.check_in_date " +
-                            "ORDER BY " +
-                            "C.room_id ",
+                    "WITH DateRoom AS ( " +
+                            "SELECT DATE(ADDDATE(:startDayId, INTERVAL seq DAY)) AS date, D.room_name, E.owner_id " +
+                            "FROM (SELECT @rownum := @rownum + 1 AS seq " +
+                            "FROM (SELECT 0 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a, " +
+                            "(SELECT 0 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b, " +
+                            "(SELECT @rownum := -1) r) seq " +
+                            "CROSS JOIN room D " +
+                            "JOIN glamping E ON D.glamp_id = E.glamp_id " +
+                            "WHERE DATE(ADDDATE(:startDayId, INTERVAL seq DAY)) BETWEEN :startDayId AND :endDayId " +
+                            "AND E.owner_id = :ownerId) " +
+                            ", SubQuery AS (SELECT A.glamp_id, " +
+                            "SUM(A.pay_amount) AS pay, " +
+                            "DATE(A. check_in_date) AS  checkInDate, " +
+                            "C.room_name AS roomNam " +
+                            "FROM reservation_complete A " +
+                            "JOIN glamping B ON A.glamp_id = B.glamp_id " +
+                            "JOIN room C ON A.room_id = C.room_id " +
+                            "WHERE B.owner_id = :ownerId AND A. check_in_date BETWEEN :startDayId AND :endDayId " +
+                            "GROUP BY A. check_in_date, C.room_name) " +
+                            "SELECT IFNULL(SUM(sub.pay), 0) AS pay, " +
+                            "DR.date AS times, " +
+                            "DR.room_name AS roomName " +
+                            "FROM DateRoom DR " +
+                            "LEFT JOIN SubQuery sub ON DR.date = sub. checkInDate AND DR.room_name = sub.roomNam " +
+                            "GROUP BY DR.date, DR.room_name " +
+                            "ORDER BY DR.date, DR.room_name ",
             nativeQuery = true
     )
-    List<GetRevenue> findRevenue(long ownerId, long startDayId);
-
+    List<GetRevenue> findRevenue(long ownerId, long startDayId, long endDayId);
 
     @Query(
             value =
-                    "SELECT COUNT(A.room_id) as counts" +
-                            ", C.owner_id " +
-                            ", B.room_name as roomName" +
-                            ", DATE(A.created_at) " +
+                    "WITH RECURSIVE dates AS ( " +
+                            "SELECT :startDayId AS check_in_date " +
+                            "UNION ALL " +
+                            "SELECT DATE_ADD(check_in_date, INTERVAL 1 DAY) " +
+                            "FROM dates " +
+                            "WHERE check_in_date < :endDayId) " +
+                            "SELECT " +
+                            "sud.roomName AS nameing, " +
+                            "IFNULL(COUNT(sud.check_in_date), 0) AS cancelCount " +
+                            "FROM dates " +
+                            "LEFT JOIN ( " +
+                            "SELECT " +
+                            "A.room_id as counts, C.owner_id, B.room_name as roomName, A.check_in_date " +
                             "FROM reservation_cancel A " +
                             "JOIN room B ON A.room_id = B.room_id " +
                             "JOIN glamping C ON B.glamp_id = C.glamp_id " +
-                            "WHERE C.owner_id = :ownerId AND A.created_at BETWEEN :startDayId AND :endDayId " +
-                            "GROUP BY B.room_name ",
+                            "WHERE C.owner_id = :ownerId) AS sud " +
+                            "ON sud.check_in_date = dates.check_in_date " +
+                            "GROUP BY  sud.roomName " +
+                            "ORDER BY dates.check_in_date ",
             nativeQuery = true
     )
-    List<GetCancelDto> findRoomCount(long ownerId, long startDayId, long endDayId);
+    List<GetCancelDto> findRoomCount(@Param("ownerId") long ownerId, @Param("startDayId") String startDayId, @Param("endDayId") String endDayId);
 }
 
-
 /*
+                    "WITH RECURSIVE date_range AS ( " +
+                            "SELECT :startDayId AS check_in_date " +
+                            "UNION ALL " +
+                            "SELECT DATE_ADD(check_in_date, INTERVAL 1 DAY) " +
+                            "FROM date_range " +
+                            "WHERE check_in_date < :endDayId) " +
+                            "SELECT " +
+                            "date_range.check_in_date, " +
+                            "IFNULL(COUNT(filtered_reservations.check_in_date), 0) AS reservation_count " +
+                            "FROM date_range " +
+                            "LEFT JOIN ( " +
+                            "SELECT A.room_id as counts " +
+                            ", C.owner_id " +
+                            ", B.room_name as roomName " +
+                            ", A.check_in_date " +
+                            "FROM reservation_cancel A " +
+                            "JOIN room B ON A.room_id = B.room_id " +
+                            "JOIN glamping C ON B.glamp_id = C.glamp_id " +
+                            "WHERE C.owner_id = :ownerId ) AS filtered_reservations ON filtered_reservations.check_in_date = date_range.check_in_date " +
+                            "GROUP BY date_range.check_in_date " +
+                            "ORDER BY date_range.check_in_date ",
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
     @Query(
             value =
                     "SELECT COUNT(A.room_id) as counts" +
@@ -198,5 +270,46 @@ GROUP BY
     )
     List<GetRevenue> findRevenue(long ownerId, long startDayId, long endDayId);
 
+SELECT
+    COALESCE(A.check_in_date, '20240702') AS check_in_date,
+    IFNULL(COUNT(A.check_in_date), 0) AS reservation_count
+FROM
+    glamping B
+RIGHT JOIN
+    room C ON B.glamp_id = C.glamp_id
+LEFT JOIN
+    reservation_complete A ON A.room_id = C.room_id
+        AND A.check_in_date = '20240703'
+WHERE
+    B.owner_id = 2
+GROUP BY
+    COALESCE(A.check_in_date, '20240702') -- 날짜별로 그룹화
+ORDER BY
+    check_in_date;
 
+
+
+WITH RECURSIVE date_range AS (
+    SELECT '2024-07-01' AS check_in_date
+    UNION ALL
+    SELECT DATE_ADD(check_in_date, INTERVAL 1 DAY)
+    FROM date_range
+    WHERE check_in_date < '2024-07-31'
+)
+SELECT
+    date_range.check_in_date,
+    IFNULL(COUNT(A.check_in_date), 0) AS reservation_count
+FROM
+    date_range
+LEFT JOIN
+    reservation_complete A ON A.check_in_date = date_range.check_in_date
+LEFT JOIN
+    room C ON A.room_id = C.room_id
+LEFT JOIN
+    glamping B ON B.glamp_id = C.glamp_id
+        AND B.owner_id = 2
+GROUP BY
+    date_range.check_in_date
+ORDER BY
+    date_range.check_in_date;
  */
