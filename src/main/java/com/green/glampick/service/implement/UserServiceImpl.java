@@ -2,7 +2,6 @@ package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.dto.object.UserReviewListItem;
-import com.green.glampick.dto.object.main.PopularGlampingItem;
 import com.green.glampick.dto.request.user.*;
 import com.green.glampick.dto.response.user.*;
 import com.green.glampick.entity.*;

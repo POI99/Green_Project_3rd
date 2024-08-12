@@ -14,6 +14,7 @@ import com.green.glampick.exception.errorCode.GlampingErrorCode;
 import com.green.glampick.mapper.GlampingMapper;
 import com.green.glampick.module.GlampingModule;
 import com.green.glampick.repository.*;
+import com.green.glampick.repository.resultset.GetPeakDateResultSet;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.GlampingService;
 import lombok.RequiredArgsConstructor;
