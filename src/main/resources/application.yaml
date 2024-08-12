@@ -110,6 +110,7 @@ app:
     access-token-expiry: 1_800_000_000_000_000
 
     #RT - 만료시간(ms) - 15일
+    refresh-token-cookie-name: refresh-token
     refresh-token-expiry: 1_296_000_000
   oauth2:
     base-uri: /oauth2/authorization

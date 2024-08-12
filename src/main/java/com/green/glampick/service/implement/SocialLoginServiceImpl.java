@@ -50,9 +50,6 @@ public class SocialLoginServiceImpl extends DefaultOAuth2UserService {
     private OAuth2User process(OAuth2UserRequest userRequest) {
         OAuth2User oAuth2User = super.loadUser(userRequest); //제공자로부터 사용자정보를 얻음
 
-        String accessToken = null;
-        String refreshToken = null;
-
         //각 소셜플랫폼에 맞는 enum타입을 얻는다.
         SignInProviderType signInProviderType = SignInProviderType.valueOf(userRequest.getClientRegistration()
                 .getRegistrationId()
@@ -80,6 +77,7 @@ public class SocialLoginServiceImpl extends DefaultOAuth2UserService {
             userEntity.setUserSocialType(signUpParam.getUserSocialType());
             userEntity.setProviderId(signUpParam.getProviderId());
             userEntity.setUserEmail(signUpParam.getUserEmail());
+            userEntity.setRole(Role.ROLE_USER);
             userRepository.save(userEntity);
 
         }
