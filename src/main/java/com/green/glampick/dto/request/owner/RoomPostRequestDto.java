@@ -25,9 +25,13 @@ public class RoomPostRequestDto {
     @Schema(example = "카라반 102호", description = "객실 이름")
     private String roomName;
 
-    @NotNull(message = "객실의 가격을 입력해주세요.")
-    @Schema(example = "65500", description = "객실 가격")
-    private Integer price;
+    @NotNull(message = "주중 객실의 가격을 입력해주세요.")
+    @Schema(example = "65500", description = "주중 가격")
+    private Integer weekdayPrice;
+
+    @NotNull(message = "주말 객실의 가격을 입력해주세요.")
+    @Schema(example = "65500", description = "주말 가격")
+    private Integer weekendPrice;
 
     @NotNull(message = "기준 인원을 입력해주세요.")
     @Min(value = 2, message = "객실의 인원은 2명부터 6명까지 가능합니다.")

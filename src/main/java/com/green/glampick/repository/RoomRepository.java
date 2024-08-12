@@ -18,7 +18,7 @@ public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
             " join RoomImageEntity ri on r = ri.roomId where r.glamp = :glamp group by ri.roomId ")
     List<GetRoomListResultSet> getRoomList(GlampingEntity glamp);
 
-    @Query (" select r.roomName AS roomName, r.roomPrice AS price" +
+    @Query (" select r.roomName AS roomName" +
             ", r.roomNumPeople AS peopleNum, r.roomMaxPeople AS peopleMax" +
             ", r.checkInTime AS inTime, r.checkOutTime AS outTime" +
             " from RoomEntity r where r.roomId = :roomId")
