@@ -3,6 +3,7 @@ package com.green.glampick.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Comment;
 
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "room_price")
+@ToString
 public class RoomPriceEntity extends CreatedAt {
 
     @Id
@@ -33,11 +35,11 @@ public class RoomPriceEntity extends CreatedAt {
     @Column( nullable = false) @Comment("성수기 주말 가격")
     private Integer peakWeekendPrice;
 
-    @Column(nullable = false) @Comment("성수기 시작")
-    private LocalDate startPeakDay;
-
-    @Column(nullable = false) @Comment("성수기 끝")
-    private LocalDate endPeakDay;
+//    @Column(nullable = false) @Comment("성수기 시작")
+//    private LocalDate startPeakDay;
+//
+//    @Column(nullable = false) @Comment("성수기 끝")
+//    private LocalDate endPeakDay;
 
 
 }

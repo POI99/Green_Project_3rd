@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -209,6 +210,26 @@ public class RoomModule {
             throw new CustomException(OwnerErrorCode.CF);
         }
         roomImageRepository.delete(entity);
+    }
+
+    // 성수기/비수기 주말 조건에 맞춰서 객실 최저가 불러오기
+    public static int getRoomPrice(List<RoomEntity> room, boolean week, boolean peak, RoomPriceRepository roomPriceRepository) {
+        List<Integer> priceList = new ArrayList<>();
+        for (RoomEntity roomEntity : room) {
+            RoomPriceEntity price = roomPriceRepository.findByRoom(roomEntity);
+            if(peak && week) priceList.add(price.getPeakWeekendPrice());
+            if(peak && !week) priceList.add(price.getPeakWeekdayPrice());
+            if(!peak && week) priceList.add(price.getWeekendPrice());
+            if(!peak && !week)priceList.add(price.getWeekdayPrice());
+        }
+        System.out.println("+++++++++++ price" + priceList);
+        Collections.sort(priceList);
+        return priceList.get(0);
+    }
+
+    // 해당 글램핑에 포함된 룸entity 가져오기
+    public static List<RoomEntity> getRoomEntity(Long glampId, RoomRepository repository){
+        return repository.findByGlampId(glampId);
     }
 
 }

@@ -1,6 +1,8 @@
 package com.green.glampick.module;
 
 
+import com.green.glampick.repository.resultset.GetPeakDateResultSet;
+
 import java.sql.Timestamp;
 import java.util.Date;
 import java.time.LocalDate;
@@ -15,20 +17,45 @@ public class DateModule {
          return LocalDate.now();
     }
 
+
     // 요일 (일~토 1~7) true = 주말(금 토) false = 평일 (일 ~ 목)
-    public static boolean week(LocalDate localDate){
+    public static boolean isWeekend(LocalDate localDate){
         Date date = Timestamp.valueOf(localDate.atStartOfDay());
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         int day = calendar.get(Calendar.DAY_OF_WEEK);
         return day == 6 || day == 7;
     }
+    // 1. 현재 날짜 기준
+    public static boolean isWeekend(){
+        return isWeekend(nowDate());
+    }
+    // 2. 입력된 날짜 기준
+    public static boolean isWeekend(String stringDate){
+        return isWeekend(parseToLocalDate(stringDate));
+    }
+
+
+    // 성수기인지 아닌지 판단 (맞으면 true 틀리면 false)
+    public static boolean isPeak(LocalDate date, LocalDate peakStart, LocalDate peakEnd) {
+        return !(date.isAfter(peakStart) || !peakEnd.isAfter(date));    // 겹치면 성수기, 겹치면 true
+    }
+    // 1. 현재 날짜 기준
+    public static boolean isPeak(GetPeakDateResultSet peak) {
+        return isPeak(nowDate(), peak.getStartDate(), peak.getEndDate());
+    }
+    // 2. 입력된 날짜 기준
+    public static boolean isPeak(String date, GetPeakDateResultSet peak) {
+        return isPeak(parseToLocalDate(date), peak.getStartDate(), peak.getEndDate());
+    }
+
 
     public static LocalDate parseToLocalDate(String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(date, formatter);
         return localDate;
     }
+
     public static boolean checkDate(String in, String out) {
         return parseToLocalDate(out).isBefore(parseToLocalDate(in)); // 틀리면 true
     }

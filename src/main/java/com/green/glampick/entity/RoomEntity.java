@@ -1,10 +1,7 @@
 package com.green.glampick.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 
 @Setter
@@ -13,6 +10,7 @@ import org.hibernate.annotations.Comment;
 @AllArgsConstructor
 @Entity
 @Table(name = "room")
+@ToString
 public class RoomEntity extends UpdatedAt {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Comment("객실 ID")

@@ -1,7 +1,6 @@
 package com.green.glampick.jin;
 
 import com.green.glampick.common.CustomFileUtils;
-import com.green.glampick.dto.object.GetPopularRoomListItem;
 import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.OwnerErrorCode;
