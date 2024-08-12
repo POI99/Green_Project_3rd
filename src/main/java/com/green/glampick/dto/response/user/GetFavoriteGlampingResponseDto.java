@@ -1,6 +1,7 @@
 package com.green.glampick.dto.response.user;
 
 import com.green.glampick.dto.ResponseDto;
+import com.green.glampick.dto.object.user.GetFavoriteGlampingItem;
 import com.green.glampick.repository.resultset.GetFavoriteGlampingResultSet;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,14 +20,14 @@ public class GetFavoriteGlampingResponseDto extends ResponseDto {
 
 
 
-    private List<GetFavoriteGlampingResultSet> favoritelist;
+    private List<GetFavoriteGlampingItem> favoritelist;
 
-    private GetFavoriteGlampingResponseDto(List<GetFavoriteGlampingResultSet> favoritelist) {
+    private GetFavoriteGlampingResponseDto(List<GetFavoriteGlampingItem> favoritelist) {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.favoritelist = favoritelist;
     }
 
-    public static ResponseEntity<ResponseDto> success(List<GetFavoriteGlampingResultSet> favoritelist) {
+    public static ResponseEntity<ResponseDto> success(List<GetFavoriteGlampingItem> favoritelist) {
         GetFavoriteGlampingResponseDto result = new GetFavoriteGlampingResponseDto(favoritelist);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
