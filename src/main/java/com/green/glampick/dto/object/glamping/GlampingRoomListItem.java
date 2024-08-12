@@ -2,7 +2,6 @@ package com.green.glampick.dto.object.glamping;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 

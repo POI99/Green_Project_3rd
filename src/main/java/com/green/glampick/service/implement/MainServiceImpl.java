@@ -55,10 +55,12 @@ public class MainServiceImpl implements MainService {
             List<MainGlampingItem> popular = mapper.popular();
             List<MainGlampingItem> petFriendly = mapper.petFriendly();
             List<MainGlampingItem> mountainView = mapper.mountainView();
+          
             // 가격 넣기
             popular = GlampingModule.setRoomPrice(popular, weekend, repository());
             petFriendly = GlampingModule.setRoomPrice(petFriendly, weekend, repository());
             mountainView = GlampingModule.setRoomPrice(mountainView, weekend, repository());
+
 
             return GetMainGlampingListResponseDto.success(popular, petFriendly, mountainView);
 

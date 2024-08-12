@@ -35,20 +35,35 @@
     </select>
     <!-- 객실 정보  -->
     <select id="selRoomInfo">
-        SELECT     A.glamp_id,
-        A.room_name AS roomName,
-        A.room_price AS roomPrice,
-        A.room_id AS roomId,
-        A.room_num_people AS roomNumPeople,
-        A.room_max_people AS roomMaxPeople,
-        A.check_in_time AS checkInTime,
-        A.check_out_time AS checkOutTime,
-        B.room_image_name AS pic
-        FROM       room A
-        INNER JOIN  room_image B
-        ON        A.room_id = B.room_id
-        GROUP BY    A.room_id
-        HAVING     A.glamp_id = #{glampId}
+        SELECT 		A.glamp_id,
+                    A.room_name AS roomName,
+                    <choose>
+                        <when test="priceType == 1">
+                            C.weekday_price AS roomPrice,
+                        </when>
+                        <when test="priceType == 2">
+                            C.weekend_price AS roomPrice,
+                        </when>
+                        <when test="priceType == 3">
+                            C.peak_weekday_price AS roomPrice,
+                        </when>
+                        <when test="priceType == 4">
+                            C.peak_weekend_price AS roomPrice,
+                        </when>
+                    </choose>
+                    A.room_id AS roomId,
+                    A.room_num_people AS roomNumPeople,
+                    A.room_max_people AS roomMaxPeople,
+                    A.check_in_time AS checkInTime,
+                    A.check_out_time AS checkOutTime,
+                    B.room_image_name AS pic
+        FROM  		room A
+        INNER JOIN	room_image B
+        ON 			A.room_id = B.room_id
+        INNER JOIN  room_price C
+        ON			A.room_id = C.room_id
+        GROUP BY 	A.room_id
+        HAVING 		A.glamp_id = #{glampId}
     </select>
     <!-- 체크인 체크아웃 데이트 추출 -->
     <select id="selDate">
