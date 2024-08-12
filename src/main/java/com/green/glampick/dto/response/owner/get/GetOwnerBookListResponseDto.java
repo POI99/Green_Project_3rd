@@ -23,22 +23,18 @@ public class GetOwnerBookListResponseDto extends ResponseDto {
 
     private List<OwnerBookCountListItem> countList;
 
-    public GetOwnerBookListResponseDto(List<OwnerBookDetailListItem> before,List<OwnerBookDetailListItem> complete,List<OwnerBookDetailListItem> cancel) {
+    public GetOwnerBookListResponseDto(List<OwnerBookDetailListItem> before,List<OwnerBookDetailListItem> complete) {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.before = before;
         this.complete = complete;
-        this.cancel = cancel;
-
     }
 
     public GetOwnerBookListResponseDto(List<OwnerBookCountListItem> countList) {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.countList = countList;
     }
-    public ResponseEntity<ResponseDto> success(List<OwnerBookDetailListItem> before,
-                                               List<OwnerBookDetailListItem> complete,
-                                               List<OwnerBookDetailListItem> cancel) {
-        GetOwnerBookListResponseDto result = new GetOwnerBookListResponseDto(before,complete,cancel);
+    public ResponseEntity<ResponseDto> success(List<OwnerBookDetailListItem> before, List<OwnerBookDetailListItem> complete) {
+        GetOwnerBookListResponseDto result = new GetOwnerBookListResponseDto(before,complete);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
     public ResponseEntity<ResponseDto> success(List<OwnerBookCountListItem> countList) {

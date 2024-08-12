@@ -14,6 +14,7 @@ import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PatchOwnerInfoResponseDto;
 import com.green.glampick.dto.response.user.GetReviewResponseDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -49,10 +50,13 @@ public interface OwnerService {
     // 탈퇴 승인 요청
     ResponseEntity<? super OwnerSuccessResponseDto> withdrawOwner(Long glampId);
 
-    //답글 작성
-    ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p);
+
     //성수기 비수기 설정
     ResponseEntity<? super PatchOwnerPeakResponseDto> patchPeak(Long glampId, PatchOwnerPeakRequestDto p);
+    //리뷰 답글 작성
+    ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p);
+    //리뷰 불러오기
+    ResponseEntity<? super GetReviewResponseDto> getReview(GetReviewRequestDto dto);
     //예약 상세보기(진행 중 예약)
     List<OwnerBookDetailListItem> getReservationBeforeList(ReservationGetRequestDto p);
     //예약 상세보기(취소 된 예약)
@@ -61,6 +65,7 @@ public interface OwnerService {
     List<OwnerBookDetailListItem> getReservationCompleteList(ReservationGetRequestDto p);
     //날짜별 예약 건수
     List<OwnerBookCountListItem> getTotalCount(String date,Long ownerId);
-    //리뷰 불러오기
-    ResponseEntity<? super GetReviewResponseDto> getReview(GetReviewRequestDto dto);
+    //예약 삭제
+    ResponseEntity<? super OwnerSuccessResponseDto> deleteOwnersReservation(Long reservationId);
+
 }

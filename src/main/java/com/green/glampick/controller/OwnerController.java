@@ -228,7 +228,7 @@ public class OwnerController {
 
 // 강국 =================================================================================================================
 
-    //  사장님 페이지 - 리뷰 답글 작성하기  //
+    /*  사장님 페이지 - 리뷰 답글 작성하기  */
     @PatchMapping("/review")
     @Operation(summary = "리뷰 답글 작성하기 (배강국)", description = POST_OWNER_REVIEW_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = POST_OWNER_REVIEW_RESPONSE_ERROR_CODE,
@@ -241,7 +241,7 @@ public class OwnerController {
         return service.patchReview(p);
     }
 
-    //  사장님 페이지 - 리뷰 불러오기  //
+    /*  사장님 페이지 - 리뷰 불러오기  */
     @GetMapping("/review")
     @Operation(summary = "리뷰 불러오기 (배강국)", description = GLAMPING_FROM_USER_REVIEW_VIEW_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = GLAMPING_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
@@ -255,7 +255,7 @@ public class OwnerController {
         dto.setOwnerId(ownerId);
         return service.getReview(dto);
     }
-
+    /* 사장님 페이지 - 성수기 설정 */
     @PatchMapping("/room/{glampId}/peak")
     @Operation(summary = "성수기 가격 설정(배강국)", description = "작성필요")
     @ApiResponse(responseCode = "200", description = "작성필요",
@@ -270,27 +270,26 @@ public class OwnerController {
         return service.patchPeak(glampId, p);
     }
 
-
-//    @Operation(summary = "예약정보 취소 처리 하기",
-//            description =
-//                    "<strong> 변수명 </strong> reservationId : 예약 PK <p>  ex)21 </p>",
-//            responses = {
-//                    @ApiResponse(
-//                            responseCode = "200",
-//                            description =
-//                                    "<p> result: 수정실패 0 수정성공 1 </p>",
-//                            content = @Content(
-//                                    mediaType = "application/json",
-//                                    schema = @Schema(implementation = PatchOwnerReviewInfoResponseDto.class)
-//                            ))})
-//    @PatchMapping("book")
-//    public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(@RequestBody ReviewPatchRequestDto p) {
-//        return service.patchReview(p);
-//    }
-
-    // 사장님 페이지 - 예약 내역 불러오기 //
+    /* 사장님 페이지 - 예약 취소 */
+    @Operation(summary = "예약 취소 처리 하기",
+            description =
+                    "<strong> 변수명 </strong> reservationId : 예약 PK <p>  ex)21 </p>",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description =
+                                    "<p> result: 수정실패 0 수정성공 1 </p>",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = PatchOwnerReviewInfoResponseDto.class)
+                            ))})
+    @DeleteMapping("book/{reservationId}")
+    public ResponseEntity<? super OwnerSuccessResponseDto> deleteOwnersReservation(@PathVariable Long reservationId) {
+        return service.deleteOwnersReservation(reservationId);
+    }
+    /* 사장님 페이지 - 예약 내역 불러오기 */
     @GetMapping("/book")
-    @Operation(summary = "사장이 글램핑에 디테일한 예약 내역 불러오기 (배강국)", description = BOOK_FROM_USER_REVIEW_VIEW_DESCRIPTION)
+    @Operation(summary = "디테일한 예약 내역 불러오기 (배강국)", description = BOOK_FROM_USER_REVIEW_VIEW_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = BOOK_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerBookListResponseDto.class)))
@@ -301,12 +300,11 @@ public class OwnerController {
         p.setOwnerId(ownerId);
         log.info("controller p: ", p);
         List<OwnerBookDetailListItem> before = service.getReservationBeforeList(p);
-        List<OwnerBookDetailListItem> cancel = service.getReservationCancelList(p);
         List<OwnerBookDetailListItem> complete = service.getReservationCompleteList(p);
 
-        GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(before, complete, cancel);
+        GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(before, complete);
 
-        return dto.success(before, complete, cancel);
+        return dto.success(before, complete);
     }
 
     /* 예약 카운트 */
@@ -321,7 +319,6 @@ public class OwnerController {
         GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
         p.setOwnerId(ownerId);
 
-//        List<OwnerBookCountListItem> totalCount = service.getTotalCount("2024-08-06",p.getOwnerId());
         List<OwnerBookCountListItem> totalCount = service.getTotalCount(p.getDate(),p.getOwnerId());
 
         GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(totalCount);

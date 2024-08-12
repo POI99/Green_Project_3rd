@@ -66,7 +66,7 @@ public interface ReservationCancelRepository extends JpaRepository<ReservationCa
 //    )
 //    List<GetReservationCancelResultSet> getReservationCancelByOwnerId(Long userId, int limit, int offset);
     @Query( "SELECT rc.inputName AS inputName,rc.personnel AS personnel, rc.checkInDate AS checkInDate, rc.checkOutDate AS checkOutDate, rc.payAmount AS payAmount, r.roomName AS roomName, " +
-            "rc.pg AS pg, rc.createdAt AS createdAt, u.userPhone AS userPhone " +
+            "rc.pg AS pg, rc.createdAt AS createdAt, u.userPhone AS userPhone, rc.reservationId AS reservationId " +
             "FROM ReservationCancelEntity rc " +
             "JOIN rc.roomId r JOIN rc.glamping g JOIN rc.user u " +
             "WHERE rc.checkInDate = :date AND g.owner.ownerId = :ownerId ")
