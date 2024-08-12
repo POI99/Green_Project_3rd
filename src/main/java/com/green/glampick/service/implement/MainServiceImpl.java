@@ -54,7 +54,6 @@ public class MainServiceImpl implements MainService {
             List<MountainViewGlampingItem> mountainView = mapper.mountainView();
             // 가격 넣기
             for (PopularGlampingItem item : popular) {
-                System.out.println("+++start");
                 GetPeakDateResultSet peakResult = glampPeakRepository.getPeak(item.getGlampId());
                 List<RoomEntity> room = RoomModule.getRoomEntity(item.getGlampId(), roomRepository);
                 int price = RoomModule.getRoomPrice(room, weekend,
