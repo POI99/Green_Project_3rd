@@ -779,8 +779,11 @@ public class OwnerServiceImpl implements OwnerService {
             item.setRoomName(resultSet.getRoomName());
             item.setPersonnel(resultSet.getPersonnel());
             item.setPayAmount(resultSet.getPayAmount());
+            item.setUserPhone(resultSet.getUserPhone());
+            item.setPg(resultSet.getPg());
             item.setCheckInDate(resultSet.getCheckInDate().toString());
             item.setCheckOutDate(resultSet.getCheckOutDate().toString());
+            item.setCreatedAt(resultSet.getCreatedAt().toString());
 
             bookDetailListItems.add(item);
         }

@@ -14,5 +14,9 @@ public class OwnerBookDetailListItem {
     private Long payAmount;
     private String checkInDate;
     private String checkOutDate;
+    private String userPhone;
+    private String pg;
+    private String createdAt;
+
 
 }

@@ -40,9 +40,10 @@ public interface ReservationBeforeRepository extends JpaRepository<ReservationBe
             nativeQuery = true
     )
     List<GetReservationBeforeResultSet> getBook(Long userId);
-    @Query( "SELECT rb.inputName AS inputName,rb.personnel AS personnel, rb.checkInDate AS checkInDate, rb.checkOutDate AS checkOutDate, rb.payAmount AS payAmount, r.roomName AS roomName " +
+    @Query( "SELECT rb.inputName AS inputName,rb.personnel AS personnel, rb.checkInDate AS checkInDate, rb.checkOutDate AS checkOutDate, rb.payAmount AS payAmount, r.roomName AS roomName, " +
+            "rb.pg AS pg, rb.createdAt AS createdAt, u.userPhone AS userPhone " +
             "FROM ReservationBeforeEntity rb " +
-            "JOIN rb.room r JOIN rb.glamping g " +
+            "JOIN rb.room r JOIN rb.glamping g JOIN rb.user u " +
             "WHERE rb.checkInDate = :date AND g.owner.ownerId = :ownerId ")
     List<OwnerBookItem> getReservationBeforeByOwnerId(@Param("ownerId") Long ownerId, Pageable pageable, @Param("date") LocalDate date);
 
