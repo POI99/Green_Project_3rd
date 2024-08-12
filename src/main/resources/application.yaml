@@ -35,11 +35,9 @@ spring:
             client-authentication-method: client_secret_post #쿼리스트링 client-id, client-secret 날아간다.
             authorization-grant-type: authorization_code #권한부여 유형 (인가코드 > access-token를 받는 방식을 선택)
             redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
-            # redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            #redirect-uri: http://localhost:8080/login/oauth2/code/kakao
             scope:
-              -
-              - profile_nickname
-              - profile_image
+              - account_email
             client-name: Kakao
           naver:
             client-id: ${SOCIAL.NAVER.CLIENT_ID}
@@ -49,9 +47,7 @@ spring:
             redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             # redirect-uri: http://localhost:8080/login/oauth2/code/naver
             scope:
-              - name
               - email
-              - profile_image
             client-name: Naver
         provider:
           kakao:
@@ -115,6 +111,16 @@ app:
 
     #RT - 만료시간(ms) - 15일
     refresh-token-expiry: 1_296_000_000
+  oauth2:
+    base-uri: /oauth2/authorization
+    authorization-request-cookie-name: oauth2_auth_request
+    redirect-uri-param-cookie-name: redirect_uri
+    cookie-expiry-seconds: 180
+    authorized-redirect-uris: #OAuth2 처리시 허용한 FE리다이렉트 주소값
+      - http://localhost:3000/oauth/redirect
+      - http://localhost:8080/oauth/redirect
+      - http://192.168.0.144:5125/oauth/redirect #내부 도커서버 IP
+      - http://112.222.157.156:5125/oauth/redirect #외부 IP
 
 management:
   endpoints:
