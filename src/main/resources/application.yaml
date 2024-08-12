@@ -37,6 +37,7 @@ spring:
             redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             # redirect-uri: http://localhost:8080/login/oauth2/code/kakao
             scope:
+              -
               - profile_nickname
               - profile_image
             client-name: Kakao

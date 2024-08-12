@@ -1,15 +1,20 @@
 package com.green.glampick.service.implement;
 
 import com.green.glampick.common.Role;
+import com.green.glampick.common.security.AppProperties;
+import com.green.glampick.common.security.CookieUtils;
 import com.green.glampick.dto.request.login.SignInRequestDto;
 import com.green.glampick.dto.request.login.SignUpRequestDto;
 import com.green.glampick.entity.UserEntity;
+import com.green.glampick.jwt.JwtTokenProvider;
 import com.green.glampick.oauth2.userinfo.OAuth2UserInfo;
 import com.green.glampick.oauth2.userinfo.OAuth2UserInfoFactory;
 import com.green.glampick.repository.UserRepository;
+import com.green.glampick.security.MyUser;
 import com.green.glampick.security.MyUserDetail;
 import com.green.glampick.security.MyUserOAuth2Vo;
 import com.green.glampick.security.SignInProviderType;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -26,11 +31,14 @@ import org.springframework.stereotype.Service;
 public class SocialLoginServiceImpl extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
     private final OAuth2UserInfoFactory oAuth2UserInfoFactory;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final CookieUtils cookieUtils;
+    private final AppProperties appProperties;
 
-    @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+
+    public OAuth2User loadUser(OAuth2UserRequest userRequest, HttpServletResponse res) throws OAuth2AuthenticationException {
         try {
-            return this.process(userRequest);
+            return this.process(userRequest, res);
         } catch (AuthenticationException e) {
             throw e;
         } catch (Exception e) {
@@ -38,8 +46,12 @@ public class SocialLoginServiceImpl extends DefaultOAuth2UserService {
         }
     }
 
-    private OAuth2User process(OAuth2UserRequest userRequest) {
+    private OAuth2User process(OAuth2UserRequest userRequest, HttpServletResponse res) {
         OAuth2User oAuth2User = super.loadUser(userRequest); //제공자로부터 사용자정보를 얻음
+
+        String accessToken = null;
+        String refreshToken = null;
+
         //각 소셜플랫폼에 맞는 enum타입을 얻는다.
         SignInProviderType signInProviderType = SignInProviderType.valueOf(userRequest.getClientRegistration()
                 .getRegistrationId()
@@ -76,6 +88,26 @@ public class SocialLoginServiceImpl extends DefaultOAuth2UserService {
 
         MyUserDetail signInUser = new MyUserDetail();
         signInUser.setMyUser(myUserOAuth2Vo);
+
+
+//        자네는 엑세스토큰 리프레쉬 토큰 값 넣어주지도 않고
+//        null값 들어온다하면 내가 뭘 말해야 하는걸까요?
+//        이싸람아...
+//        >> 옆에 코드 보면서 쿠키랑 토큰 같이 넘겨줘야지 이싸람이
+//        이제보니까 엑세스토큰도 안줘? ㅋㅋㅋ
+
+        //  myUser 에 넣은 데이터를 통해, AccessToken, RefreshToken 을 만든다.  //
+        accessToken = jwtTokenProvider.generateAccessToken(signInUser.getMyUser());
+        refreshToken = jwtTokenProvider.generateRefreshToken(signInUser.getMyUser());
+
+        //  RefreshToken 을 갱신한다.  //
+        int refreshTokenMaxAge = appProperties.getJwt().getRefreshTokenCookieMaxAge();
+        cookieUtils.deleteCookie(res, "refresh-token");
+        cookieUtils.setCookie(res, "refresh-token", refreshToken, refreshTokenMaxAge);
+
+
+
+
         return signInUser;
     }
 
