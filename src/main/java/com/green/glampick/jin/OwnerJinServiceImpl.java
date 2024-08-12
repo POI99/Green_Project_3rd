@@ -1,17 +1,14 @@
 package com.green.glampick.jin;
 
-import com.green.glampick.common.CustomFileUtils;
-import com.green.glampick.dto.object.GetPopularRoomListItem;
+
 import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.OwnerErrorCode;
 import com.green.glampick.jin.object.*;
 import com.green.glampick.jin.request.*;
 import com.green.glampick.jin.response.*;
-import com.green.glampick.mapper.OwnerMapper;
 import com.green.glampick.repository.ReservationCompleteRepository;
 import com.green.glampick.security.AuthenticationFacade;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
