@@ -114,6 +114,11 @@ public class GlampingServiceImpl implements GlampingService {
 
         //글램핑 정보,객실 정보 리스트, 리뷰 리스트, 리뷰 유저수
         GetGlampingInformationResponseDto glampInfoDto = mapper.selGlampingInfo(p);
+        /*room 가격설정     1 -> 비수기 평일
+                           2 -> 비수기 주말
+                           3 -> 성수기 평일
+                           4 -> 성수기 주말
+        */
         List<GlampingRoomListItem> rooms = mapper.selRoomInfo(p);
         List<GlampingDetailReviewItem> reviews = mapper.selReviewInfoInGlamping(p.getGlampId());
 
