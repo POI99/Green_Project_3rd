@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 public interface GlampingService {
-
+    ResponseEntity<? super GetSearchMapListResponseDto> searchMapList(String region);
     ResponseEntity<? super GetSearchGlampingListResponseDto> searchGlamping(GlampingSearchRequestDto searchReq);
     ResponseEntity<? super GetFavoriteGlampingResponseDto> favoriteGlamping(GetFavoriteRequestDto p);
     ResponseEntity<? super GetGlampingInformationResponseDto> infoGlampingDetail(GetInfoRequestDto p);

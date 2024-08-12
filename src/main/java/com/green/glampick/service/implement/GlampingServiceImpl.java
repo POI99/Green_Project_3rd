@@ -57,6 +57,12 @@ public class GlampingServiceImpl implements GlampingService {
     // 민지 =================================================================================================================
     @Override
     @Transactional
+    public ResponseEntity<? super GetSearchMapListResponseDto> searchMapList(String region) {
+        return null;
+    }
+
+    @Override
+    @Transactional
     public ResponseEntity<? super GetSearchGlampingListResponseDto> searchGlamping(GlampingSearchRequestDto req) {
 
         // 날짜가 올바르게 들어가있나?
@@ -96,9 +102,9 @@ public class GlampingServiceImpl implements GlampingService {
         if (req.getSortType() == 4) {    // 낮은 가격순
 //            Collections.sort(result);
             result = mergeSort(result, true);
-        }
-        if (req.getSortType() == 5) {    // 높은 가격순
+        } else if (req.getSortType() == 5) {    // 높은 가격순
             result = mergeSort(result, false);
+
         }
         int searchCount = mapper.searchCount(req);
 

@@ -4,10 +4,13 @@ import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.GlampingWaitEntity;
 import com.green.glampick.entity.OwnerEntity;
 import com.green.glampick.repository.resultset.GetGlampingInfoResultSet;
+import com.green.glampick.repository.resultset.GetMapListResultSet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 public interface GlampingRepository extends JpaRepository<GlampingEntity, Long> {
 
@@ -38,5 +41,14 @@ public interface GlampingRepository extends JpaRepository<GlampingEntity, Long> 
             "g.region AS region, g.extraCharge AS charge, g.glampIntro AS intro, g.infoBasic AS basic" +
             ", g.infoNotice AS notice, g.traffic AS traffic from GlampingEntity g where g.owner = :owner")
     GetGlampingInfoResultSet getGlampingInfo(OwnerEntity owner);
+
+    @Query ("select g.glampId as glampId, g.glampName as glampName, g.glampImage as glampPic" +
+            ", g.starPointAvg as starPoint, g.reviewCount as reviewCount" +
+            ", g.location as location from GlampingEntity g where g.region = :region")
+    List<GetMapListResultSet> getMapList(String region);
+    @Query ("select g.glampId as glampId, g.glampName as glampName, g.glampImage as glampPic" +
+            ", g.starPointAvg as starPoint, g.reviewCount as reviewCount" +
+            ", g.location as location from GlampingEntity g")
+    List<GetMapListResultSet> getMapList();
 
 }
