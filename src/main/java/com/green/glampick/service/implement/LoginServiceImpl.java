@@ -156,6 +156,7 @@ public class LoginServiceImpl implements LoginService {
             if (!matcherPhone.matches()) {
                 throw new CustomException(UserErrorCode.IPH);
             }
+            userPhone.replaceAll("-", "");
             //  입력받은 전화번호가 유저 테이블에 이미 있는 전화번호 이라면, 중복 전화번호에 대한 응답을 보낸다.  //
 //            boolean existedPhone = userRepository.existsByUserPhone(userPhone);
 //            if (existedPhone) { throw new CustomException(UserErrorCode.DT); }
@@ -185,6 +186,7 @@ public class LoginServiceImpl implements LoginService {
             userEntity.setUserNickname(dto.getUserNickname());
             userEntity.setUserPhone(dto.getUserPhone());
             userEntity.setRole(dto.getUserRole());
+            userEntity.setActivateStatus(1);
             userEntity.setUserSocialType(dto.getUserSocialType());
             //  바로 위에서 만든 객체를 JPA 를 통해서 DB에 저장한다.  //
             UserEntity savedUser = userRepository.save(userEntity);
@@ -283,23 +285,24 @@ public class LoginServiceImpl implements LoginService {
             }
 
             //  입력받은 이메일이 정규표현식을 통하여 이메일 형식에 맞지 않으면, 이메일 형식 오류에 대한 응답을 보낸다.  //
-            String userEmail = dto.getOwnerEmail();
+            String ownerEmail = dto.getOwnerEmail();
             String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
             Pattern patternEmail = Pattern.compile(emailRegex);
-            Matcher matcherEmail = patternEmail.matcher(userEmail);
+            Matcher matcherEmail = patternEmail.matcher(ownerEmail);
             if (!matcherEmail.matches()) {
                 throw new CustomException(UserErrorCode.IE);
             }
 
 
             //  입력받은 전화번호가 정규표현식을 통하여 전화번호 형식에 맞지 않으면, 전화번호 형식 오류에 대한 응답을 보낸다.  //
-            String userPhone = dto.getOwnerPhone();
+            String ownerPhone = dto.getOwnerPhone();
             String phoneRegex = "^(01[016789]-?\\d{3,4}-?\\d{4})|(0[2-9][0-9]-?\\d{3,4}-?\\d{4})$";
             Pattern patternPhone = Pattern.compile(phoneRegex);
-            Matcher matcherPhone = patternPhone.matcher(userPhone);
+            Matcher matcherPhone = patternPhone.matcher(ownerPhone);
             if (!matcherPhone.matches()) {
                 throw new CustomException(UserErrorCode.IPH);
             }
+            ownerPhone.replaceAll("-", "");
 
 
             //  입력받은 비밀번호가 정규표현식을 통하여 비밀번호 형식에 맞지 않으면, 비밀번호 형식 오류에 대한 응답을 보낸다.  //

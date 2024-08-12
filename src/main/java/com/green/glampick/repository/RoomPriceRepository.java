@@ -21,4 +21,6 @@ public interface RoomPriceRepository extends JpaRepository<RoomPriceEntity, Long
     RoomPriceEntity findRoomPriceByRoomId(@Param("roomId") Long roomId);
 
     RoomPriceEntity findByRoom(RoomEntity room);
+
+
 }

@@ -11,4 +11,5 @@ public interface GlampPeakRepository extends JpaRepository<GlampPeakEntity, Long
             "where gp.glamp.glampId = :glampId")
     GetPeakDateResultSet getPeak(Long glampId);
 
+
 }

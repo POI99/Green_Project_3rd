@@ -4,6 +4,7 @@ import com.green.glampick.common.Role;
 import com.green.glampick.jwt.JwtAuthenticationAccessDeniedHandler;
 import com.green.glampick.jwt.JwtAuthenticationEntryPoint;
 import com.green.glampick.jwt.JwtAuthenticationFilter;
+import com.green.glampick.oauth2.OAuth2AuthenticationCheckRedirectUriFilter;
 import com.green.glampick.oauth2.OAuth2AuthenticationFailureHandler;
 import com.green.glampick.oauth2.OAuth2AuthenticationRequestBasedOnCookieRepository;
 import com.green.glampick.oauth2.OAuth2AuthenticationSuccessHandler;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -25,6 +27,7 @@ public class SecurityConfiguration {
     private final OAuth2AuthenticationRequestBasedOnCookieRepository repository;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+    private final OAuth2AuthenticationCheckRedirectUriFilter oAuth2AuthenticationCheckRedirectUriFilter;
     private final SocialLoginServiceImpl service;
 
     @Bean
@@ -51,6 +54,7 @@ public class SecurityConfiguration {
                                 .successHandler(oAuth2AuthenticationSuccessHandler)
                                 .failureHandler(oAuth2AuthenticationFailureHandler)
                 )
+                .addFilterBefore(oAuth2AuthenticationCheckRedirectUriFilter, OAuth2AuthorizationRequestRedirectFilter.class)
                 .build();
     }
 

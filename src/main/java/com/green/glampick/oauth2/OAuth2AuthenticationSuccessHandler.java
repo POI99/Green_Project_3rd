@@ -32,6 +32,10 @@ public class OAuth2AuthenticationSuccessHandler
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        if(response.isCommitted()) { //응답 객체가 만료된 경우(다른곳에서 응답처리를 한 경우)
+            log.error("onAuthenticationSuccess - 응답이 만료됨");
+            return;
+        }
         String targetUrl = determineTargetUrl(request, response, authentication);
         log.info("targetUrl: {}", targetUrl);
         if(response.isCommitted()) { //응답 객체가 만료된 경우(다른곳에서 응답처리를 한 경우)
@@ -73,7 +77,7 @@ public class OAuth2AuthenticationSuccessHandler
 
         //refreshToken은 보안 쿠키를 이용해서 처리(FE가 따로 작업을 하지 않아도 아래 cookie값은 항상 넘어온다.)
         int refreshTokenMaxAge = appProperties.getJwt().getRefreshTokenCookieMaxAge();
-        cookieUtils.deleteCookie(response, appProperties.getJwt().getRefreshTokenCookieName());
+//        cookieUtils.deleteCookie(response, appProperties.getJwt().getRefreshTokenCookieName());
         cookieUtils.setCookie(response
                 , appProperties.getJwt().getRefreshTokenCookieName()
                 , refreshToken

@@ -17,10 +17,10 @@ public interface FavoriteGlampingRepository extends JpaRepository<GlampFavoriteE
             value =
             "SELECT distinct(A.glamp_id) AS glampId " +
             ", A.glamp_name AS glampName " +
-            ", A.glamp_location  AS glampLocation " +
+            ", A.region  AS region " +
             ", A.star_point_avg AS starPoint " +
             ", A.review_count AS reviewCount " +
-            ", B.room_price AS price " +
+//            ", B.room_price AS price " +
             ", A.glamp_image AS glampImage " +
             ", C.user_id " +
             "FROM glamping A " +
@@ -29,13 +29,15 @@ public interface FavoriteGlampingRepository extends JpaRepository<GlampFavoriteE
             "JOIN glamp_favorite C " +
             "ON A.glamp_id = C.glamp_id " +
             "WHERE C.user_id = ?1 " +
-            "AND B.room_price = ( SELECT MIN(room_price) " +
-                                "FROM room " +
-                                "WHERE glamp_id = A.glamp_id ) " +
+//            "AND B.room_price = ( SELECT MIN(room_price) " +
+//                                "FROM room " +
+//                                "WHERE glamp_id = A.glamp_id ) " +
             "ORDER BY C.created_at DESC ",
             nativeQuery = true
     )
     List<GetFavoriteGlampingResultSet> getFavoriteGlamping(Long glampId);
+
+
 
     Long countByGlamping(GlampingEntity glampingEntity);
 }

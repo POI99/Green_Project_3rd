@@ -1,5 +1,6 @@
 package com.green.glampick.service.implement;
 
+import com.green.glampick.dto.object.Repository;
 import com.green.glampick.dto.object.ReviewListItem;
 import com.green.glampick.dto.object.glamping.*;
 import com.green.glampick.dto.request.glamping.*;
@@ -11,10 +12,8 @@ import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.GlampingErrorCode;
 import com.green.glampick.mapper.GlampingMapper;
-import com.green.glampick.repository.FavoriteGlampingRepository;
-import com.green.glampick.repository.GlampPeakRepository;
-import com.green.glampick.repository.GlampingRepository;
-import com.green.glampick.repository.ReviewRepository;
+import com.green.glampick.module.GlampingModule;
+import com.green.glampick.repository.*;
 import com.green.glampick.repository.resultset.GetPeakDateResultSet;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.GlampingService;
@@ -43,11 +42,25 @@ public class GlampingServiceImpl implements GlampingService {
     private final GlampingMapper mapper;
     private final GlampingRepository glampingRepository;
     private final FavoriteGlampingRepository favoriteGlampingRepository;
-    private final ReviewRepository reviewRepository;
     private final AuthenticationFacade facade;
     private final GlampPeakRepository glampPeakRepository;
+    private final RoomPriceRepository roomPriceRepository;
+    private final RoomRepository roomRepository;
+
+    private Repository repository() {
+        return Repository.builder().glampingRepository(glampingRepository)
+                .glampPeakRepository(glampPeakRepository)
+                .roomRepository(roomRepository)
+                .roomPriceRepository(roomPriceRepository).build();
+    }
 
     // 민지 =================================================================================================================
+    @Override
+    @Transactional
+    public ResponseEntity<? super GetSearchMapListResponseDto> searchMapList(String region) {
+        return null;
+    }
+
     @Override
     @Transactional
     public ResponseEntity<? super GetSearchGlampingListResponseDto> searchGlamping(GlampingSearchRequestDto req) {
@@ -57,29 +70,47 @@ public class GlampingServiceImpl implements GlampingService {
             throw new CustomException(GlampingErrorCode.WD);
         }
 
+        // 정렬 기준이 있는지
+        if (req.getSortType() == null) {
+            req.setSortType(1);
+        }
+
         // 필터가 있는지
-        if(req.getFilter() != null && !req.getFilter().isEmpty()){
+        if (req.getFilter() != null && !req.getFilter().isEmpty()) {
             req.setFilterSize(1);
         }
 
         // searchGlamping1 : 필터, 날짜, 인원수
         List<Long> roomList = mapper.searchGlamping1(req);
-        if(roomList == null || roomList.isEmpty()){
+        if (roomList == null || roomList.isEmpty()) {
             // 검색결과 없음
             return GetSearchGlampingListResponseDto.isNull();
         }
 
         req.setRoomList(roomList);
         List<GlampingListItem> result = mapper.searchGlamping2(req);
-        if(result == null || result.isEmpty()){
+        if (result == null || result.isEmpty()) {
             // 검색결과 없음
             return GetSearchGlampingListResponseDto.isNull();
         }
 
+        // 객실 가격 넣기
+        boolean week = DateModule.isWeekend(req.getInDate());
+        result = GlampingModule.setRoomPrice(result, week, repository());
+
+        // 가격순 정렬하기
+        if (req.getSortType() == 4) {    // 낮은 가격순
+//            Collections.sort(result);
+            result = mergeSort(result, true);
+        } else if (req.getSortType() == 5) {    // 높은 가격순
+            result = mergeSort(result, false);
+
+        }
         int searchCount = mapper.searchCount(req);
 
         return GetSearchGlampingListResponseDto.success(searchCount, result);
     }
+
 
     // 강국 =================================================================================================================
     @Override
@@ -342,8 +373,12 @@ public class GlampingServiceImpl implements GlampingService {
             Double starAvg = glampingRepository.findStarPointAvgByGlampId(glampingEntity.getGlampId());
             Long favoriteCount = favoriteGlampingRepository.countByGlamping(glampingEntity);
 
-            if (starAvg == null) { starAvg = 0.0; }
-            if (favoriteCount == null) { favoriteCount = 0L; }
+            if (starAvg == null) {
+                starAvg = 0.0;
+            }
+            if (favoriteCount == null) {
+                favoriteCount = 0L;
+            }
 
             Double recommendScore = (starAvg * 0.7) + (favoriteCount + 0.3);
 
@@ -352,6 +387,46 @@ public class GlampingServiceImpl implements GlampingService {
 
         }
 
+    }
+
+
+    private List<GlampingListItem> mergeSort(List<GlampingListItem> glampings, boolean ascending) {
+        if (glampings.size() <= 1) {
+            return glampings;
+        }
+        int mid = glampings.size() / 2;
+        List<GlampingListItem> leftHalf = mergeSort(glampings.subList(0, mid), ascending);
+        List<GlampingListItem> rightHalf = mergeSort(glampings.subList(mid, glampings.size()), ascending);
+
+        return merge(leftHalf, rightHalf, ascending);
+    }
+
+    private List<GlampingListItem> merge(List<GlampingListItem> left, List<GlampingListItem> right, boolean ascending) {
+        List<GlampingListItem> merged = new ArrayList<>();
+        int leftIndex = 0, rightIndex = 0;
+
+        while (leftIndex < left.size() && rightIndex < right.size()) {
+            if ((ascending && left.get(leftIndex).getPrice() <= right.get(rightIndex).getPrice()) ||
+                    (!ascending && left.get(leftIndex).getPrice() >= right.get(rightIndex).getPrice())) {
+                merged.add(left.get(leftIndex));
+                leftIndex++;
+            } else {
+                merged.add(right.get(rightIndex));
+                rightIndex++;
+            }
+        }
+
+        while (leftIndex < left.size()) {
+            merged.add(left.get(leftIndex));
+            leftIndex++;
+        }
+
+        while (rightIndex < right.size()) {
+            merged.add(right.get(rightIndex));
+            rightIndex++;
+        }
+
+        return merged;
     }
 }
 

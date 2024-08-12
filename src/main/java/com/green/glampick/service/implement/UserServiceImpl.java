@@ -1,7 +1,9 @@
 package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
+import com.green.glampick.dto.object.Repository;
 import com.green.glampick.dto.object.UserReviewListItem;
+import com.green.glampick.dto.object.user.GetFavoriteGlampingItem;
 import com.green.glampick.dto.request.user.*;
 import com.green.glampick.dto.response.user.*;
 import com.green.glampick.entity.*;
@@ -9,6 +11,9 @@ import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.GlampingErrorCode;
 import com.green.glampick.exception.errorCode.UserErrorCode;
+import com.green.glampick.module.DateModule;
+import com.green.glampick.module.GlampingModule;
+import com.green.glampick.module.RoomModule;
 import com.green.glampick.repository.*;
 import com.green.glampick.repository.resultset.*;
 import com.green.glampick.security.AuthenticationFacade;
@@ -45,6 +50,15 @@ public class UserServiceImpl implements UserService {
     private final ReviewImageRepository reviewImageRepository;
     private final GlampingRepository glampingRepository;
     private final OwnerRepository ownerRepository;
+    private final GlampPeakRepository glampPeakRepository;
+    private final RoomPriceRepository roomPriceRepository;
+    private final RoomRepository roomRepository;
+
+    private Repository repository() {
+        return Repository.builder().glampPeakRepository(glampPeakRepository)
+                .roomPriceRepository(roomPriceRepository)
+                .roomRepository(roomRepository).build();
+    }
 
     //  마이페이지 - 예약 내역 불러오기  //
     @Override
@@ -335,7 +349,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public ResponseEntity<? super GetFavoriteGlampingResponseDto> getFavoriteGlamping(GetFavoriteGlampingRequestDto dto) {
 
+        boolean weekend = DateModule.isWeekend();
+//        boolean peak = DateModule.isPeak();
         try {
+
             dto.setUserId(authenticationFacade.getLoginUserId());
             if (dto.getUserId() <= 0) {
                 throw new RuntimeException();
@@ -345,20 +362,31 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(CommonErrorCode.MNF);
         }
 
-        List<GetFavoriteGlampingResultSet> resultSets;
+        List<GetFavoriteGlampingResultSet> resultSets = new ArrayList<>();
+
+        List<GetFavoriteGlampingItem> result = new ArrayList<>();
 
         try {
+
             resultSets = favoriteGlampingRepository.getFavoriteGlamping(dto.getUserId());
             if (resultSets == null) {
                 throw new CustomException(GlampingErrorCode.NG);
             }
+            for (GetFavoriteGlampingResultSet resultSet : resultSets) {
+                GetFavoriteGlampingItem item = new GetFavoriteGlampingItem(resultSet.getGlampName()
+                        , resultSet.getRegion(), resultSet.getStarPoint(),
+                        resultSet.getReviewCount(), resultSet.getGlampImage());
+                item.setGlampId(resultSet.getGlampId());
+                result.add(item);
+            }
+            result = GlampingModule.setRoomPrice(result, weekend, repository());
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.DBE);
         }
-        return GetFavoriteGlampingResponseDto.success(resultSets);
+        return GetFavoriteGlampingResponseDto.success(result);
     }
 
     //  마이페이지 - 내 정보 불러오기  //
