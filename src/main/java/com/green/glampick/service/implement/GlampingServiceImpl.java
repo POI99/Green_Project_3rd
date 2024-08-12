@@ -12,8 +12,10 @@ import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.GlampingErrorCode;
 import com.green.glampick.mapper.GlampingMapper;
 import com.green.glampick.repository.FavoriteGlampingRepository;
+import com.green.glampick.repository.GlampPeakRepository;
 import com.green.glampick.repository.GlampingRepository;
 import com.green.glampick.repository.ReviewRepository;
+import com.green.glampick.repository.resultset.GetPeakDateResultSet;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.GlampingService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,8 @@ import java.util.*;
 
 import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
 import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
+import static com.green.glampick.module.DateModule.isPeak;
+import static com.green.glampick.module.DateModule.isWeekend;
 
 @Slf4j
 @Service
@@ -41,6 +45,7 @@ public class GlampingServiceImpl implements GlampingService {
     private final FavoriteGlampingRepository favoriteGlampingRepository;
     private final ReviewRepository reviewRepository;
     private final AuthenticationFacade facade;
+    private final GlampPeakRepository glampPeakRepository;
 
     // 민지 =================================================================================================================
     @Override
@@ -114,12 +119,12 @@ public class GlampingServiceImpl implements GlampingService {
 
         //글램핑 정보,객실 정보 리스트, 리뷰 리스트, 리뷰 유저수
         GetGlampingInformationResponseDto glampInfoDto = mapper.selGlampingInfo(p);
-        /*room 가격설정     1 -> 비수기 평일
-                           2 -> 비수기 주말
-                           3 -> 성수기 평일
-                           4 -> 성수기 주말
-        */
+        //  1 -> 평일 비수기 2 -> 주말 비수기 3 -> 평일 성수기 4 -> 주말 성수기
+        Long priceStatus = getPriceData(p);
+        p.setPriceType(priceStatus);
+
         List<GlampingRoomListItem> rooms = mapper.selRoomInfo(p);
+
         List<GlampingDetailReviewItem> reviews = mapper.selReviewInfoInGlamping(p.getGlampId());
 
         // 로그인 중 이면 관심 등록 데이터 판단
@@ -165,6 +170,7 @@ public class GlampingServiceImpl implements GlampingService {
             }
 
         }
+
         Collections.sort(rooms);
 
         // dto 데이터 세팅
@@ -287,14 +293,30 @@ public class GlampingServiceImpl implements GlampingService {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    // =========================================================================================================
-    private void isNull(String text) {
-        if (text == null || text.isEmpty()) {
-            throw new RuntimeException();
+    // =================================================================================================================
+    private Long getPriceData(GetInfoRequestDto p) {
+        Long typeNumber = 0L;
+        GetPeakDateResultSet peak = glampPeakRepository.getPeak(p.getGlampId());
+        boolean getPeakStatus = isPeak(p.getInDate(), peak);// true -> 성수기 false -> 비수기
+        boolean getWeekendStatus = isWeekend(p.getInDate());// true -> 주말 false -> 평일
+
+        /*  1 -> 평일 비수기
+            2 -> 주말 비수기
+            3 -> 평일 성수기
+            4 -> 주말 성수기
+         */
+        if (getPeakStatus && getWeekendStatus) { //주말 성수기
+            typeNumber = 4L;
+        } else if (getPeakStatus) { //평일 성수기
+            typeNumber = 3L;
+        } else if (getWeekendStatus) { //주말 비수기
+            typeNumber = 2L;
+        } else { //평일 비수기
+            typeNumber = 1L;
         }
+
+        return typeNumber;
     }
-
-
 
     private int getIsFavData(GetInfoRequestDto dto, long loginUserId) {
         if (loginUserId != 0) {
