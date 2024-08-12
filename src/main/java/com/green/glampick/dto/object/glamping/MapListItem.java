@@ -2,11 +2,13 @@ package com.green.glampick.dto.object.glamping;
 
 import com.green.glampick.dto.object.GlampingPriceItem;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class MapListItem extends GlampingPriceItem {
 
     @Schema(example = "뉴욕카라반", description = "글램핑장의 이름")
@@ -22,9 +24,9 @@ public class MapListItem extends GlampingPriceItem {
     private int reviewCount;
 
     @Schema(example = "위도")
-    private double lat;
+    private Double lat;
 
     @Schema(example = "위도")
-    private double lng;
+    private Double lng;
 
 }
