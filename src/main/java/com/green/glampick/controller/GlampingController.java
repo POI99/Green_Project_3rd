@@ -34,6 +34,16 @@ public class GlampingController {
 
 // 민지 =================================================================================================================
 
+    //  지도 결과 불러오기  //
+    @GetMapping("search/map")
+    @Operation(summary = "지도 검색 결과 가져오기 (김민지)", description = "")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetSearchMapListResponseDto.class)))
+    public ResponseEntity<? super GetSearchMapListResponseDto> mapSearchList(@RequestParam String region) {
+        return service.searchMapList(region);
+    }
+
     //  글램핑 검색 결과 불러오기  //
     @GetMapping("search")
     @Operation(summary = "글램핑 검색 결과 가져오기 (김민지)", description = SEARCH_GLAMPING_DESCRIPTION)
