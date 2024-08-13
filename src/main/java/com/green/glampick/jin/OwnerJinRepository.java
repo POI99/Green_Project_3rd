@@ -114,3 +114,14 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
     )
     List<GetCancelDto> findRoomCount(@Param("ownerId") long ownerId, @Param("startDayId") String startDayId, @Param("endDayId") String endDayId);
 }
+/*
+
+SELECT SUM(A.pay_amount) AS pay
+FROM glamping B RIGHT JOIN
+room C ON B.glamp_id = C.glamp_id
+LEFT JOIN
+reservation_complete A ON A.room_id = C.room_id
+ AND A.check_in_date BETWEEN 20240701 AND 20240715
+WHERE
+B.owner_id = 2
+ */
