@@ -31,6 +31,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import static com.green.glampick.module.DateModule.getPeriod;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -91,8 +93,7 @@ public class BookServiceImpl implements BookService {
             long extraCharge = glampingEntity.getExtraCharge();
 
             // 예약 일수 계산
-            Period period = Period.between(dto.getCheckInDate(), dto.getCheckOutDate());
-            int day = period.getDays();
+            int day = getPeriod(dto.getCheckInDate(), dto.getCheckOutDate());
             long payAmount = 0;
             GetPeakDateResultSet peakResult = glampPeakRepository.getPeak(dto.getGlampId());
             RoomPriceEntity roomPriceEntity = roomPriceRepository.findByRoom(roomEntity);
