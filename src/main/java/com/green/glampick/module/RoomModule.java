@@ -109,12 +109,15 @@ public class RoomModule {
     }
 
     // 수정 시 null 인 경우 기존값 넣어주기
-    public static RoomPostRequestDto dtoNull(RoomPostRequestDto dto, RoomEntity entity) {
+    public static RoomPostRequestDto dtoNull(RoomPostRequestDto dto, RoomEntity entity, RoomPriceEntity roomPrice) {
         if (dto.getRoomName() == null || dto.getRoomName().isEmpty()) {
             dto.setRoomName(entity.getRoomName());
         }
-        if (dto.getPrice() == null || dto.getPrice() < 0) {
-            dto.setPrice(entity.getRoomPrice());
+        if (dto.getWeekdayPrice() == null || dto.getWeekdayPrice() < 0) {
+            dto.setWeekdayPrice(roomPrice.getWeekdayPrice());
+        }
+        if (dto.getWeekendPrice() == null || dto.getWeekendPrice() < 0) {
+            dto.setWeekendPrice(roomPrice.getWeekendPrice());
         }
         if (dto.getPeopleNum() == null || dto.getPeopleNum() < 0) {
             dto.setPeopleNum(entity.getRoomNumPeople());
@@ -221,10 +224,7 @@ public class RoomModule {
         List<Integer> priceList = new ArrayList<>();
         for (RoomEntity roomEntity : room) {
             RoomPriceEntity price = roomPriceRepository.findByRoom(roomEntity);
-            if (peak && week) priceList.add(price.getPeakWeekendPrice());
-            if (peak && !week) priceList.add(price.getPeakWeekdayPrice());
-            if (!peak && week) priceList.add(price.getWeekendPrice());
-            if (!peak && !week) priceList.add(price.getWeekdayPrice());
+            priceList.add(getPrice(price, week, peak));
         }
         Collections.sort(priceList);
         return priceList.get(0);
@@ -233,6 +233,14 @@ public class RoomModule {
     // 해당 글램핑에 포함된 룸entity 가져오기
     public static List<RoomEntity> getRoomEntity(Long glampId, RoomRepository repository) {
         return repository.findByGlampId(glampId);
+    }
+
+    // 객실 한개의 가격 뽑아내기
+    public static int getPrice(RoomPriceEntity entity, boolean week, boolean peak) {
+        if (peak && week) return entity.getPeakWeekendPrice();
+        if (peak) return entity.getPeakWeekdayPrice();
+        if (week) return entity.getWeekendPrice();
+        return entity.getWeekdayPrice();
     }
 
 }

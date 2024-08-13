@@ -9,7 +9,10 @@ import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.BookErrorCode;
 import com.green.glampick.exception.errorCode.CommonErrorCode;
 import com.green.glampick.exception.errorCode.GlampingErrorCode;
+import com.green.glampick.module.DateModule;
+import com.green.glampick.module.RoomModule;
 import com.green.glampick.repository.*;
+import com.green.glampick.repository.resultset.GetPeakDateResultSet;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -35,6 +40,8 @@ public class BookServiceImpl implements BookService {
     private final RoomRepository roomRepository;
     private final GlampingRepository glampingRepository;
     private final AuthenticationFacade authenticationFacade;
+    private final GlampPeakRepository glampPeakRepository;
+    private final RoomPriceRepository roomPriceRepository;
 
     //  예약 페이지 - 글램핑 예약하기  //
     @Override
@@ -79,12 +86,26 @@ public class BookServiceImpl implements BookService {
 
             RoomEntity roomEntity = roomRepository.findByRoomId(dto.getRoomId());
             GlampingEntity glampingEntity = glampingRepository.findByGlampId(dto.getGlampId());
-            long roomPrice = roomEntity.getRoomPrice();
             long personnel = dto.getPersonnel();
             long roomPeople = roomEntity.getRoomNumPeople();
             long extraCharge = glampingEntity.getExtraCharge();
 
-            long payAmount = roomPrice + (personnel - roomPeople) * extraCharge;
+            // 예약 일수 계산
+            Period period = Period.between(dto.getCheckInDate(), dto.getCheckOutDate());
+            int day = period.getDays();
+            long payAmount = 0;
+            GetPeakDateResultSet peakResult = glampPeakRepository.getPeak(dto.getGlampId());
+            RoomPriceEntity roomPriceEntity = roomPriceRepository.findByRoom(roomEntity);
+            // 성수기, 주말 판단
+            for (int i = 0; i < day; i++) {
+                LocalDate date = dto.getCheckInDate().plusDays(i);
+                boolean weekend = DateModule.isWeekend(date);
+                boolean peak = !(peakResult == null || !DateModule.isPeak(date, peakResult.getStartDate(), peakResult.getEndDate()));
+                long roomPrice = RoomModule.getPrice(roomPriceEntity, weekend, peak);
+
+                payAmount += (roomPrice + (personnel - roomPeople) * extraCharge);
+            }
+
 
             reservationBeforeEntity.setPayAmount(payAmount);
 
@@ -108,22 +129,33 @@ public class BookServiceImpl implements BookService {
     @Override
     public ResponseEntity<? super GetBookPayResponseDto> getReservationAmount(GetBookPayRequestDto dto) {
 
-        long roomPrice = 0;
+        List<Long> roomPrice = new ArrayList<>();
         long extraChargePrice = 0;
         long payAmount = 0;
 
 
         try {
-
             RoomEntity roomEntity = roomRepository.findByRoomId(dto.getRoomId());
             GlampingEntity glampingEntity = glampingRepository.findByGlampId(dto.getGlampId());
-            roomPrice = roomEntity.getRoomPrice();
             long roomPeople = roomEntity.getRoomNumPeople();
             long extraCharge = glampingEntity.getExtraCharge();
-
             extraChargePrice = (dto.getPersonnel() - roomPeople) * extraCharge;
 
-            payAmount = roomPrice + (dto.getPersonnel() - roomPeople) * extraCharge;
+            // 예약 일수 계산
+            Period period = Period.between(dto.getCheckInDate(), dto.getCheckOutDate());
+            int day = period.getDays();
+            GetPeakDateResultSet peakResult = glampPeakRepository.getPeak(dto.getGlampId());
+            RoomPriceEntity roomPriceEntity = roomPriceRepository.findByRoom(roomEntity);
+            // 성수기, 주말 판단
+            for (int i = 0; i < day; i++) {
+                LocalDate date = dto.getCheckInDate().plusDays(i);
+                boolean weekend = DateModule.isWeekend(date);
+                boolean peak = !(peakResult == null || !DateModule.isPeak(date, peakResult.getStartDate(), peakResult.getEndDate()));
+                long price = RoomModule.getPrice(roomPriceEntity, weekend, peak);
+                roomPrice.add(price);
+                payAmount += (price + (dto.getPersonnel() - roomPeople) * extraCharge);
+            }
+
 
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());

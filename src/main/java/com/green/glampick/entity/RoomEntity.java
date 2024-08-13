@@ -23,8 +23,8 @@ public class RoomEntity extends UpdatedAt {
     @Column(length = 30, nullable = false) @Comment("객실명")
     private String roomName;
 
-    @Column(length = 11, nullable = false) @Comment("객실 가격")
-    private Integer roomPrice;
+//    @Column(length = 11, nullable = false) @Comment("객실 가격")
+//    private Integer roomPrice;
 
     @Column(length = 11, nullable = false) @Comment("객실 기준인원")
     private Integer roomNumPeople;

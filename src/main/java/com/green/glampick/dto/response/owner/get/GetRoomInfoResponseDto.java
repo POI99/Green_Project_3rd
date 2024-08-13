@@ -2,6 +2,7 @@ package com.green.glampick.dto.response.owner.get;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.green.glampick.dto.ResponseDto;
+import com.green.glampick.entity.RoomPriceEntity;
 import com.green.glampick.repository.resultset.GetRoomInfoResultSet;
 import com.green.glampick.repository.resultset.OwnerInfoResultSet;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,8 +23,11 @@ public class GetRoomInfoResponseDto extends ResponseDto {
     @Schema(example = "카라반 102호", description = "객실 이름")
     private String roomName;
 
-    @Schema(example = "65500", description = "객실 가격")
-    private Integer price;
+    @Schema(example = "65500", description = "주중 객실 가격")
+    private Integer weekdayPrice;
+
+    @Schema(example = "65500", description = "주말 객실 가격")
+    private Integer weekendPrice;
 
     @Schema(example = "2", description = "기준 인원")
     private Integer peopleNum;
@@ -43,12 +47,13 @@ public class GetRoomInfoResponseDto extends ResponseDto {
     @Schema(example = "[1,2,3]", description = "객실 서비스")
     private List<Long> service;
 
-    public GetRoomInfoResponseDto(String roomName, Integer price, Integer peopleNum,
+    public GetRoomInfoResponseDto(String roomName, Integer weekdayPrice, Integer weekendPrice, Integer peopleNum,
                                   Integer peopleMax, String inTime, String outTime, List<String> roomImgName,
                                   List<Long> service){
         super(SUCCESS_CODE, "객실 상세 정보를 불러왔습니다.");
         this.roomName=roomName;
-        this.price=price;
+        this.weekdayPrice=weekdayPrice;
+        this.weekendPrice=weekendPrice;
         this.peopleNum=peopleNum;
         this.peopleMax=peopleMax;
         this.inTime=inTime;
@@ -57,9 +62,11 @@ public class GetRoomInfoResponseDto extends ResponseDto {
         this.service=service;
     }
 
-    public static ResponseEntity<GetRoomInfoResponseDto> success(GetRoomInfoResultSet resultSet, List<String> roomImgName, List<Long> service) {
-        GetRoomInfoResponseDto result = new GetRoomInfoResponseDto(resultSet.getRoomName(), resultSet.getPrice()
-                , resultSet.getPeopleNum(), resultSet.getPeopleMax(), resultSet.getInTime(), resultSet.getOutTime(), roomImgName, service);
+    public static ResponseEntity<GetRoomInfoResponseDto> success(GetRoomInfoResultSet resultSet, List<String> roomImgName
+            , List<Long> service, RoomPriceEntity roomPrice) {
+        GetRoomInfoResponseDto result = new GetRoomInfoResponseDto(resultSet.getRoomName(), roomPrice.getWeekdayPrice()
+                , roomPrice.getWeekendPrice(), resultSet.getPeopleNum(), resultSet.getPeopleMax()
+                , resultSet.getInTime(), resultSet.getOutTime(), roomImgName, service);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }

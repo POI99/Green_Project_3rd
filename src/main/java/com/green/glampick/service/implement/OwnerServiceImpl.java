@@ -242,9 +242,16 @@ public class OwnerServiceImpl implements OwnerService {
 
         // room 테이블 insert
         GlampingEntity glamping = glampingRepository.getReferenceById(req.getGlampId());
-        RoomEntity room = new RoomEntity(null, glamping, req.getRoomName(), req.getPrice()
+        RoomEntity room = new RoomEntity(null, glamping, req.getRoomName()
                 , req.getPeopleNum(), req.getPeopleMax(), req.getInTime(), req.getOutTime());
         roomRepository.save(room);
+
+        // room price 테이블 insert
+        RoomPriceEntity price = new RoomPriceEntity();
+        price.setRoom(roomRepository.getReferenceById(room.getRoomId()));
+        price.setWeekdayPrice(req.getWeekdayPrice());
+        price.setWeekendPrice(req.getWeekendPrice());
+        roomPriceRepository.save(price);
 
         // 이미지 저장
         List<String> roomImgName = RoomModule.imgInsert(image, req.getGlampId(), room.getRoomId(), customFileUtils);
@@ -287,13 +294,20 @@ public class OwnerServiceImpl implements OwnerService {
 
         // null 인 경우 기존값 넣어주기
         RoomEntity room = roomRepository.getReferenceById(p.getRoomId());
-        dto = RoomModule.dtoNull(dto, room);
+        dto = RoomModule.dtoNull(dto, room, roomPriceRepository.findByRoom(room));
 
+        // room 업데이트
         RoomEntity roomUpdate = new RoomEntity(p.getRoomId()
                 , glampingRepository.getReferenceById(dto.getGlampId())
-                , dto.getRoomName(), dto.getPrice(), dto.getPeopleNum()
+                , dto.getRoomName(), dto.getPeopleNum()
                 , dto.getPeopleMax(), dto.getInTime(), dto.getOutTime());
         roomRepository.save(roomUpdate);
+        // room price 없데이트
+        RoomPriceEntity priceUpdate = new RoomPriceEntity();
+        priceUpdate.setRoom(roomUpdate);
+        priceUpdate.setWeekdayPrice(dto.getWeekdayPrice());
+        priceUpdate.setWeekendPrice(dto.getWeekendPrice());
+        roomPriceRepository.save(priceUpdate);
 
         // 서비스 수정
         List<Long> roomService = serviceRepository.findRoomServiceIdByRoom(room);
@@ -399,8 +413,9 @@ public class OwnerServiceImpl implements OwnerService {
         RoomEntity room = roomRepository.getReferenceById(roomId);
         List<String> roomImage = roomImageRepository.getRoomImg(room);
         List<Long> service = serviceRepository.findRoomServiceIdByRoom(room);
+        RoomPriceEntity price = roomPriceRepository.findByRoom(room);
 
-        return GetRoomInfoResponseDto.success(resultSet, roomImage, service);
+        return GetRoomInfoResponseDto.success(resultSet, roomImage, service, price);
     }
 
     // 비밀번호 확인
@@ -446,14 +461,14 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     // 사장님 탈퇴 승인 요청
-    public ResponseEntity<? super OwnerSuccessResponseDto> withdrawOwner(Long glampId) {
+    public ResponseEntity<? super OwnerSuccessResponseDto> withdrawOwner() {
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
         OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
-        GlampingModule.isGlampIdOk(glampingRepository, owner, glampId);
+
 
         // 예약 된 글램핑이 있는지 확인
-        GlampingEntity glamping = glampingRepository.getReferenceById(glampId);
+        GlampingEntity glamping = glampingRepository.findByOwner(owner);
         GlampingModule.existReservation(glamping, reservationBeforeRepository);
 
         // 탈퇴 요청

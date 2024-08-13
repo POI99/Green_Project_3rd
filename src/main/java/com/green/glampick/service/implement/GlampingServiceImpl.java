@@ -4,6 +4,7 @@ import com.green.glampick.dto.object.Repository;
 import com.green.glampick.dto.object.ReviewListItem;
 import com.green.glampick.dto.object.glamping.*;
 import com.green.glampick.dto.request.glamping.*;
+import com.green.glampick.entity.RoomEntity;
 import com.green.glampick.module.DateModule;
 import com.green.glampick.dto.response.glamping.*;
 import com.green.glampick.dto.response.glamping.favorite.GetFavoriteGlampingResponseDto;
@@ -14,6 +15,7 @@ import com.green.glampick.exception.errorCode.GlampingErrorCode;
 import com.green.glampick.mapper.GlampingMapper;
 import com.green.glampick.module.GlampingModule;
 import com.green.glampick.repository.*;
+import com.green.glampick.repository.resultset.GetMapListResultSet;
 import com.green.glampick.repository.resultset.GetPeakDateResultSet;
 import com.green.glampick.security.AuthenticationFacade;
 import com.green.glampick.service.GlampingService;
@@ -58,7 +60,19 @@ public class GlampingServiceImpl implements GlampingService {
     @Override
     @Transactional
     public ResponseEntity<? super GetSearchMapListResponseDto> searchMapList(String region) {
-        return null;
+        List<GetMapListResultSet> resultSets = new ArrayList<>();
+        resultSets = region.equals("all") ? glampingRepository.getMapList() : glampingRepository.getMapList(region);
+        List<MapListItem> result = new ArrayList<>();
+        for (GetMapListResultSet resultSet : resultSets) {
+            List<RoomEntity> room =  roomRepository.findByGlampId(resultSet.getGlampId());
+            if(room == null || room.isEmpty()) continue;  // 등록된 룸정보가 없으면 x
+            MapListItem item = new MapListItem(resultSet.getGlampName(), resultSet.getGlampPic(), resultSet.getStarPoint()
+            , resultSet.getReviewCount(), resultSet.getLat(), resultSet.getLng());
+            item.setGlampId(resultSet.getGlampId());
+            result.add(item);
+        }
+        result = GlampingModule.setRoomPrice(result, DateModule.isWeekend(), repository());
+        return GetSearchMapListResponseDto.success(result);
     }
 
     @Override
