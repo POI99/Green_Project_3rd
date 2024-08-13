@@ -6,14 +6,19 @@ import com.green.glampick.entity.GlampingWaitEntity;
 import com.green.glampick.entity.OwnerEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface GlampingWaitRepository extends JpaRepository<GlampingWaitEntity, Long> {
 
     @Modifying
     @Transactional
-    @Query("update GlampingWaitEntity g set g.glampImage = :glampImg where g.glampId = :glampId")
-    void updateGlampImageByGlampId(String glampImg, Long glampId);
+    @Query(value = "update glamping_wait g" +
+            " set g.location = ST_GeomFromText(:point)" +
+            " , g.glamp_image = :glampImg" +
+            " where g.glamp_id = :glampId", nativeQuery = true)
+    void updateGlampImageByGlampId(@Param("glampImg") String glampImg, @Param("glampId") Long glampId, @Param("point") String point);
+
 
     GlampingWaitEntity findByOwner(OwnerEntity owner);
     GlampingWaitEntity findByGlampId(Long glampId);

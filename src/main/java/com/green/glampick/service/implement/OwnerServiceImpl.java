@@ -153,9 +153,10 @@ public class OwnerServiceImpl implements OwnerService {
         glampingWaitRepository.save(entity);
         long glampId = entity.getGlampId();
 
-        // 이미지 저장하기
+        // 좌표, 이미지 저장하기
+        String point = String.format("POINT(%s %s)", req.getLat(), req.getLng());
         String fileName = GlampingModule.imageUpload(customFileUtils, glampImg, glampId, "glampingWait");
-        glampingWaitRepository.updateGlampImageByGlampId(fileName, glampId);
+        glampingWaitRepository.updateGlampImageByGlampId(fileName, glampId, point);
 
         return OwnerSuccessResponseDto.postInformation();
     }
@@ -192,7 +193,8 @@ public class OwnerServiceImpl implements OwnerService {
         glampingRepository.updateGlampingInformation(dto.getGlampName(), dto.getGlampCall()
                 , dto.getGlampLocation(), dto.getRegion(), dto.getExtraCharge()
                 , dto.getIntro(), dto.getBasic(), dto.getNotice(), dto.getTraffic(), p.getGlampId());
-
+        String point = String.format("POINT(%s %s)", dto.getLat(), dto.getLng());
+        glampingRepository.updateGlampLocation(p.getGlampId(), point);
 
         return OwnerSuccessResponseDto.updateInformation();
     }

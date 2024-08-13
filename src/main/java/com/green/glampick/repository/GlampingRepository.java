@@ -8,6 +8,7 @@ import com.green.glampick.repository.resultset.GetMapListResultSet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -30,6 +31,14 @@ public interface GlampingRepository extends JpaRepository<GlampingEntity, Long> 
             ", g.traffic = :traffic where g.glampId = :glampId")
     void updateGlampingInformation(String name, String call, String location, String region, int extra,
             String intro, String basic, String notice, String traffic, Long glampId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update glamping g" +
+            " set g.location = ST_GeomFromText(:point)" +
+            " where g.glamp_id = :glampId", nativeQuery = true)
+    void updateGlampLocation(@Param("glampId") Long glampId, @Param("point") String point);
+
 
     @Modifying
     @Transactional
