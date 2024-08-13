@@ -16,18 +16,19 @@ import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 @Setter
 public class GetOwnerPopularRoomResponseDto extends ResponseDto {
 
-
+    private Long total;
     List<GetPopularRoom> popularRooms;
 
-    private GetOwnerPopularRoomResponseDto(List<GetPopularRoom> popularRooms) {
+    private GetOwnerPopularRoomResponseDto(Long total, List<GetPopularRoom> popularRooms) {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.popularRooms = popularRooms;
+        this.total = total;
 
 
     }
 
-    public static ResponseEntity<GetOwnerPopularRoomResponseDto> success(List<GetPopularRoom> popularRooms) {
-        GetOwnerPopularRoomResponseDto result = new GetOwnerPopularRoomResponseDto(popularRooms);
+    public static ResponseEntity<GetOwnerPopularRoomResponseDto> success(Long total, List<GetPopularRoom> popularRooms) {
+        GetOwnerPopularRoomResponseDto result = new GetOwnerPopularRoomResponseDto(total, popularRooms);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 

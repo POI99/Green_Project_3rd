@@ -42,6 +42,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.MNF);
         }
+        Long total = 0L;
         List<GetPopularRoom> popRoom = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -49,7 +50,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
         String formEnd = dto.getEndDayId().format(formatter);
         try {
 
-
+            total = reservationCompleteRepository.findTotal(dto.getOwnerId(), formStart, formEnd);
             popRoom = reservationCompleteRepository.findPopularRoom(dto.getOwnerId(), formStart, formEnd);
             if (dto.getOwnerId() == 0) {
                 throw new CustomException(OwnerErrorCode.NMG);
@@ -61,7 +62,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             throw new CustomException(CommonErrorCode.DBE);
         }
 
-        return GetOwnerPopularRoomResponseDto.success(popRoom);
+        return GetOwnerPopularRoomResponseDto.success(total, popRoom);
     }
 
     @Override// 별점
