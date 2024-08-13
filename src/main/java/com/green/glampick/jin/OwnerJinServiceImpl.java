@@ -87,6 +87,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
             e.printStackTrace();
+
             throw new CustomException(CommonErrorCode.DBE);
         }
 
