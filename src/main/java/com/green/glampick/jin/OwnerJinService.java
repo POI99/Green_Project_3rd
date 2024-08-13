@@ -12,9 +12,6 @@ public interface OwnerJinService {
     // 별점
     ResponseEntity<? super GetOwnerStarResponseDto> getStarRoom(ReviewGetStarRequestDto dto);
 
-    // 관심 수
-//    ResponseEntity<? super GetGlampingHeartResponseDto> getHeartRoom(ReviewGetHeartRequestDto dto);
-
     // 예약 취소율
     ResponseEntity<? super GetGlampingCancelResponseDto> getGlampingCancelRoom(ReviewGetCancelRequestDto dto);
 

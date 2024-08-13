@@ -92,34 +92,6 @@ public class OwnerJinServiceImpl implements OwnerJinService {
         return GetOwnerStarResponseDto.success(starHearts);
     }
 
-//    @Override// 관심 수
-//    @Transactional
-//    public ResponseEntity<? super GetGlampingHeartResponseDto> getHeartRoom(ReviewGetHeartRequestDto dto) {
-//        try {
-//            dto.setOwnerId(authenticationFacade.getLoginUserId());
-//            if (dto.getOwnerId() <= 0) {
-//                throw new RuntimeException();
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new CustomException(CommonErrorCode.MNF);
-//        }
-//        List<GetGlampingHeart> getGlampingHearts = null;
-//        try {
-//            getGlampingHearts = ownerRepository.findGlampingHeart(dto.getOwnerId());
-//            if (dto.getOwnerId() == 0) {
-//                throw new CustomException(OwnerErrorCode.NMG);
-//            }
-//        } catch (CustomException e) {
-//            throw new CustomException(e.getErrorCode());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new CustomException(CommonErrorCode.DBE);
-//        }
-//
-//        return GetGlampingHeartResponseDto.success(getGlampingHearts);
-//    }
-
 
     @Override// 예약 취소율
     @Transactional
@@ -173,8 +145,11 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             throw new CustomException(CommonErrorCode.MNF);
         }
         List<GetRevenue> revenue = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formStart = dto.getStartDayId().format(formatter);
+        String formEnd = dto.getEndDayId().format(formatter);
         try {
-            revenue = ownerRepository.findRevenue(dto.getOwnerId(), dto.getStartDayId(), dto.getEndDayId());
+            revenue = ownerRepository.findRevenue(dto.getOwnerId(), formStart, formEnd);
             if (dto.getOwnerId() == 0) {
                 throw new CustomException(OwnerErrorCode.NMG);
             }

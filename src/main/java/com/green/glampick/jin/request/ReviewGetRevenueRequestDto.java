@@ -13,8 +13,8 @@ public class ReviewGetRevenueRequestDto {
 
     @JsonIgnore
     private long ownerId;
-    @Schema(example = "20240701")
-    private long startDayId;
-    @Schema(example = "20240731")
-    private long endDayId;
+    @Schema(example = "2024-07-01")
+    private LocalDate startDayId;
+    @Schema(example = "2024-07-31")
+    private LocalDate endDayId;
 }
