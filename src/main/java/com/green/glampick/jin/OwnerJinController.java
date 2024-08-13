@@ -15,6 +15,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.green.glampick.common.swagger.description.owner.GetCancelDescription.OWNER_CANCEL_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetCancelDescription.OWNER_CANCEL_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.GetOwnerPopularRoomDescription.OWNER_ROOM_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetOwnerPopularRoomDescription.OWNER_ROOM_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.GetOwnerStarDescription.OWNER_STAR_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetOwnerStarDescription.OWNER_STAR_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.GetRevenueDescription.OWNER_REVENUE_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetRevenueDescription.OWNER_REVENUE_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.user.GetUserBookSwaggerDescription.USER_BOOK_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.user.GetUserBookSwaggerDescription.USER_BOOK_RESPONSE_ERROR_CODE;
 
@@ -31,18 +39,18 @@ public class OwnerJinController {
 
     // 이용 완료된 객실별 예약수
     @GetMapping("/poproom")
-    @Operation(summary = "이용 완료된 객실별 예약수 (이진현)", description = USER_BOOK_DESCRIPTION)
-    @ApiResponse(responseCode = "200", description = USER_BOOK_RESPONSE_ERROR_CODE,
+    @Operation(summary = "이용 완료된 객실별 예약수 (이진현)", description = OWNER_ROOM_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = OWNER_ROOM_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerPopularRoomResponseDto.class)))
     public ResponseEntity<? super GetOwnerPopularRoomResponseDto> getPopRoom(@ParameterObject ReviewGetRoomRequestDto dto) {
         return service.getPopRoom(dto);
     }
 
-    // 평균 별점
+    // 평균 별점 및 관심 수
     @GetMapping("/starheart")
-    @Operation(summary = "평균 별점, 관심 수 (이진현)", description = USER_BOOK_DESCRIPTION)
-    @ApiResponse(responseCode = "200", description = USER_BOOK_RESPONSE_ERROR_CODE,
+    @Operation(summary = "평균 별점, 관심 수 (이진현)", description = OWNER_STAR_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = OWNER_STAR_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerStarResponseDto.class)))
     public ResponseEntity<? super GetOwnerStarResponseDto> getStarRoom(@ParameterObject ReviewGetStarRequestDto dto) {
@@ -51,8 +59,8 @@ public class OwnerJinController {
 
     // 예약 취소율
     @GetMapping("/glampingcancel")
-    @Operation(summary = "예약 취소율 (이진현)", description = USER_BOOK_DESCRIPTION)
-    @ApiResponse(responseCode = "200", description = USER_BOOK_RESPONSE_ERROR_CODE,
+    @Operation(summary = "예약 취소율 (이진현)", description = OWNER_CANCEL_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = OWNER_CANCEL_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetGlampingCancelResponseDto.class)))
     public ResponseEntity<? super GetGlampingCancelResponseDto> getGlampingCancelRoom(@ParameterObject ReviewGetCancelRequestDto dto) {
@@ -61,8 +69,8 @@ public class OwnerJinController {
 
     //매출
     @GetMapping("/revenue")
-    @Operation(summary = "매출 (이진현)", description = USER_BOOK_DESCRIPTION)
-    @ApiResponse(responseCode = "200", description = USER_BOOK_RESPONSE_ERROR_CODE,
+    @Operation(summary = "매출 (이진현)", description = OWNER_REVENUE_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = OWNER_REVENUE_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = GetOwnerRevenueResponseDto.class)))
     public ResponseEntity<? super GetOwnerRevenueResponseDto> getPopRoom(@ParameterObject ReviewGetRevenueRequestDto dto) {
