@@ -15,6 +15,7 @@ import com.green.glampick.exception.errorCode.GlampingErrorCode;
 import com.green.glampick.mapper.GlampingMapper;
 import com.green.glampick.module.GlampingModule;
 import com.green.glampick.repository.*;
+import com.green.glampick.repository.resultset.GetBookDateResultSet;
 import com.green.glampick.repository.resultset.GetMapListResultSet;
 import com.green.glampick.repository.resultset.GetPeakDateResultSet;
 import com.green.glampick.security.AuthenticationFacade;
@@ -48,6 +49,7 @@ public class GlampingServiceImpl implements GlampingService {
     private final GlampPeakRepository glampPeakRepository;
     private final RoomPriceRepository roomPriceRepository;
     private final RoomRepository roomRepository;
+    private final ReservationBeforeRepository reservationBeforeRepository;
 
     private Repository repository() {
         return Repository.builder().glampingRepository(glampingRepository)
@@ -59,6 +61,37 @@ public class GlampingServiceImpl implements GlampingService {
     // 민지 =================================================================================================================
     @Override
     @Transactional
+//    public ResponseEntity<? super GetSearchMapListResponseDto> searchMapList(GetSearchMapRequestDto dto) {
+//        List<GetMapListResultSet> resultSets = new ArrayList<>();
+//        resultSets = dto.getRegion().equals("all") ? glampingRepository.getMapList() : glampingRepository.getMapList(dto.getRegion());
+//        List<MapListItem> result = new ArrayList<>();
+//
+//        List<RoomEntity> roomEntities = new ArrayList<>();
+//
+//        for (GetMapListResultSet resultSet : resultSets) {
+//            List<RoomEntity> rooms =  roomRepository.findByGlampId(resultSet.getGlampId());
+//            if(rooms == null || rooms.isEmpty()) continue;  // 등록된 룸정보가 없으면 x
+//            for (RoomEntity room : rooms) {
+//                roomEntities.add(room);
+//                List<GetBookDateResultSet> roomDateList = reservationBeforeRepository.getBookDateByRoom(room);
+//                for (GetBookDateResultSet dateItem : roomDateList) {
+//                    HashMap<String, LocalDate> dateHashMap = DateModule.parseDate(dto.getIn(), dto.getOut(), dateItem.getCheckInDate().toString(), dateItem.getCheckOutDate().toString());
+//                    if (DateModule.checkOverlap(dateHashMap)) { // 겹치면
+//                        roomEntities.remove(room);
+//                        break;
+//                    }
+//                }
+//            }
+//            MapListItem item = new MapListItem(resultSet.getGlampName(), resultSet.getGlampPic(), resultSet.getStarPoint()
+//            , resultSet.getReviewCount(), resultSet.getLat(), resultSet.getLng());
+//            item.setGlampId(resultSet.getGlampId());
+//            result.add(item);
+//        }
+//        // 가격 넣기
+//        result = GlampingModule.setRoomPrice(result, DateModule.isWeekend(), repository(), roomEntities);
+//        System.out.println(result.size() + "+++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+//        return GetSearchMapListResponseDto.success(result);
+//    }
     public ResponseEntity<? super GetSearchMapListResponseDto> searchMapList(String region) {
         List<GetMapListResultSet> resultSets = new ArrayList<>();
         resultSets = region.equals("all") ? glampingRepository.getMapList() : glampingRepository.getMapList(region);
@@ -67,7 +100,7 @@ public class GlampingServiceImpl implements GlampingService {
             List<RoomEntity> room =  roomRepository.findByGlampId(resultSet.getGlampId());
             if(room == null || room.isEmpty()) continue;  // 등록된 룸정보가 없으면 x
             MapListItem item = new MapListItem(resultSet.getGlampName(), resultSet.getGlampPic(), resultSet.getStarPoint()
-            , resultSet.getReviewCount(), resultSet.getLat(), resultSet.getLng());
+                    , resultSet.getReviewCount(), resultSet.getLat(), resultSet.getLng());
             item.setGlampId(resultSet.getGlampId());
             result.add(item);
         }
@@ -91,7 +124,7 @@ public class GlampingServiceImpl implements GlampingService {
 
         // 필터가 있는지
         if (req.getFilter() != null && !req.getFilter().isEmpty()) {
-            req.setFilterSize(1);
+            req.setFilterSize(req.getFilter().size());
         }
 
         // searchGlamping1 : 필터, 날짜, 인원수

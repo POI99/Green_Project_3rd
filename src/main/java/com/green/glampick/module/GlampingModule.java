@@ -182,5 +182,16 @@ public class GlampingModule {
         }
         return items;
     }
+    public static <T extends GlampingPriceItem> List<T> setRoomPrice(List<T> items, boolean weekend
+            , Repository repository, List<RoomEntity> room) {
+        for (T item : items) {
+            GetPeakDateResultSet peakResult = repository.getGlampPeakRepository().getPeak(item.getGlampId());
+            int price = RoomModule.getRoomPrice(room, weekend,
+                    !(peakResult == null || !DateModule.isPeak(peakResult)), repository.getRoomPriceRepository());
+            item.setPrice(price);
+        }
+        return items;
+    }
+
 
 }

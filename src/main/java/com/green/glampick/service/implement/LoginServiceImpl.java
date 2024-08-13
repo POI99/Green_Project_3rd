@@ -441,8 +441,16 @@ public class LoginServiceImpl implements LoginService {
                 throw new CustomException(CommonErrorCode.SF);
             }
 
-            if (ownerEntity.getActivateStatus() != 1) {
+            if (ownerEntity.getActivateStatus() == -1) {
                 throw new CustomException(CommonErrorCode.NS);
+            }
+
+            if (ownerEntity.getActivateStatus() == 0) {
+                throw new CustomException(CommonErrorCode.WO);
+            }
+
+            if (ownerEntity.getRole() == Role.ROLE_RESERVE_OWNER) {
+                throw new CustomException(CommonErrorCode.WS);
             }
 
             //  로그인에 성공할 경우, myUser 에 로그인한 userId 값을 넣고, 권한을 넣는다.  //

@@ -26,4 +26,5 @@ public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
 
     @Query ("select r from RoomEntity r where r.glamp.glampId = :glampId")
     List<RoomEntity> findByGlampId(Long glampId);
+
 }

@@ -4,6 +4,8 @@ import com.green.glampick.dto.object.owner.OwnerBookItem;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookBeforeCountResponseDto;
 import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.ReservationBeforeEntity;
+import com.green.glampick.entity.RoomEntity;
+import com.green.glampick.repository.resultset.GetBookDateResultSet;
 import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -61,4 +63,11 @@ public interface ReservationBeforeRepository extends JpaRepository<ReservationBe
     List<GetOwnerBookBeforeCountResponseDto> getCountFromReservationBefore(@Param("month")int month, @Param("ownerId")Long ownerId);
 
     List<ReservationBeforeEntity> findByGlamping(GlampingEntity glamping);
+
+
+    @Query ("SELECT rb.glamping.glampId AS glampId " +
+            " ,rb.checkInDate AS checkInDate, rb.checkOutDate AS checkOutDate" +
+            " from ReservationBeforeEntity rb " +
+            "WHERE rb.room = :room")
+    List<GetBookDateResultSet> getBookDateByRoom(RoomEntity room);
 }
