@@ -12,6 +12,7 @@ public class OwnerBookDetailListItem {
     private String roomName;
     private Long personnel;
     private Long payAmount;
+    private Long reservationId;
     private String checkInDate;
     private String checkOutDate;
     private String userPhone;

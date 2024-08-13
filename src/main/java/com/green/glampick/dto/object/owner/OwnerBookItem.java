@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 
 public interface OwnerBookItem {
     Long getPersonnel();
+    Long getPayAmount();
+    Long getReservationId();
     LocalDate getCheckInDate();
     LocalDate getCheckOutDate();
     LocalDateTime getCreatedAt();
@@ -13,5 +15,4 @@ public interface OwnerBookItem {
     String getPg();
     String getUserPhone();
     String getRoomName();
-    Long getPayAmount();
 }

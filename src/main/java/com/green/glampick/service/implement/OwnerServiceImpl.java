@@ -39,6 +39,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -481,7 +482,8 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
 
-    // 강국 =================================================================================================================
+    // 강국 ====================================================================================================================
+
     @Override
     @Transactional // 사장님 답글달기
     public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p) {
@@ -708,7 +710,7 @@ public class OwnerServiceImpl implements OwnerService {
         return null;
     }
 
-
+    @Override // 성수기 비수기 등록
     public ResponseEntity<? super PatchOwnerPeakResponseDto> patchPeak(Long glampId, PatchOwnerPeakRequestDto p) {
         log.info("service: {}", p);
         //가격정보 찾아오기
@@ -735,8 +737,13 @@ public class OwnerServiceImpl implements OwnerService {
 
     }
 
+    @Override // 예약 삭제
+    public ResponseEntity<? super OwnerSuccessResponseDto> deleteOwnersReservation(Long reservationId) {
+        return null;
+    }
 
-    //========================================= < PRIVATE METHOD > =========================================================//
+
+    //========================================= < PRIVATE METHOD > =================================================//
     private void putPriceData(Long glampId, PatchOwnerPeakRequestDto p, List<GetRoomPriceItem> priceItems, double percent) {
         for (GetRoomPriceItem item : priceItems) {
             // 리스트에서 가격정보 받아옴
@@ -790,6 +797,7 @@ public class OwnerServiceImpl implements OwnerService {
     private static void setBookDetailList(List<OwnerBookItem> reservationResultSetList, List<OwnerBookDetailListItem> bookDetailListItems) {
         for (OwnerBookItem resultSet : reservationResultSetList) {
             OwnerBookDetailListItem item = new OwnerBookDetailListItem();
+            item.setReservationId(resultSet.getReservationId());
             item.setInputName(resultSet.getInputName());
             item.setRoomName(resultSet.getRoomName());
             item.setPersonnel(resultSet.getPersonnel());

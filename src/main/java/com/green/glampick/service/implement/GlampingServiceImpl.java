@@ -341,8 +341,14 @@ public class GlampingServiceImpl implements GlampingService {
     // =================================================================================================================
     private Long getPriceData(GetInfoRequestDto p) {
         Long typeNumber = 0L;
+
         GetPeakDateResultSet peak = glampPeakRepository.getPeak(p.getGlampId());
-        boolean getPeakStatus = isPeak(p.getInDate(), peak);// true -> 성수기 false -> 비수기
+        boolean getPeakStatus = false;
+
+        if (peak != null) {
+            getPeakStatus = isPeak(p.getInDate(), peak);// true -> 성수기 false -> 비수기
+
+        }
         boolean getWeekendStatus = isWeekend(p.getInDate());// true -> 주말 false -> 평일
 
         /*  1 -> 평일 비수기
