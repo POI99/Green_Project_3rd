@@ -44,6 +44,7 @@ public class BookServiceImpl implements BookService {
     private final AuthenticationFacade authenticationFacade;
     private final GlampPeakRepository glampPeakRepository;
     private final RoomPriceRepository roomPriceRepository;
+    private final UserRepository userRepository;
 
     //  예약 페이지 - 글램핑 예약하기  //
     @Override
@@ -107,9 +108,15 @@ public class BookServiceImpl implements BookService {
                 payAmount += (roomPrice + (personnel - roomPeople) * extraCharge);
             }
 
-
             reservationBeforeEntity.setPayAmount(payAmount);
-
+            reservationBeforeEntity.setUser(userRepository.getReferenceById(dto.getUserId()));
+            reservationBeforeEntity.setGlamping(glampingRepository.getReferenceById(dto.getGlampId()));
+            reservationBeforeEntity.setRoom(roomEntity);
+            reservationBeforeEntity.setPersonnel(dto.getPersonnel());
+            reservationBeforeEntity.setInputName(dto.getInputName());
+            reservationBeforeEntity.setCheckInDate(dto.getCheckInDate());
+            reservationBeforeEntity.setCheckOutDate(dto.getCheckOutDate());
+            reservationBeforeEntity.setPg(dto.getPg());
             log.info("PerSonnel : {}", personnel);
 
             //  가공이 완료된 Entity 를 DB에 저장한다.  //
