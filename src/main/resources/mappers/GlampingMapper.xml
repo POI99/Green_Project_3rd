@@ -203,16 +203,31 @@
         AND check_out_date > #{inDate} )
         ) C
         ON A.room_id = C.room_id
-        <where>
-            C.room_id IS NULL
+        <if test="filterSize != 0">
+            JOIN (
+            SELECT A.glamp_id
+            FROM room A
+            JOIN room_service B ON A.room_id = B.room_id
+            WHERE B.service_id IN
+            <foreach item="filterId" collection="filter" open="(" separator="," close=")">
+                #{filterId}
+            </foreach>
+            GROUP BY A.glamp_id
+            HAVING COUNT(DISTINCT B.service_id) = #{filterSize}
+            ) D
+            ON A.glamp_id = D.glamp_id
+        </if>
+<!--        <where>-->
+        WHERE C.room_id IS NULL
             AND (#{people} >= A.room_num_people  AND A.room_max_people >= #{people})
-            <if test="filterSize != 0">
-                AND B.service_id IN
-                <foreach item="filterId" collection="filter" open="(" separator="," close=")">
-                    #{filterId}
-                </foreach>
-            </if>
-        </where>
+
+<!--            <if test="filterSize != 0">-->
+<!--                AND B.service_id IN-->
+<!--                <foreach item="filterId" collection="filter" open="(" separator="," close=")">-->
+<!--                    #{filterId}-->
+<!--                </foreach>-->
+<!--            </if>-->
+<!--        </where>-->
         GROUP BY A.glamp_id
 <!--        ORDER BY A.room_price-->
     </select>

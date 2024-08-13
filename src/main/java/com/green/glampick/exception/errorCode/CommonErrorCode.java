@@ -19,6 +19,8 @@ public enum CommonErrorCode implements ErrorCode {
     IC(HttpStatus.BAD_REQUEST, "인증코드가 올바르지 않습니다."), // INVALID_CODE
     VF(HttpStatus.BAD_REQUEST, "모든 정보를 입력해주세요."), // VALIDATION_FAILED
     NS(HttpStatus.BAD_REQUEST, "탈퇴한 회원 입니다."),
+    WO(HttpStatus.BAD_REQUEST, "탈퇴 대기중인 회원 입니다."),
+    WS(HttpStatus.BAD_REQUEST, "가입 대기중인 회원 입니다."),
 
     // 401
     SF(HttpStatus.UNAUTHORIZED, "로그인에 실패하였습니다."), // SIGN_IN_FAILED
