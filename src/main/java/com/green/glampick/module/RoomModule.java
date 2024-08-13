@@ -224,6 +224,7 @@ public class RoomModule {
         List<Integer> priceList = new ArrayList<>();
         for (RoomEntity roomEntity : room) {
             RoomPriceEntity price = roomPriceRepository.findByRoom(roomEntity);
+            if(price == null) continue;
             priceList.add(getPrice(price, week, peak));
         }
         Collections.sort(priceList);
