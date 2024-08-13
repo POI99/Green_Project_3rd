@@ -30,7 +30,7 @@ import com.green.glampick.service.OwnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springdoc.core.annotations.ParameterObject;
+
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,15 +38,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.green.glampick.module.DateModule.getPeriod;
 import static com.green.glampick.module.DateModule.parseToLocalDate;
 
 
@@ -810,6 +809,9 @@ public class OwnerServiceImpl implements OwnerService {
             item.setCheckOutDate(resultSet.getCheckOutDate().toString());
             item.setCreatedAt(resultSet.getCreatedAt().toString());
 
+            /*연박데이터 세팅*/
+            int period = getPeriod(item.getCheckInDate(), item.getCheckOutDate());
+            item.setPeriod(period);
             bookDetailListItems.add(item);
         }
     }

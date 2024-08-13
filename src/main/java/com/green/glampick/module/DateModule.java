@@ -1,9 +1,11 @@
 package com.green.glampick.module;
 
 
+import com.green.glampick.dto.request.book.PostBookRequestDto;
 import com.green.glampick.repository.resultset.GetPeakDateResultSet;
 
 import java.sql.Timestamp;
+import java.time.Period;
 import java.util.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -49,7 +51,6 @@ public class DateModule {
         return isPeak(parseToLocalDate(date), peak.getStartDate(), peak.getEndDate());
     }
 
-
     public static LocalDate parseToLocalDate(String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(date, formatter);
@@ -59,7 +60,7 @@ public class DateModule {
     public static boolean checkDate(String in, String out) {
         return parseToLocalDate(out).isBefore(parseToLocalDate(in)); // 틀리면 true
     }
-
+    /* 데이트 put HashMap  */
     public static HashMap<String, LocalDate> parseDate(String in, String out, String dbCheckIn, String dbCheckOut) {
         HashMap<String, LocalDate> date = new HashMap<>();
         //Request check-in check-out
@@ -72,7 +73,7 @@ public class DateModule {
 
         return date;
     }
-
+    /* 예약가능여부 판단 HashMap 데이터를 꺼내서 */
     public static  boolean checkOverlap(HashMap<String, LocalDate> dateHashMap) {
         //get Req in out date
         LocalDate start1 = dateHashMap.get("inDate");
@@ -85,4 +86,13 @@ public class DateModule {
         return !start1.isAfter(end2) && !start2.isAfter(end1); // 날짜가 겹치면 true
     }
 
+    /* 연박 데이트 추출(몇박인지 알 수 있음) */
+    public static int getPeriod(String inDate, String outDate) {
+        Period period = Period.between(parseToLocalDate(inDate), parseToLocalDate(outDate));
+        return period.getDays();
+    }
+    /* 파라메터가 LocalDate 인 경우 */
+    public static int getPeriod(LocalDate inDate, LocalDate outDate) {
+        return getPeriod(inDate.toString(), outDate.toString());
+    }
 }

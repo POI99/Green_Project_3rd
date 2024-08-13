@@ -10,6 +10,7 @@ import lombok.ToString;
 public class OwnerBookDetailListItem {
     private String inputName;
     private String roomName;
+    private Integer period;
     private Long personnel;
     private Long payAmount;
     private Long reservationId;
@@ -18,6 +19,5 @@ public class OwnerBookDetailListItem {
     private String userPhone;
     private String pg;
     private String createdAt;
-
 
 }

@@ -19,7 +19,7 @@ public class GetOwnerBookListResponseDto extends ResponseDto {
 
     private List<OwnerBookDetailListItem> before;
     private List<OwnerBookDetailListItem> complete;
-    private List<OwnerBookDetailListItem> cancel;
+//    private List<OwnerBookDetailListItem> cancel;
 
     private List<OwnerBookCountListItem> countList;
 
