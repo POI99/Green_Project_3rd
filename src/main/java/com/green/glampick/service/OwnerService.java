@@ -47,7 +47,7 @@ public interface OwnerService {
     // 회원 정보 수정
     ResponseEntity<? super PatchOwnerInfoResponseDto> patchOwnerInfo(PatchOwnerInfoRequestDto dto);
     // 탈퇴 승인 요청
-    ResponseEntity<? super OwnerSuccessResponseDto> withdrawOwner(Long glampId);
+    ResponseEntity<? super OwnerSuccessResponseDto> withdrawOwner();
 
     //답글 작성
     ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p);

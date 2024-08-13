@@ -461,14 +461,14 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     // 사장님 탈퇴 승인 요청
-    public ResponseEntity<? super OwnerSuccessResponseDto> withdrawOwner(Long glampId) {
+    public ResponseEntity<? super OwnerSuccessResponseDto> withdrawOwner() {
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
         OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
-        GlampingModule.isGlampIdOk(glampingRepository, owner, glampId);
+
 
         // 예약 된 글램핑이 있는지 확인
-        GlampingEntity glamping = glampingRepository.getReferenceById(glampId);
+        GlampingEntity glamping = glampingRepository.findByOwner(owner);
         GlampingModule.existReservation(glamping, reservationBeforeRepository);
 
         // 탈퇴 요청

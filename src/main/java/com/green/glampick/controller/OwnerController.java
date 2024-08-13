@@ -217,13 +217,13 @@ public class OwnerController {
     }
 
     // patch - 탈퇴 승인 요청
-    @PatchMapping("withdraw/{glamp_id}")
+    @PatchMapping("withdraw")
     @Operation(summary = "사장님 탈퇴 승인 요청 (김민지)", description = WITHDRAW_OWNER_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = WITHDRAW_OWNER_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = OwnerSuccessResponseDto.class)))
-    public ResponseEntity<? super OwnerSuccessResponseDto> withdrawOwner(@PathVariable("glamp_id") Long glampId) {
-        return service.withdrawOwner(glampId);
+    public ResponseEntity<? super OwnerSuccessResponseDto> withdrawOwner() {
+        return service.withdrawOwner();
     }
 
 // 강국 =================================================================================================================
