@@ -271,7 +271,7 @@ public class OwnerController {
     }
 
     /* 사장님 페이지 - 성수기 기간 불러오기 */
-    @Operation(summary = "성수기 기간 불러오기",
+    @Operation(summary = "성수기 기간 불러오기 (배강국)",
             description =
                     "<strong> 변수명 </strong> glampId : 예약 PK <p>  ex)2 </p>",
             responses = {
