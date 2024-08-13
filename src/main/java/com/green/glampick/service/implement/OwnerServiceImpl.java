@@ -738,9 +738,11 @@ public class OwnerServiceImpl implements OwnerService {
 
     }
 
-    @Override // 예약 삭제
-    public ResponseEntity<? super OwnerSuccessResponseDto> deleteOwnersReservation(Long reservationId) {
-        return null;
+    @Override // 성수기 기간 불러오기
+    public ResponseEntity<? super GetGlampingPeakPeriodResponseDto> getGlampingPeakPeriod(Long glampId) {
+        GetPeakDateResultSet peakDateResultSet = glampPeakRepository.getPeak(glampId);
+
+        return GetGlampingPeakPeriodResponseDto.success(peakDateResultSet.getStartDate().toString(),peakDateResultSet.getEndDate().toString());
     }
 
 

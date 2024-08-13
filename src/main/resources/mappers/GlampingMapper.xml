@@ -56,12 +56,15 @@
                     A.room_max_people AS roomMaxPeople,
                     A.check_in_time AS checkInTime,
                     A.check_out_time AS checkOutTime,
-                    B.room_image_name AS pic
+                    B.room_image_name AS pic,
+                    D.extra_charge AS extraCharge
         FROM  		room A
         INNER JOIN	room_image B
         ON 			A.room_id = B.room_id
         INNER JOIN  room_price C
         ON			A.room_id = C.room_id
+        INNER JOIN	glamping D
+        ON			A.glamp_id = D.glamp_id
         GROUP BY 	A.room_id
         HAVING 		A.glamp_id = #{glampId}
     </select>

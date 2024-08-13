@@ -35,8 +35,7 @@ import java.util.*;
 
 import static com.green.glampick.common.GlobalConst.SUCCESS_CODE;
 import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
-import static com.green.glampick.module.DateModule.isPeak;
-import static com.green.glampick.module.DateModule.isWeekend;
+import static com.green.glampick.module.DateModule.*;
 
 @Slf4j
 @Service

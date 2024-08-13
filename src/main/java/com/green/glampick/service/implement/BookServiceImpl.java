@@ -51,7 +51,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public ResponseEntity<? super PostBookResponseDto> postBook(PostBookRequestDto dto) {
 
-        //  로그인 유저가 없다면, 권한이 없다는 응답을 보낸다.  //
+        /*  로그인 유저가 없다면, 권한이 없다는 응답을 보낸다.  */
         try {
             dto.setUserId(authenticationFacade.getLoginUserId());
             if (dto.getUserId() <= 0) {

@@ -270,10 +270,10 @@ public class OwnerController {
         return service.patchPeak(glampId, p);
     }
 
-    /* 사장님 페이지 - 예약 취소 */
-    @Operation(summary = "예약 취소 처리 하기",
+    /* 사장님 페이지 - 성수기 기간 불러오기 */
+    @Operation(summary = "성수기 기간 불러오기",
             description =
-                    "<strong> 변수명 </strong> reservationId : 예약 PK <p>  ex)21 </p>",
+                    "<strong> 변수명 </strong> glampId : 예약 PK <p>  ex)2 </p>",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -281,11 +281,11 @@ public class OwnerController {
                                     "<p> result: 수정실패 0 수정성공 1 </p>",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = PatchOwnerReviewInfoResponseDto.class)
+                                    schema = @Schema(implementation = GetGlampingPeakPeriodResponseDto.class)
                             ))})
-    @DeleteMapping("book/{reservationId}")
-    public ResponseEntity<? super OwnerSuccessResponseDto> deleteOwnersReservation(@PathVariable Long reservationId) {
-        return service.deleteOwnersReservation(reservationId);
+    @GetMapping("book/{glampId}")
+    public ResponseEntity<? super GetGlampingPeakPeriodResponseDto> getGlampingPeakPeriod(@PathVariable Long glampId) {
+        return service.getGlampingPeakPeriod(glampId);
     }
     /* 사장님 페이지 - 예약 내역 불러오기 */
     @GetMapping("/book")

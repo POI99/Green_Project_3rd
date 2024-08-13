@@ -28,7 +28,8 @@ public class GlampingRoomListItem implements Comparable<GlampingRoomListItem> {
     private String checkOutTime;
     @Schema(example = "true", $dynamicAnchor = "예약가능여부")
     private boolean isReservationAvailable;
-
+    @Schema(example = "15000", description = "인당추가요금")
+    private Integer extraCharge;
 
     @Override
     public int compareTo(GlampingRoomListItem other) {
