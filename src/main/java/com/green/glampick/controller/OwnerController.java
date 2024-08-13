@@ -115,7 +115,7 @@ public class OwnerController {
     }
 
     //  사장님 페이지 - 글램핑 대표 이미지 수정하기  //
-    @PatchMapping("glamping/image")
+    @PatchMapping(value ="glamping/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "글램핑 대표 이미지 수정 (김민지)", description = UPDATE_GLAMPING_IMAGE_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = UPDATE_GLAMPING_IMAGE_RESPONSE_ERROR_CODE,
             content = @Content(
