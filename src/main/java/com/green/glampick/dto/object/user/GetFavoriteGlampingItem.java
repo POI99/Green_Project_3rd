@@ -23,6 +23,6 @@ public class GetFavoriteGlampingItem extends GlampingPriceItem {
 //    @Schema(example = "65,500", description = "글램핑장의 가격")
 //    private int price;
     @Schema(example = "vjecie.png", description = "대표 이미지")
-    private String glampImg;
+    private String glampImage;
 }
 
