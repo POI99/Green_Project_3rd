@@ -269,11 +269,29 @@ public class OwnerController {
 
         return service.patchPeak(glampId, p);
     }
+    /* 성수기 초기화 */
+    @Operation(summary = "성수기 초기화 (배강국)",
+            description =
+                    "<strong> 변수명 </strong> glampId : 글램프 PK <p>  ex)2 </p>",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description =
+                                    "<p> result: 수정실패 0 수정성공 1 </p>",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = OwnerSuccessResponseDto.class)
+                            ))})
+    @DeleteMapping("room/{glampId}/peak")
+    public ResponseEntity<? super OwnerSuccessResponseDto> delGlampingPeakPeriod(@PathVariable Long glampId) {
+        return service.delGlampingPeakPeriod(glampId);
+    }
+
 
     /* 사장님 페이지 - 성수기 기간 불러오기 */
     @Operation(summary = "성수기 기간 불러오기 (배강국)",
             description =
-                    "<strong> 변수명 </strong> glampId : 예약 PK <p>  ex)2 </p>",
+                    "<strong> 변수명 </strong> glampId : 글램프 PK <p>  ex)2 </p>",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -283,7 +301,7 @@ public class OwnerController {
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = GetGlampingPeakPeriodResponseDto.class)
                             ))})
-    @GetMapping("book/{glampId}")
+    @GetMapping("room/{glampId}/peak")
     public ResponseEntity<? super GetGlampingPeakPeriodResponseDto> getGlampingPeakPeriod(@PathVariable Long glampId) {
         return service.getGlampingPeakPeriod(glampId);
     }

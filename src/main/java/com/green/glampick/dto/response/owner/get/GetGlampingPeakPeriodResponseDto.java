@@ -17,15 +17,17 @@ import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 public class GetGlampingPeakPeriodResponseDto extends ResponseDto {
     private String startPeakDate;
     private String endPeakDate;
+    private Integer percent;
 
-    private GetGlampingPeakPeriodResponseDto(String startPeakDate, String endPeakDate) {
+    private GetGlampingPeakPeriodResponseDto(String startPeakDate, String endPeakDate,Integer percent) {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.startPeakDate = startPeakDate;
         this.endPeakDate = endPeakDate;
+        this.percent = percent;
     }
 
-    public static ResponseEntity<GetGlampingPeakPeriodResponseDto> success(String startPeakDate, String endPeakDate) {
-        GetGlampingPeakPeriodResponseDto result = new GetGlampingPeakPeriodResponseDto(startPeakDate,endPeakDate);
+    public static ResponseEntity<GetGlampingPeakPeriodResponseDto> success(String startPeakDate, String endPeakDate,Integer percent) {
+        GetGlampingPeakPeriodResponseDto result = new GetGlampingPeakPeriodResponseDto(startPeakDate, endPeakDate, percent);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }

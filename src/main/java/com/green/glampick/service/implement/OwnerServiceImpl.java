@@ -733,16 +733,18 @@ public class OwnerServiceImpl implements OwnerService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.DBE);
         }
-
-
-
     }
 
     @Override // 성수기 기간 불러오기
     public ResponseEntity<? super GetGlampingPeakPeriodResponseDto> getGlampingPeakPeriod(Long glampId) {
         GetPeakDateResultSet peakDateResultSet = glampPeakRepository.getPeak(glampId);
 
-        return GetGlampingPeakPeriodResponseDto.success(peakDateResultSet.getStartDate().toString(),peakDateResultSet.getEndDate().toString());
+        return GetGlampingPeakPeriodResponseDto.success(peakDateResultSet.getStartDate().toString(),peakDateResultSet.getEndDate().toString(),peakDateResultSet.getPercent());
+    }
+    @Override // 성수기 초기화
+    public ResponseEntity<? super OwnerSuccessResponseDto> delGlampingPeakPeriod(Long glampId) {
+        glampPeakRepository.deleteById(glampId);
+        return OwnerSuccessResponseDto.deleteInformation();
     }
 
 
@@ -765,23 +767,28 @@ public class OwnerServiceImpl implements OwnerService {
                 throw new CustomException(CommonErrorCode.DBE);
             }
 
-            Optional<GlampPeakEntity> peakEntity = glampPeakRepository.findById(glampId);
-            GlampPeakEntity g = new GlampPeakEntity();
+
+//            GlampPeakEntity gp = new GlampPeakEntity();
+            GlampingEntity glampEntity = glampingRepository.findByGlampId(glampId);
+            Optional<GlampPeakEntity> gp = glampPeakRepository.findByGlamp(glampEntity);
+
             LocalDate startDay = parseToLocalDate(p.getPeakStartDay());
             LocalDate endDay = parseToLocalDate(p.getPeakEndDay());
 
-            if (peakEntity.isEmpty()) { // 값이 존재하지 않으면 insert
-                GlampingEntity glampEntity = glampingRepository.findByGlampId(glampId);
+            if (gp.isEmpty()) { // 값이 존재하지 않으면 insert
+                GlampPeakEntity g = new GlampPeakEntity();
                 g.setPeakStart(startDay);
                 g.setPeakEnd(endDay);
+                g.setPercent(p.getPeakCost());
                 g.setGlamp(glampEntity);
 
                 glampPeakRepository.save(g);
             } else { // 있다면 update
-                g.setPeakStart(startDay);
-                g.setPeakEnd(endDay);
+                gp.get().setPeakStart(startDay);
+                gp.get().setPeakEnd(endDay);
+                gp.get().setPercent(p.getPeakCost());
 
-                glampPeakRepository.save(g);
+                glampPeakRepository.save(gp.get());
             }
         }
     }
