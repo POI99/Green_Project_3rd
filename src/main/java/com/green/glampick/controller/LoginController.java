@@ -19,8 +19,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import retrofit2.http.Multipart;
 
 import static com.green.glampick.common.swagger.description.login.GetAccessTokenSwaggerDescription.ACCESS_TOKEN_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.login.PostCheckMailSwaggerDescription.CHECK_MAIL_DESCRIPTION;
@@ -62,14 +65,14 @@ public class LoginController {
         return service.signUpSnsUser(dto);
     }
 
-    @PostMapping("/owner/sign-up")
+    @PostMapping(value = "/owner/sign-up", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "사장님 회원가입 (김수찬)", description = "")
     @ApiResponse(responseCode = "200", description = "",
         content = @Content(
                 mediaType = "application/json", schema = @Schema(implementation = PostOwnerSignUpResponseDto.class)
         ))
-    public ResponseEntity<? super PostOwnerSignUpResponseDto> signUpOwner(@RequestBody @Valid OwnerSignUpRequestDto dto) {
-        return service.signUpOwner(dto);
+    public ResponseEntity<? super PostOwnerSignUpResponseDto> signUpOwner(@RequestPart MultipartFile file, @RequestPart OwnerSignUpRequestDto dto) {
+        return service.signUpOwner(file, dto);
     }
 
     @PostMapping("/sign-in")

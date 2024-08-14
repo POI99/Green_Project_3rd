@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface LoginService {
 
@@ -29,7 +30,7 @@ public interface LoginService {
     ResponseEntity<? super PostSnsSignUpResponseDto> signUpSnsUser(SignUpSnsRequestDto dto);
 
     //  로그인 및 회원가입 페이지 - 사장님 회원가입 처리  //
-    ResponseEntity<? super PostOwnerSignUpResponseDto> signUpOwner(OwnerSignUpRequestDto dto);
+    ResponseEntity<? super PostOwnerSignUpResponseDto> signUpOwner(MultipartFile file, OwnerSignUpRequestDto dto);
 
     //  로그인 및 회원가입 페이지 - 이메일 로그인 처리  //
     ResponseEntity<? super PostSignInResponseDto> signInUser(HttpServletResponse res, SignInRequestDto dto);

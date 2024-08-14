@@ -79,38 +79,6 @@ public class OwnerServiceImpl implements OwnerService {
                 reservationCompleteRepository, roomPriceRepository, glampPeakRepository);
     }
 
-// 수찬 =================================================================================================================
-
-    //  사장님 페이지 - 사업자 등록증 첨부하기  //
-    @Override
-    public ResponseEntity<? super PostBusinessPaperResponseDto> postBusinessInfo(MultipartFile file) {
-
-        Long ownerId = GlampingModule.ownerId(authenticationFacade);
-
-        try {
-
-            String makeFolder = String.format("businessInfo/%d", ownerId);
-            customFileUtils.makeFolders(makeFolder);
-            String saveFileName = customFileUtils.makeRandomFileName(file);
-            String saveDbFileName = String.format("/pic/businessInfo/%d/%s", ownerId, saveFileName);
-            String filePath = String.format("%s/%s", makeFolder, saveFileName);
-            customFileUtils.transferTo(file, filePath);
-
-            OwnerEntity ownerEntity = ownerRepository.findByOwnerId(ownerId);
-            ownerEntity.setBusinessPaperImage(saveDbFileName);
-            ownerRepository.save(ownerEntity);
-
-
-        } catch (CustomException e) {
-            throw new CustomException(e.getErrorCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException(CommonErrorCode.DBE);
-        }
-        return PostBusinessPaperResponseDto.success();
-
-    }
-
 // 민지 =================================================================================================================
 
     // 글램핑 등록
