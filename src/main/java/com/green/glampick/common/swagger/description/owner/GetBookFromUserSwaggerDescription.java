@@ -7,10 +7,8 @@ public class GetBookFromUserSwaggerDescription {
             "<strong>글램핑에 대한 예약정보를 모두 불러옵니다.</strong>" +
             "<p>로그인이 필요한 기능입니다. 상단 Authorize 에 토큰값을 입력 후 이용해주세요.</p>" +
             "<p>-------------------------------------------------</p>" +
-            "<p>glampId : 글램핑 PK</p>" +
-            "<p>before : 이용 예정</p>" +
-            "<p>complete : 이용 완료</p>" +
-            "<p>cancel : 예약 취소</p>"
+            "<p>date : 캘린더 선택 날짜 PK</p>" +
+            "<p>page : 선택 페이지</p>"
             ;
 
     public static final String BOOK_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE =
