@@ -55,6 +55,8 @@ public interface OwnerService {
     ResponseEntity<? super PatchOwnerPeakResponseDto> patchPeak(Long glampId, PatchOwnerPeakRequestDto p);
     //성수기 기간 불러오기
     ResponseEntity<? super GetGlampingPeakPeriodResponseDto> getGlampingPeakPeriod(Long glampId);
+    //성수기 초기화
+    ResponseEntity<? super OwnerSuccessResponseDto> delGlampingPeakPeriod(Long glampId);
     //리뷰 답글 작성
     ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p);
     //리뷰 불러오기
