@@ -78,19 +78,6 @@ public class OwnerController {
     private final OwnerService service;
     private final AuthenticationFacade authenticationFacade;
 
-// 수찬 =================================================================================================================
-
-    @PutMapping(value = "/businessInfo", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "사업자등록증 첨부 하기 (김수찬)", description = "")
-    @ApiResponse(responseCode = "200", description = "",
-            content = @Content(
-                    mediaType = "application/json", schema = @Schema(implementation = PostBusinessPaperResponseDto.class)))
-    public ResponseEntity<? super PostBusinessPaperResponseDto> postBusinessInfo
-            (@RequestPart MultipartFile file) {
-        return service.postBusinessInfo(file);
-    }
-
-
 // 민지 =================================================================================================================
 
     //  사장님 페이지 - 글램핑 정보 등록하기  //

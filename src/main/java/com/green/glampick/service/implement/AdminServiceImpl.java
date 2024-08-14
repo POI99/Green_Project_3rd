@@ -32,6 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.internet.MimeMessage;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import static com.green.glampick.common.GlobalConst.MAX_BANNER_SIZE;
@@ -335,6 +338,8 @@ public class AdminServiceImpl implements AdminService {
 
         try {
 
+
+
             ownerEntity.setGlampingStatus(1);
             ownerRepository.save(ownerEntity);
 
@@ -355,6 +360,8 @@ public class AdminServiceImpl implements AdminService {
             glampingEntity.setInfoNotice(glampingWaitEntity.getInfoNotice());
             glampingEntity.setTraffic(glampingWaitEntity.getTraffic());
             glampingEntity.setActivateStatus(1);
+
+
 
             //  MimeMessage 객체를 만든다.  //
             MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -394,6 +401,32 @@ public class AdminServiceImpl implements AdminService {
             mailSender.send(mimeMessage);
 
             glampingRepository.save(glampingEntity);
+
+            String fileOriginName = glampingWaitEntity.getGlampImage(); // 예: /pic/glampingWait/11/glamp/4a6f8660-ec70-42c2-9176-0bb361824379.jpg
+
+            // "/glampingWait"부터 끝까지의 경로를 추출 ("/glampingWait" 앞의 "/pic" 부분은 제외)
+            int idx = fileOriginName.indexOf("/glampingWait");
+            String fileOriginPath = fileOriginName.substring(idx); // "/glampingWait/11/glamp/4a6f8660-ec70-42c2-9176-0bb361824379.jpg"
+
+            // 순수 파일 이름 추출
+            int index = fileOriginName.lastIndexOf("/");
+            String fileFullName = fileOriginName.substring(index + 1); // "4a6f8660-ec70-42c2-9176-0bb361824379.jpg"
+
+            // 새로운 경로 생성
+            String path = String.format("/%s/%s/glamp", "glamping", glampId); // "/glamping/11/glamp"
+            customFileUtils.makeFolders(path);
+            String filePath = String.format("%s/%s", path, fileFullName); // "/glamping/11/glamp/4a6f8660-ec70-42c2-9176-0bb361824379.jpg"
+
+            // 원본 파일과 복사될 파일 경로 설정
+            File file = new File(customFileUtils.uploadPath + fileOriginPath); // "/glampingWait/11/glamp/4a6f8660-ec70-42c2-9176-0bb361824379.jpg"
+            File copyfile = new File(customFileUtils.uploadPath + filePath); // "/glamping/11/glamp/4a6f8660-ec70-42c2-9176-0bb361824379.jpg"
+
+            Files.copy(file.toPath(),copyfile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            customFileUtils.deleteFolder(fileOriginPath);
+
+            glampingEntity.setGlampImage("/pic" + filePath);
+            glampingRepository.save(glampingEntity);
+
             glampingWaitRepository.delete(glampingWaitEntity);
 
         } catch (CustomException e) {

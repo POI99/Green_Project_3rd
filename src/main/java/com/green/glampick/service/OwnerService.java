@@ -21,8 +21,6 @@ import java.util.List;
 
 public interface OwnerService {
 
-    ResponseEntity<? super PostBusinessPaperResponseDto> postBusinessInfo(MultipartFile file);
-
     // 글램핑 등록
     ResponseEntity<? super OwnerSuccessResponseDto> postGlampingInfo(GlampingPostRequestDto glampingPostRequestDtoReq, MultipartFile glampImg);
     // 객실 등록

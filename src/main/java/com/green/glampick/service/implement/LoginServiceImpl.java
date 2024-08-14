@@ -1,5 +1,6 @@
 package com.green.glampick.service.implement;
 
+import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.common.Role;
 import com.green.glampick.common.coolsms.SmsUtils;
 import com.green.glampick.common.security.AppProperties;
@@ -41,6 +42,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.internet.MimeMessage;
 import java.util.HashMap;
@@ -58,6 +60,7 @@ public class LoginServiceImpl implements LoginService {
     private final OwnerRepository ownerRepository;
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CustomFileUtils customFileUtils;
     private final JwtTokenProvider jwtTokenProvider;
     private final CookieUtils cookieUtils;
     private final AppProperties appProperties;
@@ -264,7 +267,7 @@ public class LoginServiceImpl implements LoginService {
     //  로그인 및 회원가입 페이지 - 사장님 회원가입 처리  //
     @Override
     @Transactional
-    public ResponseEntity<? super PostOwnerSignUpResponseDto> signUpOwner(OwnerSignUpRequestDto dto) {
+    public ResponseEntity<? super PostOwnerSignUpResponseDto> signUpOwner(MultipartFile file, OwnerSignUpRequestDto dto) {
 
         try {
             //  입력받은 값이 없다면, 유효성 검사에 대한 응답을 보낸다.  //
@@ -332,6 +335,17 @@ public class LoginServiceImpl implements LoginService {
 
             //  바로 위에서 만든 객체를 JPA 를 통해서 DB에 저장한다.  //
             OwnerEntity savedUser = ownerRepository.save(ownerEntity);
+
+            String makeFolder = String.format("businessInfo/%d", savedUser.getOwnerId());
+            customFileUtils.makeFolders(makeFolder);
+            String saveFileName = customFileUtils.makeRandomFileName(file);
+            String saveDbFileName = String.format("/pic/businessInfo/%d/%s", savedUser.getOwnerId(), saveFileName);
+            String filePath = String.format("%s/%s", makeFolder, saveFileName);
+            customFileUtils.transferTo(file, filePath);
+
+            ownerEntity = ownerRepository.findByOwnerId(savedUser.getOwnerId());
+            ownerEntity.setBusinessPaperImage(saveDbFileName);
+            ownerRepository.save(ownerEntity);
 
             return PostOwnerSignUpResponseDto.success(savedUser.getOwnerId());
 
