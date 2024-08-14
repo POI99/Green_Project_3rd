@@ -11,6 +11,7 @@
             , A.review_count AS reviewCount
             , A.glamp_image AS glampingImg
         FROM glamping A
+        WHERE A.activate_status = 1
         ORDER BY recommend_score DESC
         LIMIT 3
     </select>
@@ -31,6 +32,7 @@
                 GROUP BY A.glamp_id
         ) B
         ON A.glamp_id = B.glamp_id
+        WHERE A.activate_status = 1
         ORDER BY recommend_score DESC
         LIMIT 3
     </select>
@@ -51,6 +53,7 @@
             GROUP BY A.glamp_id
         ) B
         ON A.glamp_id = B.glamp_id
+        WHERE A.activate_status = 1
         ORDER BY recommend_score DESC
         LIMIT 3
     </select>
