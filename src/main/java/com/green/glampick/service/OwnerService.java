@@ -53,6 +53,8 @@ public interface OwnerService {
 
     //성수기 비수기 설정
     ResponseEntity<? super PatchOwnerPeakResponseDto> patchPeak(Long glampId, PatchOwnerPeakRequestDto p);
+    //성수기 기간 불러오기
+    ResponseEntity<? super GetGlampingPeakPeriodResponseDto> getGlampingPeakPeriod(Long glampId);
     //리뷰 답글 작성
     ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p);
     //리뷰 불러오기
@@ -65,7 +67,6 @@ public interface OwnerService {
     List<OwnerBookDetailListItem> getReservationCompleteList(ReservationGetRequestDto p);
     //날짜별 예약 건수
     List<OwnerBookCountListItem> getTotalCount(String date,Long ownerId);
-    //예약 삭제
-    ResponseEntity<? super OwnerSuccessResponseDto> deleteOwnersReservation(Long reservationId);
+
 
 }

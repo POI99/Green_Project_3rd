@@ -25,4 +25,7 @@ public class GlampPeakEntity extends UpdatedAt {
     @Column(nullable = false) @Comment("성수기 끝 날짜")
     private LocalDate peakEnd;
 
+    @Column(nullable = false) @Comment("퍼센트")
+    private Integer percent;
+
 }

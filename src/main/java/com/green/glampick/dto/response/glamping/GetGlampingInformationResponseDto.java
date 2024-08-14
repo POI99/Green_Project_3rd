@@ -44,7 +44,7 @@ public class GetGlampingInformationResponseDto extends ResponseDto {
         private int countReviewUsers;
         @Schema(example = "0 or 1", description = "좋아요 on/off")
         private int isFav;
-        @Schema(example = "1 or -1")
+        @Schema(example = "1 or -1 or 0")
         private int activateStatus;
 
 

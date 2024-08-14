@@ -305,14 +305,14 @@ public class AdminServiceImpl implements AdminService {
     public ResponseEntity<? super GetAccessGlampingInfoResponseDto> getAccessGlamping(Long glampId) {
 
 
-        GlampingEntity glampingEntity = new GlampingEntity();
-
+//        GlampingEntity glampingEntity = new GlampingEntity();
+        GlampingWaitEntity glampingWaitEntity = new GlampingWaitEntity();
         try {
 
-            glampingEntity = glampingRepository.findByGlampId(glampId);
-
-            if (glampingEntity == null) { throw new CustomException(AdminErrorCode.NG); }
-
+//            glampingEntity = glampingRepository.findByGlampId(glampId);
+            glampingWaitEntity = glampingWaitRepository.findByGlampId(glampId);
+//            if (glampingEntity == null) { throw new CustomException(AdminErrorCode.NG); }
+            if (glampingWaitEntity == null) { throw new CustomException(AdminErrorCode.NG); }
         } catch (CustomException e) {
           throw new CustomException(e.getErrorCode());
         } catch (Exception e) {
@@ -320,7 +320,8 @@ public class AdminServiceImpl implements AdminService {
             throw new CustomException(CommonErrorCode.DBE);
         }
 
-        return GetAccessGlampingInfoResponseDto.success(glampingEntity);
+//        return GetAccessGlampingInfoResponseDto.success(glampingEntity);
+        return GetAccessGlampingInfoResponseDto.success(glampingWaitEntity);
 
     }
 

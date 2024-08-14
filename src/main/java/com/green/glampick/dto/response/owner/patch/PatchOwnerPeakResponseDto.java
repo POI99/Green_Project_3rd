@@ -11,6 +11,7 @@ import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 public class PatchOwnerPeakResponseDto extends ResponseDto {
     @Schema(example = "0 or 1", description = "수정실패 0 수정성공 1")
     private int result;
+
     private PatchOwnerPeakResponseDto() {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
         result = 1;

@@ -2,6 +2,7 @@ package com.green.glampick.dto.response.admin;
 
 import com.green.glampick.dto.ResponseDto;
 import com.green.glampick.entity.GlampingEntity;
+import com.green.glampick.entity.GlampingWaitEntity;
 import com.green.glampick.entity.OwnerEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +28,7 @@ public class GetAccessGlampingInfoResponseDto extends ResponseDto {
     private String infoNotice;
     private String traffic;
 
-    private GetAccessGlampingInfoResponseDto(GlampingEntity glampingEntity) {
+    private GetAccessGlampingInfoResponseDto(GlampingWaitEntity glampingEntity) {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
         this.ownerId = glampingEntity.getOwner().getOwnerId();
         this.glampName = glampingEntity.getGlampName();
@@ -42,7 +43,7 @@ public class GetAccessGlampingInfoResponseDto extends ResponseDto {
         this.traffic = glampingEntity.getTraffic();
     }
 
-    public static ResponseEntity<GetAccessGlampingInfoResponseDto> success(GlampingEntity glampingEntity) {
+    public static ResponseEntity<GetAccessGlampingInfoResponseDto> success(GlampingWaitEntity glampingEntity) {
         GetAccessGlampingInfoResponseDto result = new GetAccessGlampingInfoResponseDto(glampingEntity);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
