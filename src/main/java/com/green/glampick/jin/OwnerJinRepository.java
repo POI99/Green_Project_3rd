@@ -113,26 +113,27 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
             nativeQuery = true
     )
     List<GetCancelDto> findRoomCount(@Param("ownerId") long ownerId, @Param("startDayId") String startDayId, @Param("endDayId") String endDayId);
+
+    @Query(
+            value =
+                    "WITH RECURSIVE dates AS ( " +
+            "SELECT :startDayId AS check_in_date " +
+            "UNION ALL " +
+            "SELECT DATE_ADD(check_in_date, INTERVAL 1 DAY) " +
+    "FROM dates " +
+    "WHERE check_in_date < :endDayId) " +
+    "SELECT " +
+    "sum(sud.pay_amount) AS totalpay " +
+    "FROM dates " +
+    "LEFT JOIN ( " +
+            "SELECT " +
+                    "A.check_in_date, A.pay_amount " +
+                    "FROM reservation_cancel A " +
+                    "JOIN room B ON A.room_id = B.room_id " +
+                    "JOIN glamping C ON B.glamp_id = C.glamp_id " +
+                    "WHERE C.owner_id = :ownerId) AS sud " +
+    "ON sud.check_in_date = dates.check_in_date ",
+            nativeQuery = true
+    )
+    Long findTotalPay(@Param("ownerId") long ownerId, @Param("startDayId") String startDayId, @Param("endDayId") String endDayId);
 }
-
-/*
-WITH RECURSIVE dates AS (
-SELECT  '2024-07-01' AS check_in_date
-UNION ALL
-SELECT DATE_ADD(check_in_date, INTERVAL 1 DAY)
-FROM dates
-WHERE check_in_date < '2024-07-31')
-SELECT
-sum(sud.pay_amount) AS totalpay
-FROM dates
-LEFT JOIN (
-SELECT
- A.check_in_date, A.pay_amount
-FROM reservation_cancel A
-JOIN room B ON A.room_id = B.room_id
-JOIN glamping C ON B.glamp_id = C.glamp_id
-WHERE C.owner_id = 2) AS sud
-ON sud.check_in_date = dates.check_in_date
-
-
- */

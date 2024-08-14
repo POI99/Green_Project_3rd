@@ -147,10 +147,12 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             throw new CustomException(CommonErrorCode.MNF);
         }
         List<GetRevenue> revenue = new ArrayList<>();
+        Long totalPay = 0L;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formStart = dto.getStartDayId().format(formatter);
         String formEnd = dto.getEndDayId().format(formatter);
         try {
+            totalPay = ownerRepository.findTotalPay(dto.getOwnerId(), formStart, formEnd);
             revenue = ownerRepository.findRevenue(dto.getOwnerId(), formStart, formEnd);
             if (dto.getOwnerId() == 0) {
                 throw new CustomException(OwnerErrorCode.NMG);
@@ -162,7 +164,7 @@ public class OwnerJinServiceImpl implements OwnerJinService {
             throw new CustomException(CommonErrorCode.DBE);
         }
 
-        return GetOwnerRevenueResponseDto.success(revenue);
+        return GetOwnerRevenueResponseDto.success(totalPay, revenue);
     }
 }
 

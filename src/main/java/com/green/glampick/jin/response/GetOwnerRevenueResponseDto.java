@@ -17,17 +17,18 @@ import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 @Setter
 public class GetOwnerRevenueResponseDto extends ResponseDto {
 
-
+    private Long totalPay;
    List<GetRevenue> revenue;
 
-    private GetOwnerRevenueResponseDto(List<GetRevenue> revenue) {
+    private GetOwnerRevenueResponseDto(Long totalPay, List<GetRevenue> revenue) {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
+        this.totalPay = totalPay;
         this.revenue = revenue;
 
     }
 
-    public static ResponseEntity<GetOwnerRevenueResponseDto> success(List<GetRevenue> revenue) {
-        GetOwnerRevenueResponseDto result = new GetOwnerRevenueResponseDto(revenue);
+    public static ResponseEntity<GetOwnerRevenueResponseDto> success(Long totalPay, List<GetRevenue> revenue) {
+        GetOwnerRevenueResponseDto result = new GetOwnerRevenueResponseDto(totalPay, revenue);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
