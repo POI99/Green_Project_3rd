@@ -45,6 +45,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.green.glampick.exception.errorCode.GlampingErrorCode.NEGP;
 import static com.green.glampick.module.DateModule.getPeriod;
 import static com.green.glampick.module.DateModule.parseToLocalDate;
 
@@ -705,9 +706,16 @@ public class OwnerServiceImpl implements OwnerService {
 
     @Override // 성수기 기간 불러오기
     public ResponseEntity<? super GetGlampingPeakPeriodResponseDto> getGlampingPeakPeriod(Long glampId) {
-        GetPeakDateResultSet peakDateResultSet = glampPeakRepository.getPeak(glampId);
-
-        return GetGlampingPeakPeriodResponseDto.success(peakDateResultSet.getStartDate().toString(),peakDateResultSet.getEndDate().toString(),peakDateResultSet.getPercent());
+        try {
+            GetPeakDateResultSet peakDateResultSet = glampPeakRepository.getPeak(glampId);
+            if(peakDateResultSet == null) {
+                throw new CustomException(NEGP);
+            }
+            return GetGlampingPeakPeriodResponseDto.success(peakDateResultSet.getStartDate().toString(),peakDateResultSet.getEndDate().toString(),peakDateResultSet.getPercent());
+        } catch (CustomException e) {
+            e.printStackTrace();
+            throw new CustomException(e.getErrorCode());
+        }
     }
     @Override // 성수기 초기화
     public ResponseEntity<? super OwnerSuccessResponseDto> delGlampingPeakPeriod(Long glampId) {
