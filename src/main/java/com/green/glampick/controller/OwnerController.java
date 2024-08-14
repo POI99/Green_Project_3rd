@@ -255,17 +255,16 @@ public class OwnerController {
         dto.setOwnerId(ownerId);
         return service.getReview(dto);
     }
-    /* 사장님 페이지 - 성수기 설정 */
+    /* 사장님 페이지 - 성수기 등록 */
     @PatchMapping("/room/{glampId}/peak")
-    @Operation(summary = "성수기 가격 설정(배강국)", description = "작성필요")
+    @Operation(summary = "성수기기간 & 가격 등록(배강국)", description = "작성필요")
     @ApiResponse(responseCode = "200", description = "작성필요",
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = PatchOwnerPeakResponseDto.class)))
     public ResponseEntity<? super PatchOwnerPeakResponseDto> patchPeak(@PathVariable Long glampId, @ParameterObject @ModelAttribute PatchOwnerPeakRequestDto p) {
 
-        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        GlampingModule.ownerId(authenticationFacade);
         GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
-        p.setOwnerId(ownerId);
 
         return service.patchPeak(glampId, p);
     }
@@ -284,6 +283,8 @@ public class OwnerController {
                             ))})
     @DeleteMapping("room/{glampId}/peak")
     public ResponseEntity<? super OwnerSuccessResponseDto> delGlampingPeakPeriod(@PathVariable Long glampId) {
+        GlampingModule.ownerId(authenticationFacade);
+        GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
         return service.delGlampingPeakPeriod(glampId);
     }
 
@@ -296,15 +297,20 @@ public class OwnerController {
                     @ApiResponse(
                             responseCode = "200",
                             description =
-                                    "<p> result: 수정실패 0 수정성공 1 </p>",
+                                    "<p> startPeakDate: 성수기 시작 날 </p>" +
+                                    "<p> endPeakDate: 성수기 끝나는 날 </p>" +
+                                    "<p> percent: 가격인상 퍼센트 </p>",
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = GetGlampingPeakPeriodResponseDto.class)
                             ))})
     @GetMapping("room/{glampId}/peak")
     public ResponseEntity<? super GetGlampingPeakPeriodResponseDto> getGlampingPeakPeriod(@PathVariable Long glampId) {
+        GlampingModule.ownerId(authenticationFacade);
+        GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
         return service.getGlampingPeakPeriod(glampId);
     }
+
     /* 사장님 페이지 - 예약 내역 불러오기 */
     @GetMapping("/book")
     @Operation(summary = "디테일한 예약 내역 불러오기 (배강국)", description = BOOK_FROM_USER_REVIEW_VIEW_DESCRIPTION)
