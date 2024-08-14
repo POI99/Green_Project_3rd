@@ -114,26 +114,3 @@ public interface OwnerJinRepository extends JpaRepository<OwnerEntity, Long> {
     )
     List<GetCancelDto> findRoomCount(@Param("ownerId") long ownerId, @Param("startDayId") String startDayId, @Param("endDayId") String endDayId);
 }
-/*
-WITH RECURSIVE dates AS (
-SELECT  '2024-07-01' AS check_in_date
-UNION ALL
-SELECT DATE_ADD(check_in_date, INTERVAL 1 DAY)
-FROM dates
-WHERE check_in_date < '2024-07-31')
-SELECT
-sud.roomName AS nameing,
-COUNT(sud.check_in_date) AS cancelCount
-SUM(sud.check_in_date) AS total
-FROM dates
-LEFT JOIN (
-SELECT
-A.room_id as counts, C.owner_id, B.room_name as roomName, A.check_in_date
-FROM reservation_cancel A
-JOIN room B ON A.room_id = B.room_id
-JOIN glamping C ON B.glamp_id = C.glamp_id
-WHERE C.owner_id = 2) AS sud
-ON sud.check_in_date = dates.check_in_date
-GROUP BY  sud.roomName
-ORDER BY dates.check_in_date
-*/
