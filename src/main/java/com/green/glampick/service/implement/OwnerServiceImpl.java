@@ -743,8 +743,11 @@ public class OwnerServiceImpl implements OwnerService {
     }
     @Override // 성수기 초기화
     public ResponseEntity<? super OwnerSuccessResponseDto> delGlampingPeakPeriod(Long glampId) {
-        glampPeakRepository.deleteById(glampId);
+        Optional<GlampPeakEntity> peakEntity = glampPeakRepository.findByGlamp(glampingRepository.getReferenceById(glampId));
+//        glampPeakRepository.deleteById(glampId);
+        glampPeakRepository.delete(peakEntity.get());
         return OwnerSuccessResponseDto.deleteInformation();
+
     }
 
 
