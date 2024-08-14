@@ -21,17 +21,18 @@
     </select>
     <!-- 글램핑 상세 페이지 글램핑 정보 -->
     <select id="selGlampingInfo">
-        SELECT     glamp_id AS glampId,
-        glamp_image AS glampImage,
-        glamp_name AS glampName,
-        star_point_avg AS starPointAvg,
-        glamp_location AS glampLocation,
-        glamp_intro AS glampIntro,
-        info_basic AS infoBasic,
-        traffic AS traffic,
-        info_notice AS infoNotice
-        FROM       glamping
-        WHERE      glamp_id = #{glampId}
+        SELECT      glamp_id AS glampId,
+                    glamp_image AS glampImage,
+                    glamp_name AS glampName,
+                    star_point_avg AS starPointAvg,
+                    glamp_location AS glampLocation,
+                    glamp_intro AS glampIntro,
+                    info_basic AS infoBasic,
+                    traffic AS traffic,
+                    info_notice AS infoNotice,
+                    activate_status AS activateStatus
+        FROM        glamping
+        WHERE       glamp_id = #{glampId}
     </select>
     <!-- 객실 정보  -->
     <select id="selRoomInfo">

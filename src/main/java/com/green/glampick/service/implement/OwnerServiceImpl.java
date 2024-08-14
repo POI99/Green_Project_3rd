@@ -766,11 +766,11 @@ public class OwnerServiceImpl implements OwnerService {
             }
 
             Optional<GlampPeakEntity> peakEntity = glampPeakRepository.findById(glampId);
+            GlampPeakEntity g = new GlampPeakEntity();
             LocalDate startDay = parseToLocalDate(p.getPeakStartDay());
             LocalDate endDay = parseToLocalDate(p.getPeakEndDay());
 
             if (peakEntity.isEmpty()) { // 값이 존재하지 않으면 insert
-                GlampPeakEntity g = new GlampPeakEntity();
                 GlampingEntity glampEntity = glampingRepository.findByGlampId(glampId);
                 g.setPeakStart(startDay);
                 g.setPeakEnd(endDay);
@@ -778,10 +778,10 @@ public class OwnerServiceImpl implements OwnerService {
 
                 glampPeakRepository.save(g);
             } else { // 있다면 update
-                peakEntity.get().setPeakStart(startDay);
-                peakEntity.get().setPeakEnd(endDay);
+                g.setPeakStart(startDay);
+                g.setPeakEnd(endDay);
 
-                glampPeakRepository.save(peakEntity.get());
+                glampPeakRepository.save(g);
             }
         }
     }
