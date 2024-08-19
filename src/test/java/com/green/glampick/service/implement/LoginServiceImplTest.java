@@ -62,16 +62,10 @@ class LoginServiceImplTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private CustomFileUtils customFileUtils;
-
-    @Mock
     private JwtTokenProvider jwtTokenProvider;
 
     @Mock
     private CookieUtils cookieUtils;
-
-    @Mock
-    private AppProperties appProperties;
 
     @Mock
     private SmsUtils smsUtils;

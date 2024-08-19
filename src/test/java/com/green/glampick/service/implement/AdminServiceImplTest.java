@@ -56,9 +56,6 @@ class AdminServiceImplTest {
     private AdminRepository adminRepository;
 
     @Mock
-    private CustomFileUtils customFileUtils;
-
-    @Mock
     private JavaMailSender mailSender;
 
     @BeforeEach
