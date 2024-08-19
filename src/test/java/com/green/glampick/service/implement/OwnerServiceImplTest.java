@@ -20,6 +20,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
@@ -89,6 +90,7 @@ class OwnerServiceImplTest {
         GlampingWaitEntity savedEntity = glampingWaitRepository.findById(entity.getGlampId()).orElse(null);
         assertNotNull(savedEntity, "글램핑 등록 실패");
 
+        verify(authenticationFacade, times(3)).getLoginUserId();
     }
 
     @Test
@@ -98,13 +100,13 @@ class OwnerServiceImplTest {
         given(authenticationFacade.getLoginUserId()).willReturn(1L);
         long ownerId1 = authenticationFacade.getLoginUserId();
         OwnerEntity owner1 = ownerRepository.getReferenceById(ownerId1);
-        assertNotEquals(Role.ROLE_OWNER, owner1.getRole(), "1번 사장의 권한은 ROLE_OWNER이 아니기 때문에 일치하지 않아야 함");
+        assertNotEquals(Role.ROLE_OWNER, owner1.getRole(), "1번 사장의 권한은 ROLE_OWNER 가 아니기 때문에 일치하지 않아야 함");
 
         // 잘못된 PK 입력
-        given(authenticationFacade.getLoginUserId()).willReturn(3L);
-        long ownerId3 = authenticationFacade.getLoginUserId();
-        OwnerEntity owner3 = ownerRepository.getReferenceById(ownerId3);
-        assertEquals(Role.ROLE_OWNER, owner3.getRole(), "owner 권한이 들어있지 않음");
+        given(authenticationFacade.getLoginUserId()).willReturn(2L);
+        long ownerId2 = authenticationFacade.getLoginUserId();
+        OwnerEntity owner2 = ownerRepository.getReferenceById(ownerId2);
+        assertEquals(Role.ROLE_OWNER, owner2.getRole(), "owner 권한이 들어있지 않음");
 
         // 정상
     }
