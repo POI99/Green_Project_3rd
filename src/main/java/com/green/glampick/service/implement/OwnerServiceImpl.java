@@ -438,15 +438,19 @@ public class OwnerServiceImpl implements OwnerService {
         OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
 
 
-        // 예약 된 글램핑이 있는지 확인
         GlampingEntity glamping = glampingRepository.findByOwner(owner);
-        GlampingModule.existReservation(glamping, reservationBeforeRepository);
+        if(glamping != null) {  // 글램핑을 등록한 회원인지 확인
+            // 예약 된 글램핑이 있는지 확인
+            GlampingModule.existReservation(glamping, reservationBeforeRepository);
+            // 글램핑
+            glamping.setActivateStatus(0);
+            glampingRepository.save(glamping);
+        }
 
         // 탈퇴 요청
         owner.setActivateStatus(0);
         ownerRepository.save(owner);
-        glamping.setActivateStatus(0);
-        glampingRepository.save(glamping);
+
 
         return OwnerSuccessResponseDto.withdraw();
     }
