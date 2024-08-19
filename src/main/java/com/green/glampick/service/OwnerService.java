@@ -9,12 +9,18 @@ import com.green.glampick.dto.response.owner.*;
 import com.green.glampick.dto.response.owner.get.*;
 import com.green.glampick.dto.response.owner.patch.PatchOwnerPeakResponseDto;
 import com.green.glampick.dto.response.owner.patch.PatchOwnerReviewInfoResponseDto;
-import com.green.glampick.dto.response.owner.post.PostBusinessPaperResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PatchOwnerInfoResponseDto;
 import com.green.glampick.dto.response.user.GetReviewResponseDto;
+import com.green.glampick.dto.request.owner.ReviewGetCancelRequestDto;
+import com.green.glampick.dto.request.owner.ReviewGetRevenueRequestDto;
+import com.green.glampick.dto.request.owner.ReviewGetRoomRequestDto;
+import com.green.glampick.dto.request.owner.ReviewGetStarRequestDto;
+import com.green.glampick.dto.response.owner.get.GetGlampingCancelResponseDto;
+import com.green.glampick.dto.response.owner.get.GetOwnerPopularRoomResponseDto;
+import com.green.glampick.dto.response.owner.get.GetOwnerRevenueResponseDto;
+import com.green.glampick.dto.response.owner.get.GetOwnerStarResponseDto;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -67,6 +73,18 @@ public interface OwnerService {
     List<OwnerBookDetailListItem> getReservationCompleteList(ReservationGetRequestDto p);
     //날짜별 예약 건수
     List<OwnerBookCountListItem> getTotalCount(String date,Long ownerId);
+
+
+
+    // 이용 완료된 객실별 예약수, 매출
+    ResponseEntity<? super GetOwnerPopularRoomResponseDto> getPopRoom(ReviewGetRoomRequestDto dto);
+    // 별점
+    ResponseEntity<? super GetOwnerStarResponseDto> getStarRoom(ReviewGetStarRequestDto dto);
+    // 예약 취소율
+    ResponseEntity<? super GetGlampingCancelResponseDto> getGlampingCancelRoom(ReviewGetCancelRequestDto dto);
+    //매출
+    ResponseEntity<? super GetOwnerRevenueResponseDto> getRevenue(ReviewGetRevenueRequestDto dto);
+
 
 
 }

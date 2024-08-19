@@ -8,12 +8,23 @@ import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.response.owner.patch.PatchOwnerPeakResponseDto;
 import com.green.glampick.dto.response.owner.patch.PatchOwnerReviewInfoResponseDto;
+import com.green.glampick.dto.object.owner.GetCancelDto;
+import com.green.glampick.dto.object.owner.GetPopularRoom;
+import com.green.glampick.dto.object.owner.GetRevenue;
+import com.green.glampick.dto.object.owner.GetStarHeart;
+import com.green.glampick.dto.request.owner.ReviewGetCancelRequestDto;
+import com.green.glampick.dto.request.owner.ReviewGetRevenueRequestDto;
+import com.green.glampick.dto.request.owner.ReviewGetRoomRequestDto;
+import com.green.glampick.dto.request.owner.ReviewGetStarRequestDto;
+import com.green.glampick.dto.response.owner.get.GetGlampingCancelResponseDto;
+import com.green.glampick.dto.response.owner.get.GetOwnerPopularRoomResponseDto;
+import com.green.glampick.dto.response.owner.get.GetOwnerRevenueResponseDto;
+import com.green.glampick.dto.response.owner.get.GetOwnerStarResponseDto;
 import com.green.glampick.module.GlampingModule;
 import com.green.glampick.module.RoomModule;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
 import com.green.glampick.dto.response.owner.get.*;
-import com.green.glampick.dto.response.owner.post.PostBusinessPaperResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PatchOwnerInfoResponseDto;
 import com.green.glampick.dto.response.user.GetReviewResponseDto;
@@ -42,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -730,6 +742,144 @@ public class OwnerServiceImpl implements OwnerService {
 
     }
 
+    // 진현 ====================================================================================================================
+
+    @Override// 이용 완료된 객실별 예약수
+    @Transactional
+    public ResponseEntity<? super GetOwnerPopularRoomResponseDto> getPopRoom(ReviewGetRoomRequestDto dto) {
+        try {
+            dto.setOwnerId(authenticationFacade.getLoginUserId());
+            if (dto.getOwnerId() <= 0) {
+                throw new CustomException(CommonErrorCode.MNF);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.MNF);
+        }
+        Long total = 0L;
+        List<GetPopularRoom> popRoom = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String formStart = dto.getStartDayId().format(formatter);
+        String formEnd = dto.getEndDayId().format(formatter);
+        try {
+
+            total = reservationCompleteRepository.findTotal(dto.getOwnerId(), formStart, formEnd);
+            popRoom = reservationCompleteRepository.findPopularRoom(dto.getOwnerId(), formStart, formEnd);
+            if (dto.getOwnerId() == 0) {
+                throw new CustomException(OwnerErrorCode.NMG);
+            }
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return GetOwnerPopularRoomResponseDto.success(total, popRoom);
+    }
+
+    @Override// 별점
+    @Transactional
+    public ResponseEntity<? super GetOwnerStarResponseDto> getStarRoom(ReviewGetStarRequestDto dto) {
+        try {
+            dto.setOwnerId(authenticationFacade.getLoginUserId());
+            if (dto.getOwnerId() <= 0) {
+                throw new CustomException(CommonErrorCode.MNF);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.MNF);
+        }
+        List<GetStarHeart> starHearts = null;
+        try {
+            starHearts = ownerRepository.findByIdStarPoint(dto.getOwnerId());
+            if (dto.getOwnerId() == 0) {
+                throw new CustomException(OwnerErrorCode.NMG);
+            }
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return GetOwnerStarResponseDto.success(starHearts);
+    }
+
+
+    @Override// 예약 취소율
+    @Transactional
+    public ResponseEntity<? super GetGlampingCancelResponseDto> getGlampingCancelRoom(ReviewGetCancelRequestDto dto) {
+        try {
+            dto.setOwnerId(authenticationFacade.getLoginUserId());
+            if (dto.getOwnerId() <= 0) {
+                throw new CustomException(CommonErrorCode.MNF);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.MNF);
+        }
+        String formattedResult = null;
+        List<GetCancelDto> room = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formStart = dto.getStartDayId().format(formatter);
+        String formEnd = dto.getEndDayId().format(formatter);
+        try {
+            room = ownerRepository.findRoomCount(dto.getOwnerId(), formStart, formEnd);
+            Long total = ownerRepository.findTotalCount(dto.getOwnerId(), formStart, formEnd);
+            total = total == null ? 0L : total;
+            Long cancel = ownerRepository.findCancelCount(dto.getOwnerId(), formStart, formEnd);
+            cancel = cancel == null ? 0L : cancel;
+            if (dto.getOwnerId() == 0) {
+                throw new CustomException(OwnerErrorCode.NMG);
+            }
+            double result = (double) cancel / total * 100;
+            formattedResult = String.format("%.2f", result);
+
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+        return GetGlampingCancelResponseDto.success(room, formattedResult);
+    }
+
+    @Override//매출
+    @Transactional
+    public ResponseEntity<? super GetOwnerRevenueResponseDto> getRevenue(ReviewGetRevenueRequestDto dto) {
+        try {
+            dto.setOwnerId(authenticationFacade.getLoginUserId());
+            if (dto.getOwnerId() <= 0) {
+                throw new CustomException(CommonErrorCode.MNF);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.MNF);
+        }
+        List<GetRevenue> revenue = new ArrayList<>();
+        Long totalPay = 0L;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formStart = dto.getStartDayId().format(formatter);
+        String formEnd = dto.getEndDayId().format(formatter);
+        try {
+            totalPay = ownerRepository.findTotalPay(dto.getOwnerId(), formStart, formEnd);
+            revenue = ownerRepository.findRevenue(dto.getOwnerId(), formStart, formEnd);
+            if (dto.getOwnerId() == 0) {
+                throw new CustomException(OwnerErrorCode.NMG);
+            }
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return GetOwnerRevenueResponseDto.success(totalPay, revenue);
+    }
 
     //========================================= < PRIVATE METHOD > =================================================//
     private void putPriceData(Long glampId, PatchOwnerPeakRequestDto p, List<GetRoomPriceItem> priceItems, double percent) {

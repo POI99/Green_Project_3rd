@@ -1,4 +1,4 @@
-package com.green.glampick.jin.request;
+package com.green.glampick.dto.request.owner;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
