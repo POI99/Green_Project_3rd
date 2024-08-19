@@ -1,5 +1,6 @@
 package com.green.glampick.controller;
 
+import com.green.glampick.controller.controllerInterface.OwnerController;
 import com.green.glampick.dto.object.owner.OwnerBookCountListItem;
 import com.green.glampick.dto.object.owner.OwnerBookDetailListItem;
 import com.green.glampick.dto.request.owner.*;
@@ -88,7 +89,7 @@ import static com.green.glampick.common.swagger.description.owner.WithdrawOwnerS
 @RequiredArgsConstructor
 @RequestMapping("/api/owner")
 @Tag(name = "사장님 컨트롤러")
-public class OwnerController {
+public class OwnerControllerImpl implements OwnerController {
 
     private final OwnerService service;
     private final AuthenticationFacade authenticationFacade;
@@ -132,7 +133,7 @@ public class OwnerController {
     @ApiResponse(responseCode = "200", description = POST_ROOM_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = PostRoomInfoResponseDto.class)))
-    public ResponseEntity<? super PostRoomInfoResponseDto> createRoom(@RequestPart @Valid RoomPostRequestDto req
+    public ResponseEntity<? super OwnerSuccessResponseDto> createRoom(@RequestPart @Valid RoomPostRequestDto req
             , @RequestPart List<MultipartFile> roomImg) {
         return service.postRoomInfo(req, roomImg);
     }

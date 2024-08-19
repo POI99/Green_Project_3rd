@@ -1,8 +1,7 @@
-package com.green.glampick.service.implement;
+package com.green.glampick.service;
 
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.common.Role;
-import com.green.glampick.config.SecurityConfiguration;
 import com.green.glampick.dto.object.owner.GetRoomItem;
 import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.GlampingWaitEntity;
@@ -11,6 +10,7 @@ import com.green.glampick.entity.RoomEntity;
 import com.green.glampick.repository.*;
 import com.green.glampick.repository.resultset.GetRoomListResultSet;
 import com.green.glampick.security.AuthenticationFacade;
+import com.green.glampick.service.implement.OwnerServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,10 +27,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @Import({ OwnerServiceImpl.class })
@@ -38,8 +38,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
 @Rollback(value = false)
-class OwnerServiceImplTest {
+class OwnerServiceTest {
 
+    @Autowired private OwnerService service;
     @Autowired private OwnerRepository ownerRepository;
     @Autowired private GlampingRepository glampingRepository;
     @Autowired private GlampingWaitRepository glampingWaitRepository;
@@ -57,6 +58,7 @@ class OwnerServiceImplTest {
     @MockBean private ReservationCompleteRepository reservationCompleteRepository;
     @MockBean private RoomPriceRepository roomPriceRepository;
     @MockBean private GlampPeakRepository glampPeakRepository;
+
 
     @Test
     @DisplayName("글램핑 등록 테스트")
@@ -202,5 +204,4 @@ class OwnerServiceImplTest {
         verify(passwordEncoder).encode(password);
         verify(passwordEncoder).matches(password, findOwner.getOwnerPw());
     }
-
 }

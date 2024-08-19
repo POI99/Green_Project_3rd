@@ -206,7 +206,7 @@ public class OwnerServiceImpl implements OwnerService {
 
     // 객실 등록
     @Transactional
-    public ResponseEntity<? super PostRoomInfoResponseDto> postRoomInfo(RoomPostRequestDto req
+    public ResponseEntity<? super OwnerSuccessResponseDto> postRoomInfo(RoomPostRequestDto req
             , List<MultipartFile> image) {
 
         // 오너 PK 불러오기
@@ -248,7 +248,7 @@ public class OwnerServiceImpl implements OwnerService {
         }
 
 //        return OwnerSuccessResponseDto.postInformation();
-        return PostRoomInfoResponseDto.success(room.getRoomId());
+        return OwnerSuccessResponseDto.postInformation();
     }
 
     // 객실 수정
