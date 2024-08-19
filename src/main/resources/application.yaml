@@ -146,6 +146,22 @@ coolsms:
 ---
 
 spring:
+  config:
+    activate:
+      on-profile: tdd
+  datasource:
+    url: ${TDD.DB_URL}
+  sql:
+    init:
+      mode: always
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+---
+
+spring:
   datasource:
     url: ${PROD.DB_URL}
     username: ${PROD.DB_USERNAME}
