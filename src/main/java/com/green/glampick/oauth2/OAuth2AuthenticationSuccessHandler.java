@@ -2,7 +2,9 @@ package com.green.glampick.oauth2;
 
 import com.green.glampick.common.security.AppProperties;
 import com.green.glampick.common.security.CookieUtils;
+import com.green.glampick.entity.UserEntity;
 import com.green.glampick.jwt.JwtTokenProvider;
+import com.green.glampick.repository.UserRepository;
 import com.green.glampick.security.MyUser;
 import com.green.glampick.security.MyUserDetail;
 import com.green.glampick.security.MyUserOAuth2Vo;
@@ -26,6 +28,7 @@ public class OAuth2AuthenticationSuccessHandler
         extends SimpleUrlAuthenticationSuccessHandler {
 
     private final OAuth2AuthenticationRequestBasedOnCookieRepository repository;
+    private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final AppProperties appProperties;
     private final CookieUtils cookieUtils;
@@ -83,10 +86,17 @@ public class OAuth2AuthenticationSuccessHandler
                 , refreshToken
                 , refreshTokenMaxAge);
 
+        UserEntity user = userRepository.findByUserId(myUserOAuth2Vo.getUserId());
+        boolean infoStatus = true;
+        if (user.getUserName() == null) { infoStatus = false; }
+        if (user.getUserNickname() == null) { infoStatus = false; }
+        if (user.getUserPhone() == null) { infoStatus = false; }
+
         //http://localhost:8080/oauth/redirect?user_id=1&nm=홍길동&pic=https://image.jpg&access_token=aslkdjslajf
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("user_id", myUserOAuth2Vo.getUserId())
                 .queryParam("user_email", myUserOAuth2Vo.getUserEmail()).encode()
+                .queryParam("info_status", infoStatus)
                 .queryParam("access_token", accessToken)
                 .build()
                 .toUriString();

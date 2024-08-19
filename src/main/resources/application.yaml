@@ -118,10 +118,10 @@ app:
     redirect-uri-param-cookie-name: redirect_uri
     cookie-expiry-seconds: 180
     authorized-redirect-uris: #OAuth2 처리시 허용한 FE리다이렉트 주소값
-      - http://localhost:3000/oauth/redirect
+      - http://localhost:3000/oauth/sns-signup
       - http://localhost:8080/oauth/redirect
-      - http://192.168.0.144:5125/oauth/redirect #내부 도커서버 IP
-      - http://112.222.157.156:5125/oauth/redirect #외부 IP
+      - http://192.168.0.144:5124/oauth/redirect #내부 도커서버 IP
+      - http://112.222.157.156:5124/oauth/redirect #외부 IP
 
 management:
   endpoints:
@@ -144,6 +144,7 @@ coolsms:
     secret: ${COOLSMS.API_SECRET}
 
 ---
+
 
 spring:
   config:
@@ -172,3 +173,12 @@ spring:
 
 file:
   directory: ${PROD.FILE_DIRECTORY}
+
+app:
+  oauth2:
+    authorized-redirect-uris:
+      - http://localhost:3000/sns-signup
+      - http://localhost:8080/oauth/redirect
+      - http://localhost:8080/sns-signup
+      - http://192.168.0.144:5124/oauth/redirect #내부 도커서버 IP
+      - http://112.222.157.156:5124/oauth/redirect #외부 IP

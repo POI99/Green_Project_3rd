@@ -31,6 +31,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -66,7 +67,9 @@ public class LoginServiceImpl implements LoginService {
     private final AppProperties appProperties;
     private final SmsUtils smsUtils;
 
+    @Getter
     private Map<String, Integer> CodeMap;
+    @Getter
     private Map<String, Long> CodeExpiryMap;
 
     private final JavaMailSender mailSender;
@@ -159,7 +162,9 @@ public class LoginServiceImpl implements LoginService {
             if (!matcherPhone.matches()) {
                 throw new CustomException(UserErrorCode.IPH);
             }
-            userPhone.replaceAll("-", "");
+            String userPhoneReplace = userPhone.replaceAll("-", "");
+            dto.setUserPhone(userPhoneReplace);
+
             //  입력받은 전화번호가 유저 테이블에 이미 있는 전화번호 이라면, 중복 전화번호에 대한 응답을 보낸다.  //
 //            boolean existedPhone = userRepository.existsByUserPhone(userPhone);
 //            if (existedPhone) { throw new CustomException(UserErrorCode.DT); }
@@ -305,7 +310,8 @@ public class LoginServiceImpl implements LoginService {
             if (!matcherPhone.matches()) {
                 throw new CustomException(UserErrorCode.IPH);
             }
-            ownerPhone.replaceAll("-", "");
+            String ownerPhoneReplace = ownerPhone.replaceAll("-", "");
+            dto.setOwnerPhone(ownerPhoneReplace);
 
 
             //  입력받은 비밀번호가 정규표현식을 통하여 비밀번호 형식에 맞지 않으면, 비밀번호 형식 오류에 대한 응답을 보낸다.  //
