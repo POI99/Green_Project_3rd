@@ -2,12 +2,9 @@ package com.green.glampick.repository;
 
 import com.green.glampick.dto.object.owner.OwnerBookItem;
 import com.green.glampick.dto.response.owner.get.GetOwnerBookCompleteCountResponseDto;
-import com.green.glampick.entity.GlampingEntity;
 import com.green.glampick.entity.ReservationCompleteEntity;
-import com.green.glampick.jin.object.GetPopularRoom;
-import com.green.glampick.repository.resultset.GetReservationBeforeResultSet;
+import com.green.glampick.dto.object.owner.GetPopularRoom;
 import com.green.glampick.repository.resultset.GetReservationCompleteResultSet;
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

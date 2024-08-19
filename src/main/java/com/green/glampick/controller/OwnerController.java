@@ -6,11 +6,18 @@ import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.response.owner.patch.PatchOwnerPeakResponseDto;
 import com.green.glampick.dto.response.owner.patch.PatchOwnerReviewInfoResponseDto;
+import com.green.glampick.dto.request.owner.ReviewGetCancelRequestDto;
+import com.green.glampick.dto.request.owner.ReviewGetRevenueRequestDto;
+import com.green.glampick.dto.request.owner.ReviewGetRoomRequestDto;
+import com.green.glampick.dto.request.owner.ReviewGetStarRequestDto;
+import com.green.glampick.dto.response.owner.get.GetGlampingCancelResponseDto;
+import com.green.glampick.dto.response.owner.get.GetOwnerPopularRoomResponseDto;
+import com.green.glampick.dto.response.owner.get.GetOwnerRevenueResponseDto;
+import com.green.glampick.dto.response.owner.get.GetOwnerStarResponseDto;
 import com.green.glampick.module.GlampingModule;
 import com.green.glampick.dto.request.user.GetReviewRequestDto;
 import com.green.glampick.dto.response.owner.*;
 import com.green.glampick.dto.response.owner.get.*;
-import com.green.glampick.dto.response.owner.post.PostBusinessPaperResponseDto;
 import com.green.glampick.dto.response.owner.post.PostRoomInfoResponseDto;
 import com.green.glampick.dto.response.owner.put.PatchOwnerInfoResponseDto;
 import com.green.glampick.dto.response.user.GetReviewResponseDto;
@@ -38,6 +45,8 @@ import static com.green.glampick.common.swagger.description.owner.DeleteRoomSwag
 import static com.green.glampick.common.swagger.description.owner.DeleteRoomSwaggerDescription.DELETE_ROOM_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.GetBookFromUserSwaggerDescription.BOOK_FROM_USER_REVIEW_VIEW_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetBookFromUserSwaggerDescription.BOOK_FROM_USER_REVIEW_VIEW_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.GetCancelDescription.OWNER_CANCEL_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetCancelDescription.OWNER_CANCEL_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.GetGlampingBookCountDescription.BOOK_COUNT_FROM_OWNER_GLAMPING_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetGlampingBookCountDescription.BOOK_COUNT_RESPONSE_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetGlampingFromUserReviewSwaggerDescription.GLAMPING_FROM_USER_REVIEW_VIEW_DESCRIPTION;
@@ -46,6 +55,12 @@ import static com.green.glampick.common.swagger.description.owner.GetGlampingInf
 import static com.green.glampick.common.swagger.description.owner.GetGlampingInfoSwaggerDescription.GET_GLAMPING_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.GetOwnerInfoSwaggerDescription.GET_OWNER_INFO_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetOwnerInfoSwaggerDescription.GET_OWNER_INFO_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.GetOwnerPopularRoomDescription.OWNER_ROOM_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetOwnerPopularRoomDescription.OWNER_ROOM_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.GetOwnerStarDescription.OWNER_STAR_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetOwnerStarDescription.OWNER_STAR_RESPONSE_ERROR_CODE;
+import static com.green.glampick.common.swagger.description.owner.GetRevenueDescription.OWNER_REVENUE_DESCRIPTION;
+import static com.green.glampick.common.swagger.description.owner.GetRevenueDescription.OWNER_REVENUE_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.GetRoomInfoSwaggerDescription.GET_ROOM_DESCRIPTION;
 import static com.green.glampick.common.swagger.description.owner.GetRoomInfoSwaggerDescription.GET_ROOM_RESPONSE_ERROR_CODE;
 import static com.green.glampick.common.swagger.description.owner.GetRoomListSwaggerDescription.GET_ROOM_LIST_DESCRIPTION;
@@ -335,6 +350,47 @@ public class OwnerController {
         GetOwnerBookListResponseDto dto = new GetOwnerBookListResponseDto(totalCount);
 
         return dto.success(totalCount);
+    }
+// 진현 =================================================================================================================
+
+    // 이용 완료된 객실별 예약수
+    @GetMapping("/poproom")
+    @Operation(summary = "이용 완료된 객실별 예약수 (이진현)", description = OWNER_ROOM_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = OWNER_ROOM_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetOwnerPopularRoomResponseDto.class)))
+    public ResponseEntity<? super GetOwnerPopularRoomResponseDto> getPopRoom(@ParameterObject ReviewGetRoomRequestDto dto) {
+        return service.getPopRoom(dto);
+    }
+
+    // 평균 별점 및 관심 수
+    @GetMapping("/starheart")
+    @Operation(summary = "평균 별점, 관심 수 (이진현)", description = OWNER_STAR_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = OWNER_STAR_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetOwnerStarResponseDto.class)))
+    public ResponseEntity<? super GetOwnerStarResponseDto> getStarRoom(@ParameterObject ReviewGetStarRequestDto dto) {
+        return service.getStarRoom(dto);
+    }
+
+    // 예약 취소율
+    @GetMapping("/glampingcancel")
+    @Operation(summary = "예약 취소율 (이진현)", description = OWNER_CANCEL_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = OWNER_CANCEL_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetGlampingCancelResponseDto.class)))
+    public ResponseEntity<? super GetGlampingCancelResponseDto> getGlampingCancelRoom(@ParameterObject ReviewGetCancelRequestDto dto) {
+        return service.getGlampingCancelRoom(dto);
+    }
+
+    //매출
+    @GetMapping("/revenue")
+    @Operation(summary = "매출 (이진현)", description = OWNER_REVENUE_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = OWNER_REVENUE_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = GetOwnerRevenueResponseDto.class)))
+    public ResponseEntity<? super GetOwnerRevenueResponseDto> getPopRoom(@ParameterObject ReviewGetRevenueRequestDto dto) {
+        return service.getRevenue(dto);
     }
 
 

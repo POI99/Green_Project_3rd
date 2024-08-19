@@ -1,4 +1,4 @@
-package com.green.glampick.jin.object;
+package com.green.glampick.dto.object.owner;
 
 
 import kotlinx.datetime.LocalDate;

@@ -1,7 +1,7 @@
-package com.green.glampick.jin.response;
+package com.green.glampick.dto.response.owner.get;
 
 import com.green.glampick.dto.ResponseDto;
-import com.green.glampick.jin.object.GetStarHeart;
+import com.green.glampick.dto.object.owner.GetStarHeart;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
