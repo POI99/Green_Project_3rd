@@ -1,10 +1,7 @@
 package com.green.glampick.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 import org.locationtech.jts.geom.Point;
@@ -15,6 +12,7 @@ import org.locationtech.jts.geom.Point;
 @AllArgsConstructor
 @Entity
 @Table(name = "glamping")
+@ToString
 public class GlampingEntity extends UpdatedAt {
 
     // 글램핑 테이블
