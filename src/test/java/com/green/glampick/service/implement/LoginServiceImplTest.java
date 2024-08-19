@@ -35,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.mail.internet.MimeMessage;
 
@@ -44,6 +45,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+@ActiveProfiles("tdd")
 class LoginServiceImplTest {
 
     @InjectMocks
@@ -73,6 +75,9 @@ class LoginServiceImplTest {
     @Mock
     private JavaMailSender mailSender;
 
+    @Mock
+    private AppProperties appProperties;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -86,9 +91,14 @@ class LoginServiceImplTest {
         dto.setOwnerPw("Test1234!");
 
         OwnerEntity ownerEntity = new OwnerEntity();
+        ownerEntity.setOwnerId(1L);  // ownerId를 설정합니다.
         ownerEntity.setOwnerPw("encodedPassword");
         ownerEntity.setActivateStatus(1);
         ownerEntity.setRole(Role.ROLE_OWNER);
+
+        AppProperties.Jwt jwtProperties = mock(AppProperties.Jwt.class);
+        when(appProperties.getJwt()).thenReturn(jwtProperties);
+        when(jwtProperties.getRefreshTokenCookieMaxAge()).thenReturn(3600);
 
         when(ownerRepository.findByOwnerEmail(dto.getOwnerEmail())).thenReturn(ownerEntity);
         when(passwordEncoder.matches(dto.getOwnerPw(), ownerEntity.getOwnerPw())).thenReturn(true);
@@ -149,7 +159,12 @@ class LoginServiceImplTest {
         dto.setAdminPw("Test1234!");
 
         AdminEntity adminEntity = new AdminEntity();
+        adminEntity.setAdminIdx(1L);
         adminEntity.setAdminPw("encodedPassword");
+
+        AppProperties.Jwt jwtProperties = mock(AppProperties.Jwt.class);
+        when(appProperties.getJwt()).thenReturn(jwtProperties);
+        when(jwtProperties.getRefreshTokenCookieMaxAge()).thenReturn(3600);
 
         when(adminRepository.findByAdminId(dto.getAdminId())).thenReturn(adminEntity);
         when(passwordEncoder.matches(dto.getAdminPw(), adminEntity.getAdminPw())).thenReturn(true);
