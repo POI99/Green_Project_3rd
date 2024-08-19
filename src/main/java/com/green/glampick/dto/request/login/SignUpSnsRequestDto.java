@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class SignUpSnsRequestDto {
 
-    private Long userId;
+    private String providerId;
     private String userName;
     private String userPhone;
     private String userNickname;
