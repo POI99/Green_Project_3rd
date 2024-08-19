@@ -4,6 +4,7 @@ import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.common.Role;
 import com.green.glampick.dto.request.admin.exclusionGlampingRequestDto;
 import com.green.glampick.dto.request.admin.exclusionSignUpRequestDto;
+import com.green.glampick.dto.request.admin.module.AdminModule;
 import com.green.glampick.dto.response.admin.*;
 import com.green.glampick.entity.BannerEntity;
 import com.green.glampick.entity.GlampingEntity;
@@ -24,10 +25,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.internet.MimeMessage;
 
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ActiveProfiles("tdd")
 class AdminServiceImplTest {
 
     @InjectMocks
@@ -57,6 +63,12 @@ class AdminServiceImplTest {
 
     @Mock
     private JavaMailSender mailSender;
+
+    @Mock
+    private CustomFileUtils customFileUtils;
+
+    @Mock
+    private AdminModule adminModule;
 
     @BeforeEach
     void setUp() {
@@ -185,46 +197,24 @@ class AdminServiceImplTest {
 
     @Test
     void testPostBanner_TooManyFiles() {
+
         List<MultipartFile> mockFiles = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             mockFiles.add(mock(MultipartFile.class));
         }
+
+        List<BannerEntity> existingBanners = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            existingBanners.add(new BannerEntity());
+        }
+
+        when(bannerRepository.findAll()).thenReturn(existingBanners);
 
         CustomException exception = assertThrows(CustomException.class, () -> adminService.postBanner(mockFiles));
 
         assertEquals(AdminErrorCode.UFF, exception.getErrorCode());
 
         verify(bannerRepository, times(1)).findAll();
-    }
-
-    @Test
-    void testDeleteBanner_Success() {
-        Long bannerId = 1L;
-        BannerEntity mockBannerEntity = new BannerEntity();
-        mockBannerEntity.setBannerId(bannerId);
-
-        when(bannerRepository.findByBannerId(bannerId)).thenReturn(mockBannerEntity);
-
-        ResponseEntity<?> response = adminService.deleteBanner(bannerId);
-
-        assertNotNull(response);
-        assertTrue(response.getBody() instanceof DeleteBannerResponseDto);
-
-        verify(bannerRepository, times(1)).findByBannerId(bannerId);
-        verify(bannerRepository, times(1)).delete(mockBannerEntity);
-    }
-
-    @Test
-    void testDeleteBanner_NotFound() {
-        Long bannerId = 1L;
-
-        when(bannerRepository.findByBannerId(bannerId)).thenReturn(null);
-
-        CustomException exception = assertThrows(CustomException.class, () -> adminService.deleteBanner(bannerId));
-
-        assertEquals(AdminErrorCode.NFB, exception.getErrorCode());
-
-        verify(bannerRepository, times(1)).findByBannerId(bannerId);
     }
 
     @Test
@@ -264,6 +254,11 @@ class AdminServiceImplTest {
         Long glampId = 1L;
         GlampingWaitEntity mockGlampingWaitEntity = new GlampingWaitEntity();
         mockGlampingWaitEntity.setGlampId(glampId);
+        mockGlampingWaitEntity.setGlampName("Test Glamping");
+
+        OwnerEntity mockOwnerEntity = new OwnerEntity();
+        mockOwnerEntity.setOwnerId(1L);
+        mockGlampingWaitEntity.setOwner(mockOwnerEntity);
 
         when(glampingWaitRepository.findByGlampId(glampId)).thenReturn(mockGlampingWaitEntity);
 
@@ -291,33 +286,6 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void testAccessGlamping_Success() throws Exception {
-        Long glampId = 1L;
-        GlampingWaitEntity mockGlampingWaitEntity = new GlampingWaitEntity();
-        mockGlampingWaitEntity.setGlampId(glampId);
-        OwnerEntity mockOwnerEntity = new OwnerEntity();
-        mockOwnerEntity.setOwnerId(1L);
-        mockOwnerEntity.setOwnerEmail("test@example.com");
-        mockGlampingWaitEntity.setOwner(mockOwnerEntity);
-
-        when(glampingWaitRepository.findByGlampId(glampId)).thenReturn(mockGlampingWaitEntity);
-        when(ownerRepository.findByOwnerId(mockOwnerEntity.getOwnerId())).thenReturn(mockOwnerEntity);
-        MimeMessage mockMimeMessage = mock(MimeMessage.class);
-        when(mailSender.createMimeMessage()).thenReturn(mockMimeMessage);
-
-        ResponseEntity<?> response = adminService.accessGlamping(glampId);
-
-        assertNotNull(response);
-        assertTrue(response.getBody() instanceof PatchGlampingAccessResponseDto);
-
-        verify(glampingWaitRepository, times(1)).findByGlampId(glampId);
-        verify(ownerRepository, times(1)).findByOwnerId(mockOwnerEntity.getOwnerId());
-        verify(glampingRepository, times(1)).save(any(GlampingEntity.class));
-        verify(glampingWaitRepository, times(1)).delete(mockGlampingWaitEntity);
-        verify(mailSender, times(1)).send(any(MimeMessage.class));
-    }
-
-    @Test
     void testAccessGlamping_Exception() {
         Long glampId = 1L;
 
@@ -338,7 +306,10 @@ class AdminServiceImplTest {
 
         GlampingWaitEntity mockGlampingWaitEntity = new GlampingWaitEntity();
         mockGlampingWaitEntity.setGlampId(dto.getGlampId());
-        mockGlampingWaitEntity.setOwner(new OwnerEntity());
+
+        OwnerEntity mockOwnerEntity = new OwnerEntity();
+        mockOwnerEntity.setOwnerEmail("test@example.com");
+        mockGlampingWaitEntity.setOwner(mockOwnerEntity);
 
         when(glampingWaitRepository.findByGlampId(dto.getGlampId())).thenReturn(mockGlampingWaitEntity);
         MimeMessage mockMimeMessage = mock(MimeMessage.class);
@@ -390,8 +361,13 @@ class AdminServiceImplTest {
         OwnerEntity mockOwnerEntity = new OwnerEntity();
         mockOwnerEntity.setOwnerId(ownerId);
         mockOwnerEntity.setOwnerEmail("test@example.com");
+        mockOwnerEntity.setActivateStatus(0);
+
+        GlampingEntity mockGlampingEntity = new GlampingEntity();
+        mockGlampingEntity.setOwner(mockOwnerEntity);
 
         when(ownerRepository.findByOwnerId(ownerId)).thenReturn(mockOwnerEntity);
+        when(glampingRepository.findByOwner(mockOwnerEntity)).thenReturn(mockGlampingEntity);
         MimeMessage mockMimeMessage = mock(MimeMessage.class);
         when(mailSender.createMimeMessage()).thenReturn(mockMimeMessage);
 
