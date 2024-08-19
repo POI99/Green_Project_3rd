@@ -250,7 +250,7 @@ public class LoginServiceImpl implements LoginService {
             }
 
             //  가공이 끝난 DTO 를 새로운 userEntity 객체로 생성한다.  //
-            UserEntity userEntity = userRepository.findByProviderId(dto.getProviderId());
+            UserEntity userEntity = userRepository.findByUserId(dto.getUserId());
             userEntity.setUserName(dto.getUserName());
             userEntity.setUserNickname(dto.getUserNickname());
             userEntity.setUserPhone(dto.getUserPhone());
