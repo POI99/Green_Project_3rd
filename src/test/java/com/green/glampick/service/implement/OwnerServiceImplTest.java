@@ -40,13 +40,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Rollback(value = false)
 class OwnerServiceImplTest {
 
-    @MockBean private AuthenticationFacade authenticationFacade;
     @Autowired private OwnerRepository ownerRepository;
     @Autowired private GlampingRepository glampingRepository;
     @Autowired private GlampingWaitRepository glampingWaitRepository;
-    @MockBean private CustomFileUtils customFileUtils;
-    @MockBean private PasswordEncoder passwordEncoder;
     @Autowired private RoomRepository roomRepository;
+    @MockBean private AuthenticationFacade authenticationFacade;
+    @MockBean private PasswordEncoder passwordEncoder;
+    @MockBean private CustomFileUtils customFileUtils;
     @MockBean private RoomImageRepository roomImageRepository;
     @MockBean private ServiceRepository serviceRepository;
     @MockBean private RoomServiceRepository roomServiceRepository;
