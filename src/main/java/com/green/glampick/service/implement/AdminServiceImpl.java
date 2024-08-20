@@ -193,6 +193,9 @@ public class AdminServiceImpl implements AdminService {
             //  위에서 정의한 MimeMessage 를 전송한다.  //
             mailSender.send(mimeMessage);
 
+            String filePath = String.format("businessInfo/%d", ownerEntity.getOwnerId());
+            customFileUtils.deleteFolder(filePath);
+
             ownerRepository.delete(ownerEntity);
 
         } catch (CustomException e) {

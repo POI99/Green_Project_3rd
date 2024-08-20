@@ -222,6 +222,8 @@ public class LoginServiceImpl implements LoginService {
             Pattern patternPhone = Pattern.compile(phoneRegex);
             Matcher matcherPhone = patternPhone.matcher(userPhone);
             if (!matcherPhone.matches()) { throw new CustomException(UserErrorCode.IPH); }
+            String userPhoneReplace = userPhone.replaceAll("-", "");
+            dto.setUserPhone(userPhoneReplace);
 
             UserEntity userEntity = userRepository.findByUserId(dto.getUserId());
             userEntity.setUserPw(dto.getUserPw());
