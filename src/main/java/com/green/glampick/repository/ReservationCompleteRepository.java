@@ -111,21 +111,21 @@ public interface ReservationCompleteRepository extends JpaRepository<Reservation
     @Query(
             value =
                     "WITH RECURSIVE dates AS ( " +
-                            "SELECT :startDayId AS check_in_date " +
-                            "UNION ALL " +
-                            "SELECT DATE_ADD(check_in_date, INTERVAL 1 DAY) " +
-                            "FROM dates " +
-                            "WHERE check_in_date < :endDayId) " +
-                            "SELECT " +
-                            "IFNULL(COUNT(sud.check_in_date), 0) AS totalCount " +
-                            "FROM dates " +
-                            "LEFT JOIN ( " +
-                            "SELECT C.owner_id, A.check_in_date " +
-                            "FROM reservation_cancel A " +
-                            "JOIN room B ON A.room_id = B.room_id " +
-                            "JOIN glamping C ON B.glamp_id = C.glamp_id " +
-                            "WHERE C.owner_id = :ownerId) AS sud " +
-                            "ON sud.check_in_date = dates.check_in_date ",
+            "SELECT :startDayId AS check_in_date " +
+            "UNION ALL " +
+            "SELECT DATE_ADD(check_in_date, INTERVAL 1 DAY) " +
+    "FROM dates " +
+    "WHERE check_in_date < :endDayId) " +
+    "SELECT " +
+    "IFNULL(COUNT(sud.check_in_date), 0) AS totalCount " +
+    "FROM dates " +
+    "LEFT JOIN ( " +
+            "SELECT A.check_in_date " +
+            "FROM reservation_complete A " +
+            "JOIN room C ON A.room_id = C.room_id " +
+            "JOIN glamping B ON B.glamp_id = C.glamp_id " +
+            "WHERE B.owner_id = :ownerId " +
+    ") AS sud ON sud.check_in_date = dates.check_in_date ",
             nativeQuery = true
     )
     Long findTotal(@Param("ownerId") long ownerId, @Param("startDayId") String startDayId, @Param("endDayId") String endDayId);
