@@ -4,6 +4,7 @@ import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.dto.object.Repository;
 import com.green.glampick.dto.object.UserReviewListItem;
 import com.green.glampick.dto.object.owner.*;
+import com.green.glampick.dto.object.room.RoomImageItem;
 import com.green.glampick.dto.request.owner.*;
 import com.green.glampick.dto.request.ReviewPatchRequestDto;
 import com.green.glampick.dto.response.owner.patch.PatchOwnerPeakResponseDto;
@@ -229,11 +230,21 @@ public class OwnerServiceImpl implements OwnerService {
                 , req.getPeopleNum(), req.getPeopleMax(), req.getInTime(), req.getOutTime());
         roomRepository.save(room);
 
+        // 성수기 설정이 되어있는지 확인
+        GetPeakDateResultSet peakData = RoomModule.checkPeak(repository(), glamping);
+
         // room price 테이블 insert
         RoomPriceEntity price = new RoomPriceEntity();
         price.setRoom(roomRepository.getReferenceById(room.getRoomId()));
         price.setWeekdayPrice(req.getWeekdayPrice());
         price.setWeekendPrice(req.getWeekendPrice());
+        if(peakData != null) {
+            double ratio =  peakData.getPercent() * 0.01;
+            int weekday = (int) (req.getWeekdayPrice() + req.getWeekdayPrice() * ratio);
+            int weekend = (int) (req.getWeekendPrice() + req.getWeekendPrice() * ratio);
+            price.setPeakWeekdayPrice(weekday);
+            price.setPeakWeekendPrice(weekend);
+        }
         roomPriceRepository.save(price);
 
         // 이미지 저장
@@ -280,16 +291,26 @@ public class OwnerServiceImpl implements OwnerService {
         dto = RoomModule.dtoNull(dto, room, roomPriceRepository.findByRoom(room));
 
         // room 업데이트
-        RoomEntity roomUpdate = new RoomEntity(p.getRoomId()
-                , glampingRepository.getReferenceById(dto.getGlampId())
+        GlampingEntity glamping = glampingRepository.getReferenceById(dto.getGlampId());
+        RoomEntity roomUpdate = new RoomEntity(p.getRoomId(), glamping
                 , dto.getRoomName(), dto.getPeopleNum()
                 , dto.getPeopleMax(), dto.getInTime(), dto.getOutTime());
         roomRepository.save(roomUpdate);
+
         // room price 없데이트
         RoomPriceEntity priceUpdate = new RoomPriceEntity();
         priceUpdate.setRoom(roomUpdate);
         priceUpdate.setWeekdayPrice(dto.getWeekdayPrice());
         priceUpdate.setWeekendPrice(dto.getWeekendPrice());
+        // 성수기 설정이 되어있는지 확인
+        GetPeakDateResultSet peakData = RoomModule.checkPeak(repository(), glamping);
+        if(peakData != null) {
+            double ratio =  peakData.getPercent() * 0.01;
+            int weekday = (int) (dto.getWeekdayPrice() + dto.getWeekdayPrice() * ratio);
+            int weekend = (int) (dto.getWeekendPrice() + dto.getWeekendPrice() * ratio);
+            priceUpdate.setPeakWeekdayPrice(weekday);
+            priceUpdate.setPeakWeekendPrice(weekend);
+        }
         roomPriceRepository.save(priceUpdate);
 
         // 서비스 수정
@@ -394,7 +415,13 @@ public class OwnerServiceImpl implements OwnerService {
         // 정보 불러오기
         GetRoomInfoResultSet resultSet = roomRepository.getRoomInfo(roomId);
         RoomEntity room = roomRepository.getReferenceById(roomId);
-        List<String> roomImage = roomImageRepository.getRoomImg(room);
+        List<GetRoomImgInfo> imgResultSet = roomImageRepository.getRoomImg(room);
+        List<RoomImageItem> roomImage = new ArrayList<>();
+        for(GetRoomImgInfo res : imgResultSet) {
+            RoomImageItem item = new RoomImageItem(res.getId(), res.getName());
+            roomImage.add(item);
+        }
+
         List<Long> service = serviceRepository.findRoomServiceIdByRoom(room);
         RoomPriceEntity price = roomPriceRepository.findByRoom(room);
 

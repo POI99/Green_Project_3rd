@@ -7,12 +7,14 @@ import com.green.glampick.entity.*;
 import com.green.glampick.exception.CustomException;
 import com.green.glampick.exception.errorCode.OwnerErrorCode;
 import com.green.glampick.repository.*;
+import com.green.glampick.repository.resultset.GetPeakDateResultSet;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -242,6 +244,15 @@ public class RoomModule {
         if (peak) return entity.getPeakWeekdayPrice();
         if (week) return entity.getWeekendPrice();
         return entity.getWeekdayPrice();
+    }
+
+    // 성수기 설정이 되어있는지 확인
+    public static GetPeakDateResultSet checkPeak(Repository repository, GlampingEntity glamping) {
+        Optional<GlampPeakEntity> checkPeak = repository.getGlampPeakRepository().findByGlamp(glamping);
+        if(checkPeak.isEmpty()){
+            return null;
+        }
+        return repository.getGlampPeakRepository().getPeak(glamping.getGlampId());
     }
 
 }
