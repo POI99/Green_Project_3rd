@@ -21,7 +21,7 @@ public class GlampingPostRequestDto {
     @Schema(example = "뉴욕 카라반", description = "글램핑 이름")
     private String glampName;
 
-    @Size(min = 9, max = 13, message = "전화번호 입력이 잘못되었습니다.")
+    @Size(min = 8, max = 13, message = "전화번호 입력이 잘못되었습니다.")
     @Schema(example = "0535721005", description = "글램핑 전화번호")
     private String glampCall;
 
