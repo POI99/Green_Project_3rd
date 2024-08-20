@@ -228,6 +228,7 @@ public class LoginServiceImpl implements LoginService {
             userEntity.setUserName(dto.getUserName());
             userEntity.setUserNickname(dto.getUserNickname());
             userEntity.setUserPhone(dto.getUserPhone());
+            userEntity.setActivateStatus(1);
             UserEntity savedUser = userRepository.save(userEntity);
 
             return PostSnsSignUpResponseDto.success(savedUser.getUserId());
