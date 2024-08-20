@@ -15,7 +15,8 @@ public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
     RoomEntity findByRoomId(long roomId);
 
     @Query(" select r.roomId AS roomId, r.roomName AS roomName, ri.roomImageName AS roomImageName from RoomEntity r" +
-            " join RoomImageEntity ri on r = ri.roomId where r.glamp = :glamp group by ri.roomId ")
+            " join RoomImageEntity ri on r = ri.roomId where r.glamp = :glamp group by ri.roomId " +
+            "order by roomId")
     List<GetRoomListResultSet> getRoomList(GlampingEntity glamp);
 
     @Query (" select r.roomName AS roomName" +
