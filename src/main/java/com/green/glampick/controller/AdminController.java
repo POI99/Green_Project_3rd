@@ -85,7 +85,7 @@ public class AdminController {
     }
 
     //  관리자 페이지 - 메인 화면 배너 추가하기  //
-    @PostMapping(name = "/banner", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/banner", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "메인 배너 추가하기 (김수찬)", description = POST_BANNER_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = POST_BANNER_RESPONSE_ERROR_CODE,
             content = @Content(
