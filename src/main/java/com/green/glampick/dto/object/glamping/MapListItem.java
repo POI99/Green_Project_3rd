@@ -29,4 +29,6 @@ public class MapListItem extends GlampingPriceItem {
     @Schema(example = "위도")
     private Double lng;
 
+    private String location;
+
 }
