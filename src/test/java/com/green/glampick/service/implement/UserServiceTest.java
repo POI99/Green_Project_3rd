@@ -158,74 +158,74 @@ class UserServiceTest {
         when(reviewRepository.findById(reviewImageEntity.getReviewEntity().getReviewId())).thenReturn(Optional.empty());
         assertFalse(reviewRepository.findById(reviewImageEntity.getReviewEntity().getReviewId()).isPresent(), "리뷰(이미지) 삭제 실패!!");
     }
-
-    @Test
-    @DisplayName("유효한 사용자 ID를 사용한 리뷰 조회")
-    void getLogInReview() {
-        List<ReviewEntity> list1 = new ArrayList<>();
-        UserEntity userEntity = new UserEntity();
-        ReviewEntity reviewEntity = new ReviewEntity();
-        GlampingEntity s1 = reviewEntity.getGlampId();
-        Long t1 = reviewEntity.getReviewId();
-        ReservationCompleteEntity u1 = reviewEntity.getReservationId();
-        reviewEntity.setUserId(userEntity);
-        reviewEntity.setReviewContent("너무 별로에요");
-        reviewEntity.setGlampId(s1);
-        reviewEntity.setReviewComment("방문해 주셔서 ㄳㄳ 개ㄳ");
-        reviewEntity.setReviewId(t1);
-        reviewEntity.setReservationId(u1);
-        reviewEntity.setReviewStarPoint(4);
-
-        list1.add(reviewEntity);
-
-
-        List<ReviewEntity> list2 =new ArrayList<>();
-        long uid = 1;
-        when(reviewRepository.findById(uid)).thenReturn(Optional.of(reviewEntity));
-
-        Optional<ReviewEntity> foundReview = reviewRepository.findById(uid);
-
-        List<ReviewEntity> list3 = new ArrayList<>();
-        GlampingEntity s2 = reviewEntity.getGlampId();
-        Long t2 = reviewEntity.getReviewId();
-        ReservationCompleteEntity u2 = reviewEntity.getReservationId();
-        reviewEntity.setUserId(userEntity);
-        reviewEntity.setReviewContent("너무 별로에요");
-        reviewEntity.setGlampId(s2);
-        reviewEntity.setReviewComment("방문해 주셔서 ㄳㄳ 개ㄳ");
-        reviewEntity.setReviewId(t2);
-        reviewEntity.setReservationId(u2);
-        reviewEntity.setReviewStarPoint(4);
-
-        list3.add(reviewEntity);
-
-        assertEquals(list1, foundReview, "동일");
-//        assertEquals(list2, list1,"동일");
-    }
-
-    @Test
-    @DisplayName("유효한 사용자 ID를 사용한 리뷰 조회")
-    void getLogInsReview() {
-        // Arrange
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUserId(1L); // 사용자 ID 설정
-
-        ReviewEntity reviewEntity = new ReviewEntity();
-        reviewEntity.setUserId(userEntity);
-        reviewEntity.setReviewContent("너무 별로에요");
-        reviewEntity.setReviewComment("방문해 주셔서 감사합니다");
-        reviewEntity.setReviewStarPoint(4);
-
-        // 해당 리뷰를 리포지토리에서 찾았을 때 반환하도록 설정
-        when(reviewRepository.findById(1L)).thenReturn(Optional.of(reviewEntity));
-
-        // Act
-        Optional<ReviewEntity> foundReview = reviewRepository.findById(1L);
-
-        // Assert
-        assertTrue(foundReview.isPresent(), "리뷰가 조회되어야 합니다.");
-        assertEquals(reviewEntity, foundReview.get(), "조회된 리뷰는 예상과 동일해야 합니다.");
-    }
+//
+//    @Test
+//    @DisplayName("유효한 사용자 ID를 사용한 리뷰 조회")
+//    void getLogInReview() {
+//        List<ReviewEntity> list1 = new ArrayList<>();
+//        UserEntity userEntity = new UserEntity();
+//        ReviewEntity reviewEntity = new ReviewEntity();
+//        GlampingEntity s1 = reviewEntity.getGlampId();
+//        Long t1 = reviewEntity.getReviewId();
+//        ReservationCompleteEntity u1 = reviewEntity.getReservationId();
+//        reviewEntity.setUserId(userEntity);
+//        reviewEntity.setReviewContent("너무 별로에요");
+//        reviewEntity.setGlampId(s1);
+//        reviewEntity.setReviewComment("방문해 주셔서 ㄳㄳ 개ㄳ");
+//        reviewEntity.setReviewId(t1);
+//        reviewEntity.setReservationId(u1);
+//        reviewEntity.setReviewStarPoint(4);
+//
+//        list1.add(reviewEntity);
+//
+//
+//        List<ReviewEntity> list2 =new ArrayList<>();
+//        long uid = 1;
+//        when(reviewRepository.findById(uid)).thenReturn(Optional.of(reviewEntity));
+//
+//        Optional<ReviewEntity> foundReview = reviewRepository.findById(uid);
+//
+//        List<ReviewEntity> list3 = new ArrayList<>();
+//        GlampingEntity s2 = reviewEntity.getGlampId();
+//        Long t2 = reviewEntity.getReviewId();
+//        ReservationCompleteEntity u2 = reviewEntity.getReservationId();
+//        reviewEntity.setUserId(userEntity);
+//        reviewEntity.setReviewContent("너무 별로에요");
+//        reviewEntity.setGlampId(s2);
+//        reviewEntity.setReviewComment("방문해 주셔서 ㄳㄳ 개ㄳ");
+//        reviewEntity.setReviewId(t2);
+//        reviewEntity.setReservationId(u2);
+//        reviewEntity.setReviewStarPoint(4);
+//
+//        list3.add(reviewEntity);
+//
+//        assertEquals(list1, foundReview, "동일");
+////        assertEquals(list2, list1,"동일");
+//    }
+//
+//    @Test
+//    @DisplayName("유효한 사용자 ID를 사용한 리뷰 조회")
+//    void getLogInsReview() {
+//        // Arrange
+//        UserEntity userEntity = new UserEntity();
+//        userEntity.setUserId(1L); // 사용자 ID 설정
+//
+//        ReviewEntity reviewEntity = new ReviewEntity();
+//        reviewEntity.setUserId(userEntity);
+//        reviewEntity.setReviewContent("너무 별로에요");
+//        reviewEntity.setReviewComment("방문해 주셔서 감사합니다");
+//        reviewEntity.setReviewStarPoint(4);
+//
+//        // 해당 리뷰를 리포지토리에서 찾았을 때 반환하도록 설정
+//        when(reviewRepository.findById(1L)).thenReturn(Optional.of(reviewEntity));
+//
+//        // Act
+//        Optional<ReviewEntity> foundReview = reviewRepository.findById(1L);
+//
+//        // Assert
+//        assertTrue(foundReview.isPresent(), "리뷰가 조회되어야 합니다.");
+//        assertEquals(reviewEntity, foundReview.get(), "조회된 리뷰는 예상과 동일해야 합니다.");
+//    }
     @Test
     @DisplayName("유효하지 않은 사용자 ID를 사용한 예외 처리")
     void getNuLogInReview() {

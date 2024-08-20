@@ -157,7 +157,7 @@ public interface OwnerRepository extends JpaRepository<OwnerEntity, Long> {
                             "LEFT JOIN ( " +
                             "SELECT " +
                             "A.check_in_date, A.pay_amount " +
-                            "FROM reservation_cancel A " +
+                            "FROM reservation_complete A " +
                             "JOIN room B ON A.room_id = B.room_id " +
                             "JOIN glamping C ON B.glamp_id = C.glamp_id " +
                             "WHERE C.owner_id = :ownerId) AS sud " +
