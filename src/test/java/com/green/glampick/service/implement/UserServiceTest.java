@@ -2,10 +2,8 @@ package com.green.glampick.service.implement;
 
 import com.green.glampick.common.CustomFileUtils;
 import com.green.glampick.dto.request.user.PostReviewRequestDto;
-import com.green.glampick.entity.ReviewEntity;
-import com.green.glampick.entity.ReviewImageEntity;
+import com.green.glampick.entity.*;
 
-import com.green.glampick.entity.UserEntity;
 import com.green.glampick.repository.ReservationCompleteRepository;
 import com.green.glampick.repository.ReviewImageRepository;
 import com.green.glampick.repository.ReviewRepository;
@@ -167,12 +165,15 @@ class UserServiceTest {
         List<ReviewEntity> list1 = new ArrayList<>();
         UserEntity userEntity = new UserEntity();
         ReviewEntity reviewEntity = new ReviewEntity();
+        GlampingEntity s1 = reviewEntity.getGlampId();
+        Long t1 = reviewEntity.getReviewId();
+        ReservationCompleteEntity u1 = reviewEntity.getReservationId();
         reviewEntity.setUserId(userEntity);
         reviewEntity.setReviewContent("너무 별로에요");
-        reviewEntity.setGlampId(reviewEntity.getGlampId());
+        reviewEntity.setGlampId(s1);
         reviewEntity.setReviewComment("방문해 주셔서 ㄳㄳ 개ㄳ");
-        reviewEntity.setReviewId(reviewEntity.getReviewId());
-        reviewEntity.setReservationId(reviewEntity.getReservationId());
+        reviewEntity.setReviewId(t1);
+        reviewEntity.setReservationId(u1);
         reviewEntity.setReviewStarPoint(4);
 
         list1.add(reviewEntity);
@@ -185,12 +186,15 @@ class UserServiceTest {
         Optional<ReviewEntity> foundReview = reviewRepository.findById(uid);
 
         List<ReviewEntity> list3 = new ArrayList<>();
+        GlampingEntity s2 = reviewEntity.getGlampId();
+        Long t2 = reviewEntity.getReviewId();
+        ReservationCompleteEntity u2 = reviewEntity.getReservationId();
         reviewEntity.setUserId(userEntity);
         reviewEntity.setReviewContent("너무 별로에요");
-        reviewEntity.setGlampId(reviewEntity.getGlampId());
+        reviewEntity.setGlampId(s2);
         reviewEntity.setReviewComment("방문해 주셔서 ㄳㄳ 개ㄳ");
-        reviewEntity.setReviewId(reviewEntity.getReviewId());
-        reviewEntity.setReservationId(reviewEntity.getReservationId());
+        reviewEntity.setReviewId(t2);
+        reviewEntity.setReservationId(u2);
         reviewEntity.setReviewStarPoint(4);
 
         list3.add(reviewEntity);
@@ -199,6 +203,29 @@ class UserServiceTest {
 //        assertEquals(list2, list1,"동일");
     }
 
+    @Test
+    @DisplayName("유효한 사용자 ID를 사용한 리뷰 조회")
+    void getLogInsReview() {
+        // Arrange
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUserId(1L); // 사용자 ID 설정
+
+        ReviewEntity reviewEntity = new ReviewEntity();
+        reviewEntity.setUserId(userEntity);
+        reviewEntity.setReviewContent("너무 별로에요");
+        reviewEntity.setReviewComment("방문해 주셔서 감사합니다");
+        reviewEntity.setReviewStarPoint(4);
+
+        // 해당 리뷰를 리포지토리에서 찾았을 때 반환하도록 설정
+        when(reviewRepository.findById(1L)).thenReturn(Optional.of(reviewEntity));
+
+        // Act
+        Optional<ReviewEntity> foundReview = reviewRepository.findById(1L);
+
+        // Assert
+        assertTrue(foundReview.isPresent(), "리뷰가 조회되어야 합니다.");
+        assertEquals(reviewEntity, foundReview.get(), "조회된 리뷰는 예상과 동일해야 합니다.");
+    }
     @Test
     @DisplayName("유효하지 않은 사용자 ID를 사용한 예외 처리")
     void getNuLogInReview() {
