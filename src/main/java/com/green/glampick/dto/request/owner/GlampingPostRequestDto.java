@@ -53,12 +53,12 @@ public class GlampingPostRequestDto {
     @NotBlank(message = "추가 위치 정보가 입력되지 않았습니다.")
     @Schema(example = "해수욕장 10분", description = "추가 위치 정보")
     private String traffic;
-
-    @Schema(example = "위도")
-    private Double lat;
-
-    @Schema(example = "위도")
-    private Double lng;
+//
+//    @Schema(example = "위도")
+//    private Double lat;
+//
+//    @Schema(example = "경도")
+//    private Double lng;
 
     // 이미지
     @JsonIgnore

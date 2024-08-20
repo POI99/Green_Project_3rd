@@ -352,7 +352,7 @@ public class AdminServiceImpl implements AdminService {
             glampingEntity.setStarPointAvg(0D);
             glampingEntity.setReviewCount(0);
             glampingEntity.setGlampLocation(glampingWaitEntity.getGlampLocation());
-            glampingEntity.setLocation(glampingWaitEntity.getLocation());
+//            glampingEntity.setLocation(glampingWaitEntity.getLocation());
             glampingEntity.setRegion(glampingWaitEntity.getRegion());
             glampingEntity.setExtraCharge(glampingWaitEntity.getExtraCharge());
             glampingEntity.setGlampIntro(glampingWaitEntity.getGlampIntro());

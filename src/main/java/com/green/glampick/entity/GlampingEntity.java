@@ -44,8 +44,8 @@ public class GlampingEntity extends UpdatedAt {
     @Column(length = 50, nullable = false) @Comment("글램핑 위치")
     private String glampLocation;
 
-    @Column(columnDefinition = "POINT") @Comment("글램핑 위치 좌표")
-    private Point location;
+//    @Column(columnDefinition = "POINT") @Comment("글램핑 위치 좌표")
+//    private Point location;
 
     @Column(nullable = false, length = 9) @Comment("글램핑 지역분류")
     private String region;

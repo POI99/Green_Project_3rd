@@ -13,11 +13,10 @@ public interface GlampingWaitRepository extends JpaRepository<GlampingWaitEntity
 
     @Modifying
     @Transactional
-    @Query(value = "update glamping_wait g" +
-            " set g.location = ST_GeomFromText(:point)" +
-            " , g.glamp_image = :glampImg" +
-            " where g.glamp_id = :glampId", nativeQuery = true)
-    void updateGlampImageByGlampId(@Param("glampImg") String glampImg, @Param("glampId") Long glampId, @Param("point") String point);
+    @Query("update GlampingWaitEntity g" +
+            " set  g.glampName = :glampImg" +
+            " where g.glampId = :glampId")
+    void updateGlampImageByGlampId(@Param("glampImg") String glampImg, @Param("glampId") Long glampId);
 
 
     GlampingWaitEntity findByOwner(OwnerEntity owner);
