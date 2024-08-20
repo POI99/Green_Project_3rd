@@ -182,3 +182,4 @@ app:
       - http://localhost:8080/sns-signup
       - http://192.168.0.144:5124/oauth/redirect #내부 도커서버 IP
       - http://112.222.157.156:5124/oauth/redirect #외부 IP
+      - http://112.222.157.156:5124/sns-signup
