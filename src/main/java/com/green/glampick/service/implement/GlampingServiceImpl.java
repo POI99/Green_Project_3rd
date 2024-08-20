@@ -99,7 +99,7 @@ public class GlampingServiceImpl implements GlampingService {
             List<RoomEntity> room =  roomRepository.findByGlampId(resultSet.getGlampId());
             if(room == null || room.isEmpty()) continue;  // 등록된 룸정보가 없으면 x
             MapListItem item = new MapListItem(resultSet.getGlampName(), resultSet.getGlampPic(), resultSet.getStarPoint()
-                    , resultSet.getReviewCount(), resultSet.getLat(), resultSet.getLng(), resultSet.getLocation());
+                    , resultSet.getReviewCount(), resultSet.getLocation());
             item.setGlampId(resultSet.getGlampId());
             result.add(item);
         }

@@ -7,7 +7,5 @@ public interface GetMapListResultSet {
     String getGlampPic();
     Double getStarPoint();
     Integer getReviewCount();
-    Double getLat();
-    Double getLng();
     String getLocation();
 }

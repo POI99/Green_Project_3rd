@@ -23,11 +23,11 @@ public class MapListItem extends GlampingPriceItem {
     @Schema(example = "123", description = "글램핑장의 리뷰 개수")
     private int reviewCount;
 
-    @Schema(example = "위도")
-    private Double lat;
-
-    @Schema(example = "위도")
-    private Double lng;
+//    @Schema(example = "위도")
+//    private Double lat;
+//
+//    @Schema(example = "위도")
+//    private Double lng;
 
     private String location;
 
