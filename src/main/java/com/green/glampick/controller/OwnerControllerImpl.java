@@ -144,7 +144,8 @@ public class OwnerControllerImpl implements OwnerController {
     @ApiResponse(responseCode = "200", description = PUT_ROOM_RESPONSE_ERROR_CODE,
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = OwnerSuccessResponseDto.class)))
-    public ResponseEntity<? super OwnerSuccessResponseDto> updateRoom(@RequestPart List<MultipartFile> addImg, @RequestPart RoomPutRequestDto req) {
+    public ResponseEntity<? super OwnerSuccessResponseDto> updateRoom(@RequestPart(required = false) List<MultipartFile> addImg
+            , @RequestPart(required = false) RoomPutRequestDto req) {
         return service.updateRoomInfo(addImg, req);
     }
 
