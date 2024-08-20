@@ -139,7 +139,7 @@ public class OwnerControllerImpl implements OwnerController {
     }
 
     //  사장님 페이지 - 객실 정보 수정하기  //
-    @PutMapping("room")
+    @PutMapping(value = "room", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "객실 정보 수정 (김민지)", description = PUT_ROOM_DESCRIPTION)
     @ApiResponse(responseCode = "200", description = PUT_ROOM_RESPONSE_ERROR_CODE,
             content = @Content(
