@@ -14,7 +14,7 @@ public interface GlampingWaitRepository extends JpaRepository<GlampingWaitEntity
     @Modifying
     @Transactional
     @Query("update GlampingWaitEntity g" +
-            " set  g.glampName = :glampImg" +
+            " set  g.glampImage = :glampImg" +
             " where g.glampId = :glampId")
     void updateGlampImageByGlampId(@Param("glampImg") String glampImg, @Param("glampId") Long glampId);
 
