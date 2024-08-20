@@ -9,4 +9,5 @@ public interface GetMapListResultSet {
     Integer getReviewCount();
     Double getLat();
     Double getLng();
+    String getLocation();
 }

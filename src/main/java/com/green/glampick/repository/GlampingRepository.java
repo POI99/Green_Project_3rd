@@ -54,13 +54,13 @@ public interface GlampingRepository extends JpaRepository<GlampingEntity, Long> 
 
     @Query ("select g.glampId as glampId, g.glampName as glampName, g.glampImage as glampPic" +
             ", g.starPointAvg as starPoint, g.reviewCount as reviewCount" +
-            ", ST_X(g.location) AS lat, ST_Y(g.location) AS lng" +
+            ", ST_X(g.location) AS lat, ST_Y(g.location) AS lng, g.glampLocation as location" +
             " from GlampingEntity g where g.region = :region and g.activateStatus = 1 " +
             "order by g.recommendScore DESC")
     List<GetMapListResultSet> getMapList(String region);
     @Query("select g.glampId as glampId, g.glampName as glampName, g.glampImage as glampPic" +
             ", g.starPointAvg as starPoint, g.reviewCount as reviewCount" +
-            ", ST_X(g.location) AS lat, ST_Y(g.location) AS lng " +
+            ", ST_X(g.location) AS lat, ST_Y(g.location) AS lng, g.glampLocation as location " +
             "from GlampingEntity g where g.activateStatus = 1 " +
             "order by g.recommendScore DESC")
     List<GetMapListResultSet> getMapList();
