@@ -99,16 +99,24 @@ public class OwnerServiceImpl implements OwnerService {
     @Transactional
     public ResponseEntity<? super OwnerSuccessResponseDto> postGlampingInfo(GlampingPostRequestDto req
             , MultipartFile glampImg) {
-        GlampingWaitEntity entity = new GlampingWaitEntity();
+
         // 오너 PK 불러오기
         long ownerId = GlampingModule.ownerId(authenticationFacade);
         // 권한 체크
         OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
         GlampingModule.roleCheck(owner.getRole());
-        entity.setOwner(owner);
+        GlampingWaitEntity entity = null;
+        try {  // 오류가 난다 > 존재하지 않는다 > 처음 등록한다
+                // 오류가 안난다 > 존재한다 > 반려 후 수정
+            entity = glampingWaitRepository.findByOwner(owner);
+            if(entity == null) throw new RuntimeException();
+        } catch (Exception e) {
+            entity = new GlampingWaitEntity();
+            entity.setOwner(owner);
+            // 사장님이 글램핑을 이미 가지고 있는가?
+            GlampingModule.hasGlamping(repository(), owner);
+        }
 
-        // 사장님이 글램핑을 이미 가지고 있는가?
-        GlampingModule.hasGlamping(repository(), owner);
         // 이미지가 들어있는가?
         GlampingModule.imgExist(glampImg);
         // 글램핑 위치가 중복되는가?
@@ -497,7 +505,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
 
-    // 강국 ====================================================================================================================
+// 강국 ====================================================================================================================
 
     @Override
     @Transactional // 사장님 답글달기
