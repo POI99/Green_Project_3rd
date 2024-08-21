@@ -107,11 +107,13 @@ public class OwnerServiceImpl implements OwnerService {
         GlampingModule.roleCheck(owner.getRole());
         GlampingWaitEntity entity = null;
         String location = null;
+        boolean state = false;
         try {  // 오류가 난다 > 존재하지 않는다 > 처음 등록한다
             // 오류가 안난다 > 존재한다 > 반려 후 수정
             entity = glampingWaitRepository.findByOwner(owner);
             if (entity == null) throw new RuntimeException();
             location = entity.getGlampLocation();
+            state = true;   // 글램핑 재등록
         } catch (Exception e) {
             entity = new GlampingWaitEntity();
             entity.setOwner(owner);
@@ -146,10 +148,17 @@ public class OwnerServiceImpl implements OwnerService {
         glampingWaitRepository.save(entity);
         long glampId = entity.getGlampId();
 
+
         // 좌표, 이미지 저장하기
 //        String point = String.format("POINT(%s %s)", req.getLat(), req.getLng());
-        String fileName = GlampingModule.imageUpload(customFileUtils, glampImg, glampId, "glampingWait");
-        glampingWaitRepository.updateGlampImageByGlampId(fileName, glampId);
+        if(glampImg != null && !glampImg.isEmpty() && state) { // 재등록인데 이미지를 수정한다.
+            String folderPath = String.format("glampingWait/%d/glamp", glampId);
+            customFileUtils.deleteFolder(folderPath);
+        }
+        if(glampImg != null && !glampImg.isEmpty()) {
+            String fileName = GlampingModule.imageUpload(customFileUtils, glampImg, glampId, "glampingWait");
+            glampingWaitRepository.updateGlampImageByGlampId(fileName, glampId);
+        }
 
         return OwnerSuccessResponseDto.postInformation();
     }
