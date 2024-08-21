@@ -265,77 +265,79 @@ public class OwnerServiceImpl implements OwnerService {
     // 객실 수정
     @Transactional
     public ResponseEntity<? super OwnerSuccessResponseDto> updateRoomInfo(List<MultipartFile> addImg, RoomPutRequestDto p) {
-        RoomPostRequestDto dto = p.getRequestDto();
+        try {
+            RoomPostRequestDto dto = p.getRequestDto();
 
-        long ownerId = GlampingModule.ownerId(authenticationFacade);
-        // 권한 체크
-        OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
-        GlampingModule.roleCheck(owner.getRole());
+            long ownerId = GlampingModule.ownerId(authenticationFacade);
+            // 권한 체크
+            OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
+            GlampingModule.roleCheck(owner.getRole());
 
-        // 로그인 유저와 룸 Id가 매치되는가?
-        RoomModule.isRoomIdOk(repository(), owner, p.getRoomId());
+            // 로그인 유저와 룸 Id가 매치되는가?
+            RoomModule.isRoomIdOk(repository(), owner, p.getRoomId());
 
-        // 입력된 인원 정보가 올바른지 확인
-        RoomModule.personnelUpdate(dto.getPeopleNum(), dto.getPeopleMax());
+            // 입력된 인원 정보가 올바른지 확인
+            RoomModule.personnelUpdate(dto.getPeopleNum(), dto.getPeopleMax());
 
-        // 시간이 올바른지 확인
-        if (dto.getInTime() != null && !dto.getInTime().isEmpty()) {
-            RoomModule.isValidTime(dto.getInTime());
-        }
-        if (dto.getOutTime() != null && !dto.getOutTime().isEmpty()) {
-            RoomModule.isValidTime(dto.getOutTime());
-        }
-
-        // null 인 경우 기존값 넣어주기
-        RoomEntity room = roomRepository.getReferenceById(p.getRoomId());
-        dto = RoomModule.dtoNull(dto, room, roomPriceRepository.findByRoom(room));
-
-        // room 업데이트
-        GlampingEntity glamping = glampingRepository.getReferenceById(dto.getGlampId());
-        RoomEntity roomUpdate = new RoomEntity(p.getRoomId(), glamping
-                , dto.getRoomName(), dto.getPeopleNum()
-                , dto.getPeopleMax(), dto.getInTime(), dto.getOutTime());
-        roomRepository.save(roomUpdate);
-
-        // room price 없데이트
-        RoomPriceEntity priceUpdate = new RoomPriceEntity();
-        priceUpdate.setRoom(roomUpdate);
-        priceUpdate.setWeekdayPrice(dto.getWeekdayPrice());
-        priceUpdate.setWeekendPrice(dto.getWeekendPrice());
-        // 성수기 설정이 되어있는지 확인
-        GetPeakDateResultSet peakData = RoomModule.checkPeak(repository(), glamping);
-        if(peakData != null) {
-            double ratio =  peakData.getPercent() * 0.01;
-            int weekday = (int) (dto.getWeekdayPrice() + dto.getWeekdayPrice() * ratio);
-            int weekend = (int) (dto.getWeekendPrice() + dto.getWeekendPrice() * ratio);
-            priceUpdate.setPeakWeekdayPrice(weekday);
-            priceUpdate.setPeakWeekendPrice(weekend);
-        }
-        roomPriceRepository.save(priceUpdate);
-
-        // 서비스 수정
-        List<Long> roomService = serviceRepository.findRoomServiceIdByRoom(room);
-        List<Long> inputService = dto.getService();
-        RoomModule.updateService(roomService, inputService, room, repository());
-
-        // 삭제되는 사진이 있다면 삭제
-        if (p.getRemoveImg() != null && !p.getRemoveImg().isEmpty()) {
-            for (Long img : p.getRemoveImg()) {
-                // 해당 객실의 사진이 맞는지 확인
-                RoomImageEntity imageEntity = roomImageRepository.getReferenceById(img);
-                RoomModule.checkImgId(room, imageEntity);
-                // 삭제
-                RoomModule.deleteImageOne(img, repository());
+            // 시간이 올바른지 확인
+            if (dto.getInTime() != null && !dto.getInTime().isEmpty()) {
+                RoomModule.isValidTime(dto.getInTime());
             }
-        }
+            if (dto.getOutTime() != null && !dto.getOutTime().isEmpty()) {
+                RoomModule.isValidTime(dto.getOutTime());
+            }
 
-        // 추가되는 사진이 있다면 추가
-        if (addImg != null && !addImg.isEmpty() && !addImg.get(0).isEmpty()) {
-            List<String> roomImgName = RoomModule.imgInsert(addImg, dto.getGlampId(), room.getRoomId(), customFileUtils);
-            List<RoomImageEntity> saveImage = RoomModule.saveImage(roomImgName, roomRepository.findByRoomId(room.getRoomId()));
-            roomImageRepository.saveAll(saveImage);
-        }
+            // null 인 경우 기존값 넣어주기
+            RoomEntity room = roomRepository.getReferenceById(p.getRoomId());
+            dto = RoomModule.dtoNull(dto, room, roomPriceRepository.findByRoom(room));
 
+            // room 업데이트
+            GlampingEntity glamping = glampingRepository.getReferenceById(dto.getGlampId());
+            RoomEntity roomUpdate = new RoomEntity(p.getRoomId(), glamping
+                    , dto.getRoomName(), dto.getPeopleNum()
+                    , dto.getPeopleMax(), dto.getInTime(), dto.getOutTime());
+            roomRepository.save(roomUpdate);
+
+            // room price 없데이트
+            RoomPriceEntity priceUpdate = roomPriceRepository.findByRoom(roomUpdate);
+            priceUpdate.setWeekdayPrice(dto.getWeekdayPrice());
+            priceUpdate.setWeekendPrice(dto.getWeekendPrice());
+            // 성수기 설정이 되어있는지 확인
+            GetPeakDateResultSet peakData = RoomModule.checkPeak(repository(), glamping);
+            if (peakData != null) {
+                double ratio = peakData.getPercent() * 0.01;
+                int weekday = (int) (dto.getWeekdayPrice() + dto.getWeekdayPrice() * ratio);
+                int weekend = (int) (dto.getWeekendPrice() + dto.getWeekendPrice() * ratio);
+                priceUpdate.setPeakWeekdayPrice(weekday);
+                priceUpdate.setPeakWeekendPrice(weekend);
+            }
+            roomPriceRepository.save(priceUpdate);
+
+            // 서비스 수정
+            List<Long> roomService = serviceRepository.findRoomServiceIdByRoom(room);
+            List<Long> inputService = dto.getService();
+            RoomModule.updateService(roomService, inputService, room, repository());
+
+            // 삭제되는 사진이 있다면 삭제
+            if (p.getRemoveImg() != null && !p.getRemoveImg().isEmpty()) {
+                for (Long img : p.getRemoveImg()) {
+                    // 해당 객실의 사진이 맞는지 확인
+                    RoomImageEntity imageEntity = roomImageRepository.getReferenceById(img);
+                    RoomModule.checkImgId(room, imageEntity);
+                    // 삭제
+                    RoomModule.deleteImageOne(img, repository());
+                }
+            }
+
+            // 추가되는 사진이 있다면 추가
+            if (addImg != null && !addImg.isEmpty() && !addImg.get(0).isEmpty()) {
+                List<String> roomImgName = RoomModule.imgInsert(addImg, dto.getGlampId(), room.getRoomId(), customFileUtils);
+                List<RoomImageEntity> saveImage = RoomModule.saveImage(roomImgName, roomRepository.findByRoomId(room.getRoomId()));
+                roomImageRepository.saveAll(saveImage);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return OwnerSuccessResponseDto.updateInformation();
     }
 
