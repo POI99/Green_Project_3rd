@@ -682,7 +682,7 @@ public class OwnerServiceImpl implements OwnerService {
                     OwnerBookCountListItem item = new OwnerBookCountListItem();
                     item.setCheckInDate(bookCount.getCheckInDate());
                     item.setIngCount(bookCount.getCountCancel());
-                    bookCountListItems.add(item);
+                    plusBookCountListItems.add(item);
                 } else {
                     for (Integer i = 0 ; i < bookCountListItems.size(); i++ ) {
 
@@ -713,7 +713,7 @@ public class OwnerServiceImpl implements OwnerService {
                     OwnerBookCountListItem item = new OwnerBookCountListItem();
                     item.setCheckInDate(bookCount.getCheckInDate());
                     item.setIngCount(bookCount.getCountComplete());
-                    bookCountListItems.add(item);
+                    plusBookCountListItems2.add(item);
                 } else {
                     for (Integer i = 0 ; i <plusBookCountListItems.size(); i++ ) {
 
