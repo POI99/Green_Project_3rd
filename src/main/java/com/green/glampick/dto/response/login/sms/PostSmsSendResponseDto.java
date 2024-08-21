@@ -12,17 +12,14 @@ import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 @Getter
 @Setter
 
-public class PostSmsSendResponseDto extends ResponseDto{
+public class PostSmsSendResponseDto extends ResponseDto {
 
-    private int phoneKey;
-
-    private PostSmsSendResponseDto(int phoneKey) {
+    private PostSmsSendResponseDto() {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
-        this.phoneKey = phoneKey;
     }
 
-    public static ResponseEntity<ResponseDto> success(int authKey) {
-        PostSmsSendResponseDto result = new PostSmsSendResponseDto(authKey);
+    public static ResponseEntity<ResponseDto> success() {
+        PostSmsSendResponseDto result = new PostSmsSendResponseDto();
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 

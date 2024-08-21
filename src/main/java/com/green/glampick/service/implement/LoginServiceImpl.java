@@ -622,7 +622,7 @@ public class LoginServiceImpl implements LoginService {
             throw new CustomException(CommonErrorCode.DBE);
         }
 
-        return PostSmsSendResponseDto.success(verificationCode);
+        return PostSmsSendResponseDto.success();
 
     }
 
@@ -736,7 +736,7 @@ public class LoginServiceImpl implements LoginService {
             //  위에서 정의한 MimeMessage 를 전송한다.  //
             mailSender.send(mimeMessage);
 
-            return PostMailSendResponseDto.success(mailCode);
+            return PostMailSendResponseDto.success();
 
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
@@ -825,7 +825,7 @@ public class LoginServiceImpl implements LoginService {
             throw new CustomException(CommonErrorCode.DBE);
         }
 
-        return PostSmsSendResponseDto.success(verificationCode);
+        return PostSmsSendResponseDto.success();
 
     }
 
@@ -939,7 +939,7 @@ public class LoginServiceImpl implements LoginService {
             //  위에서 정의한 MimeMessage 를 전송한다.  //
             mailSender.send(mimeMessage);
 
-            return PostMailSendResponseDto.success(mailCode);
+            return PostMailSendResponseDto.success();
 
         } catch (CustomException e) {
             throw new CustomException(e.getErrorCode());
