@@ -113,6 +113,7 @@ public class OwnerServiceImpl implements OwnerService {
             entity = glampingWaitRepository.findByOwner(owner);
             if (entity == null) throw new RuntimeException();
             location = entity.getGlampLocation();
+            entity.setGlampImage("img");
             state = true;   // 글램핑 재등록
         } catch (Exception e) {
             entity = new GlampingWaitEntity();
@@ -122,7 +123,6 @@ public class OwnerServiceImpl implements OwnerService {
             // 이미지가 들어있는가?
             GlampingModule.imgExist(glampImg);
         }
-
 
         // 글램핑 위치가 중복되는가?
         if(!req.getGlampLocation().equals(location)) {
@@ -134,7 +134,6 @@ public class OwnerServiceImpl implements OwnerService {
             entity.setGlampCall(GlampingModule.glampingCall(req.getGlampCall()));
         }
         entity.setExclusionStatus(0);
-        entity.setGlampImage("img");
         entity.setGlampLocation(req.getGlampLocation());
         entity.setRegion(req.getRegion());
         entity.setExtraCharge(0);
