@@ -361,6 +361,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     // 객실 삭제
+    @Transactional
     public ResponseEntity<? super OwnerSuccessResponseDto> deleteRoom(Long roomId) {
         // PK 불러오기
         long ownerId = GlampingModule.ownerId(authenticationFacade);
@@ -379,6 +380,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     // 글램핑 정보 불러오기
+    @Transactional
     public ResponseEntity<? super GetGlampingInfoResponseDto> getGlamping() {
         /*
             state : owner table 에 glamping status 가 1이면 true 0이면 false
@@ -401,6 +403,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     // 객실 정보 미리보기
+    @Transactional
     public ResponseEntity<? super GetRoomListResponseDto> getRoomList(Long glampId) {
         // PK 불러오기
         long ownerId = GlampingModule.ownerId(authenticationFacade);
@@ -423,6 +426,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     // 객실 정보 상세보기
+    @Transactional
     public ResponseEntity<? super GetRoomInfoResponseDto> getRoomOne(Long glampId, Long roomId) {
         // PK 불러오기
         long ownerId = GlampingModule.ownerId(authenticationFacade);
@@ -450,6 +454,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     // 비밀번호 확인
+    @Transactional
     public ResponseEntity<? super OwnerSuccessResponseDto> checkOwnerPassword(CheckPasswordRequestDto dto) {
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
@@ -462,6 +467,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     // 정보 불러오기
+    @Transactional
     public ResponseEntity<? super OwnerInfoResponseDto> getOwnerInfo() {
         long ownerId = GlampingModule.ownerId(authenticationFacade);
         OwnerInfoResultSet result = ownerRepository.getOwnerInfo(ownerId);
@@ -469,6 +475,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     // 사장님 정보 수정
+    @Transactional
     public ResponseEntity<? super PatchOwnerInfoResponseDto> patchOwnerInfo(PatchOwnerInfoRequestDto dto) {
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
@@ -492,6 +499,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     // 사장님 탈퇴 승인 요청
+    @Transactional
     public ResponseEntity<? super OwnerSuccessResponseDto> withdrawOwner() {
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
@@ -522,6 +530,9 @@ public class OwnerServiceImpl implements OwnerService {
     @Transactional // 사장님 답글달기
     public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(ReviewPatchRequestDto p) {
 
+        // 로그인 유저와 글램핑 PK가 매치되는가?
+        GlampingModule.isGlampIdOk(glampingRepository, ownerRepository.getReferenceById(p.getOwnerId()), p.getGlampId());
+
         try {
             ReviewEntity review = reviewRepository.findReviewById(p.getReviewId());
             review.setReviewComment(p.getReviewOwnerContent());
@@ -535,6 +546,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override // 예약 중 리스트 불러오기
+    @Transactional
     public List<OwnerBookDetailListItem> getReservationBeforeList(ReservationGetRequestDto p) {
 
         try {
@@ -564,6 +576,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override // 예약취소 리스트 불러오기
+    @Transactional
     public List<OwnerBookDetailListItem> getReservationCancelList(ReservationGetRequestDto p) {
         try {
             List<OwnerBookItem> reservationCancelResultSetList;
@@ -593,6 +606,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override // 예약완료 리스트 불러오기
+    @Transactional
     public List<OwnerBookDetailListItem> getReservationCompleteList(ReservationGetRequestDto p) {
         try {
             List<OwnerBookItem> reservationCompleteResultSetList;
@@ -621,7 +635,8 @@ public class OwnerServiceImpl implements OwnerService {
 
     }
 
-    @Override //리뷰 리스트 불러오기
+    @Override //리뷰 리스트
+    @Transactional
     public ResponseEntity<? super GetReviewResponseDto> getReview(GetReviewRequestDto p) {
 
         //리뷰 데이터 추출
@@ -669,6 +684,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override // 날짜별 예약건수
+    @Transactional
     public List<OwnerBookCountListItem> getTotalCount(String date, Long ownerId) {
         LocalDate localDate = parseToLocalDate(date);
         int month = localDate.getMonth().getValue();
@@ -749,7 +765,11 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override // 성수기 비수기 등록
+    @Transactional
     public ResponseEntity<? super PatchOwnerPeakResponseDto> patchPeak(Long glampId, PatchOwnerPeakRequestDto p) {
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        // 로그인 유저와 글램핑 PK가 매치되는가?
+        GlampingModule.isGlampIdOk(glampingRepository, ownerRepository.getReferenceById(ownerId), glampId);
         log.info("service: {}", p);
         //가격정보 찾아오기
         try {
@@ -773,8 +793,14 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override // 성수기 기간 불러오기
+    @Transactional
     public ResponseEntity<? super GetGlampingPeakPeriodResponseDto> getGlampingPeakPeriod(Long glampId) {
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        // 로그인 유저와 글램핑 PK가 매치되는가?
+        GlampingModule.isGlampIdOk(glampingRepository, ownerRepository.getReferenceById(ownerId), glampId);
+
         try {
+
             GetPeakDateResultSet peakDateResultSet = glampPeakRepository.getPeak(glampId);
             if (peakDateResultSet == null) {
                 throw new CustomException(NEGP);
@@ -787,7 +813,12 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override // 성수기 초기화
+    @Transactional
     public ResponseEntity<? super OwnerSuccessResponseDto> delGlampingPeakPeriod(Long glampId) {
+        long ownerId = GlampingModule.ownerId(authenticationFacade);
+        // 로그인 유저와 글램핑 PK가 매치되는가?
+        GlampingModule.isGlampIdOk(glampingRepository, ownerRepository.getReferenceById(ownerId), glampId);
+
         Optional<GlampPeakEntity> peakEntity = glampPeakRepository.findByGlamp(glampingRepository.getReferenceById(glampId));
 //        glampPeakRepository.deleteById(glampId);
         glampPeakRepository.delete(peakEntity.get());
@@ -809,6 +840,9 @@ public class OwnerServiceImpl implements OwnerService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.MNF);
         }
+        // 로그인 유저와 글램핑 PK가 매치되는가?
+        GlampingModule.isGlampIdOk(glampingRepository, ownerRepository.getReferenceById(dto.getOwnerId()), dto.getGlampId());
+
         Long total = 0L;
         List<GetPopularRoom> popRoom = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -874,6 +908,9 @@ public class OwnerServiceImpl implements OwnerService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.MNF);
         }
+        // 로그인 유저와 글램핑 PK가 매치되는가?
+        GlampingModule.isGlampIdOk(glampingRepository, ownerRepository.getReferenceById(dto.getOwnerId()), dto.getGlampId());
+
         String formattedResult = null;
         List<GetCancelDto> room = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -913,6 +950,7 @@ public class OwnerServiceImpl implements OwnerService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.MNF);
         }
+
         List<GetRevenue> revenue = new ArrayList<>();
         Long totalPay = 0L;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
