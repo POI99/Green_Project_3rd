@@ -240,7 +240,7 @@ public class OwnerControllerImpl implements OwnerController {
                     mediaType = "application/json", schema = @Schema(implementation = PatchOwnerReviewInfoResponseDto.class)))
     public ResponseEntity<? super PatchOwnerReviewInfoResponseDto> patchReview(@RequestBody @Valid ReviewPatchRequestDto p) {
         log.info("controller {}", p);
-        GlampingModule.ownerId(authenticationFacade);
+        p.setOwnerId(GlampingModule.ownerId(authenticationFacade));
         GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
         return service.patchReview(p);
     }
@@ -310,7 +310,6 @@ public class OwnerControllerImpl implements OwnerController {
                             ))})
     @GetMapping("room/{glampId}/peak")
     public ResponseEntity<? super GetGlampingPeakPeriodResponseDto> getGlampingPeakPeriod(@PathVariable Long glampId) {
-        GlampingModule.ownerId(authenticationFacade);
         GlampingModule.roleCheck(authenticationFacade.getLoginUser().getRole());
         return service.getGlampingPeakPeriod(glampId);
     }
