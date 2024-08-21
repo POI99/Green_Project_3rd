@@ -103,7 +103,7 @@ public class OwnerControllerImpl implements OwnerController {
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = OwnerSuccessResponseDto.class)))
     public ResponseEntity<? super OwnerSuccessResponseDto> createGlamping(@RequestPart @Valid GlampingPostRequestDto req
-            , @RequestPart MultipartFile glampImg) {
+            , @RequestPart(required = false) MultipartFile glampImg) {
         return service.postGlampingInfo(req, glampImg);
     }
 
