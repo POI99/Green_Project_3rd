@@ -107,9 +107,9 @@ public class OwnerServiceImpl implements OwnerService {
         GlampingModule.roleCheck(owner.getRole());
         GlampingWaitEntity entity = null;
         try {  // 오류가 난다 > 존재하지 않는다 > 처음 등록한다
-                // 오류가 안난다 > 존재한다 > 반려 후 수정
+            // 오류가 안난다 > 존재한다 > 반려 후 수정
             entity = glampingWaitRepository.findByOwner(owner);
-            if(entity == null) throw new RuntimeException();
+            if (entity == null) throw new RuntimeException();
         } catch (Exception e) {
             entity = new GlampingWaitEntity();
             entity.setOwner(owner);
@@ -124,7 +124,7 @@ public class OwnerServiceImpl implements OwnerService {
 
         // 글램핑 아이디 받아오기
         entity.setGlampName(req.getGlampName());
-        if(req.getGlampCall() != null && !req.getGlampCall().isEmpty()){
+        if (req.getGlampCall() != null && !req.getGlampCall().isEmpty()) {
             entity.setGlampCall(GlampingModule.glampingCall(req.getGlampCall()));
         }
         entity.setExclusionStatus(0);
@@ -132,7 +132,7 @@ public class OwnerServiceImpl implements OwnerService {
         entity.setGlampLocation(req.getGlampLocation());
         entity.setRegion(req.getRegion());
         entity.setExtraCharge(0);
-        if(req.getExtraCharge() != null && req.getExtraCharge() > 0){
+        if (req.getExtraCharge() != null && req.getExtraCharge() > 0) {
             entity.setExtraCharge(req.getExtraCharge());
         }
         entity.setGlampIntro(req.getIntro());
@@ -246,8 +246,8 @@ public class OwnerServiceImpl implements OwnerService {
         price.setRoom(roomRepository.getReferenceById(room.getRoomId()));
         price.setWeekdayPrice(req.getWeekdayPrice());
         price.setWeekendPrice(req.getWeekendPrice());
-        if(peakData != null) {
-            double ratio =  peakData.getPercent() * 0.01;
+        if (peakData != null) {
+            double ratio = peakData.getPercent() * 0.01;
             int weekday = (int) (req.getWeekdayPrice() + req.getWeekdayPrice() * ratio);
             int weekend = (int) (req.getWeekendPrice() + req.getWeekendPrice() * ratio);
             price.setPeakWeekdayPrice(weekday);
@@ -379,7 +379,7 @@ public class OwnerServiceImpl implements OwnerService {
         GlampingModule.roleCheck(owner.getRole());
 
         GetGlampingInfoResultSet resultSet = null;
-        if(owner.getGlampingStatus() == 0) {
+        if (owner.getGlampingStatus() == 0) {
             resultSet = glampingWaitRepository.getGlampingInfo(owner);
             return GetGlampingInfoResponseDto.successWait(false, resultSet);
         }
@@ -425,7 +425,7 @@ public class OwnerServiceImpl implements OwnerService {
         RoomEntity room = roomRepository.getReferenceById(roomId);
         List<GetRoomImgInfo> imgResultSet = roomImageRepository.getRoomImg(room);
         List<RoomImageItem> roomImage = new ArrayList<>();
-        for(GetRoomImgInfo res : imgResultSet) {
+        for (GetRoomImgInfo res : imgResultSet) {
             RoomImageItem item = new RoomImageItem(res.getId(), res.getName());
             roomImage.add(item);
         }
@@ -460,8 +460,8 @@ public class OwnerServiceImpl implements OwnerService {
 
         long ownerId = GlampingModule.ownerId(authenticationFacade);
         OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
-        if(dto.getOwnerPw() == null || dto.getOwnerPw().isEmpty()){
-            if(dto.getPhoneNum() == null || dto.getPhoneNum().isEmpty()){
+        if (dto.getOwnerPw() == null || dto.getOwnerPw().isEmpty()) {
+            if (dto.getPhoneNum() == null || dto.getPhoneNum().isEmpty()) {
                 // 변경된 내용이 없음
                 return PatchOwnerInfoResponseDto.noUpdate();
             }
@@ -470,7 +470,7 @@ public class OwnerServiceImpl implements OwnerService {
             ownerRepository.save(owner);
             return PatchOwnerInfoResponseDto.success();
         }
-        if(dto.getPhoneNum() != null && !dto.getPhoneNum().isEmpty()){
+        if (dto.getPhoneNum() != null && !dto.getPhoneNum().isEmpty()) {
             owner.setOwnerPhone(GlampingModule.glampingCall(dto.getPhoneNum()));
         }
         owner.setOwnerPw(passwordEncoder.encode(dto.getOwnerPw()));
@@ -486,7 +486,7 @@ public class OwnerServiceImpl implements OwnerService {
 
 
         GlampingEntity glamping = glampingRepository.findByOwner(owner);
-        if(glamping != null) {  // 글램핑을 등록한 회원인지 확인
+        if (glamping != null) {  // 글램핑을 등록한 회원인지 확인
             // 예약 된 글램핑이 있는지 확인
             GlampingModule.existReservation(glamping, reservationBeforeRepository);
             // 글램핑
@@ -533,7 +533,7 @@ public class OwnerServiceImpl implements OwnerService {
             int offset = p.getOffset(); // startIdx
             String date = p.getDate(); // Date
 
-            Pageable pageable = PageRequest.of(offset,limit);
+            Pageable pageable = PageRequest.of(offset, limit);
             LocalDate localDate = parseToLocalDate(date);
 
             List<OwnerBookDetailListItem> bookDetailListItems = new ArrayList<>();
@@ -559,7 +559,7 @@ public class OwnerServiceImpl implements OwnerService {
             int offset = p.getOffset();
             String date = p.getDate();
 
-            Pageable pageable = PageRequest.of(offset,limit);
+            Pageable pageable = PageRequest.of(offset, limit);
 
             LocalDate localDate = parseToLocalDate(date);
 
@@ -567,7 +567,7 @@ public class OwnerServiceImpl implements OwnerService {
 
 
             reservationCancelResultSetList = reservationCancelRepository.getReservationCancelByOwnerId(ownerId, pageable, localDate);
-            setBookDetailList(reservationCancelResultSetList,bookDetailListItems);
+            setBookDetailList(reservationCancelResultSetList, bookDetailListItems);
 
             return bookDetailListItems;
 
@@ -588,7 +588,7 @@ public class OwnerServiceImpl implements OwnerService {
             int offset = p.getOffset();
             String date = p.getDate();
 
-            Pageable pageable = PageRequest.of(offset,limit);
+            Pageable pageable = PageRequest.of(offset, limit);
 
             LocalDate localDate = parseToLocalDate(date);
 
@@ -644,7 +644,7 @@ public class OwnerServiceImpl implements OwnerService {
             setReviewItem(reviewInfo, imageEntities, reviewListItem);
 
             //reviewTotalCount
-            return GetReviewResponseDto.success(reviewListItem,totalCount);
+            return GetReviewResponseDto.success(reviewListItem, totalCount);
 
         } catch (CustomException e) {
             e.printStackTrace();
@@ -660,31 +660,29 @@ public class OwnerServiceImpl implements OwnerService {
         LocalDate localDate = parseToLocalDate(date);
         int month = localDate.getMonth().getValue();
         try {
-            List<GetOwnerBookBeforeCountResponseDto> countBefore = reservationBeforeRepository.getCountFromReservationBefore(month,ownerId);
-            List<GetOwnerBookCancelCountResponseDto> countCancel = reservationCancelRepository.getCountFromReservationCancel(month,ownerId);
-            List<GetOwnerBookCompleteCountResponseDto> countComplete = reservationCompleteRepository.getCountFromReservationComplete(month,ownerId);
+            List<GetOwnerBookBeforeCountResponseDto> countBefore = reservationBeforeRepository.getCountFromReservationBefore(month, ownerId);
+            List<GetOwnerBookCancelCountResponseDto> countCancel = reservationCancelRepository.getCountFromReservationCancel(month, ownerId);
+            List<GetOwnerBookCompleteCountResponseDto> countComplete = reservationCompleteRepository.getCountFromReservationComplete(month, ownerId);
 
             List<OwnerBookCountListItem> bookCountListItems = new ArrayList<>();
 
-
-            for (GetOwnerBookBeforeCountResponseDto bookCount :countBefore) {
+            for (GetOwnerBookBeforeCountResponseDto bookCount : countBefore) {
                 OwnerBookCountListItem item = new OwnerBookCountListItem();
                 item.setCheckInDate(bookCount.getCheckInDate());
                 item.setIngCount(bookCount.getCountBefore());
                 bookCountListItems.add(item);
             }
-            List<OwnerBookCountListItem> plusBookCountListItems = new LinkedList<>(bookCountListItems);
 
+            List<OwnerBookCountListItem> plusBookCountListItems = new LinkedList<>(bookCountListItems);
             for (GetOwnerBookCancelCountResponseDto bookCount : countCancel) {
 //                for (OwnerBookCountListItem ownerItem : bookCountListItems) {
-
-                if(bookCountListItems.isEmpty()) {
+                if (bookCountListItems.isEmpty()) {
                     OwnerBookCountListItem item = new OwnerBookCountListItem();
                     item.setCheckInDate(bookCount.getCheckInDate());
-                    item.setIngCount(bookCount.getCountCancel());
+                    item.setCancelCount(bookCount.getCountCancel());
                     plusBookCountListItems.add(item);
                 } else {
-                    for (Integer i = 0 ; i < bookCountListItems.size(); i++ ) {
+                    for (Integer i = 0; i < bookCountListItems.size(); i++) {
 
                         String checkInDate = bookCountListItems.get(i).getCheckInDate();
                         String cancelDate = bookCount.getCheckInDate().toString();
@@ -693,29 +691,26 @@ public class OwnerServiceImpl implements OwnerService {
                             plusBookCountListItems.get(i).setCancelCount(cancelCount); //
                             break;
                         }
-                        if (i == bookCountListItems.size()-1)
-                        {
+                        if (i == bookCountListItems.size() - 1) {
                             OwnerBookCountListItem newItem = new OwnerBookCountListItem();
                             newItem.setCheckInDate(bookCount.getCheckInDate());
                             newItem.setCancelCount(cancelCount);
                             plusBookCountListItems.add(newItem);
                         }
-
                     }
                 }
-
             }
-            List<OwnerBookCountListItem> plusBookCountListItems2 = new LinkedList<>(plusBookCountListItems);
 
+            List<OwnerBookCountListItem> plusBookCountListItems2 = new LinkedList<>(plusBookCountListItems);
             for (GetOwnerBookCompleteCountResponseDto bookCount : countComplete) {
 //                for (OwnerBookCountListItem ownerItem : bookCountListItems) {
-                if(plusBookCountListItems.isEmpty()) {
+                if (plusBookCountListItems.isEmpty()) {
                     OwnerBookCountListItem item = new OwnerBookCountListItem();
                     item.setCheckInDate(bookCount.getCheckInDate());
-                    item.setIngCount(bookCount.getCountComplete());
+                    item.setCompleteCount(bookCount.getCountComplete());
                     plusBookCountListItems2.add(item);
                 } else {
-                    for (Integer i = 0 ; i <plusBookCountListItems.size(); i++ ) {
+                    for (Integer i = 0; i < plusBookCountListItems.size(); i++) {
 
                         String checkInDate = plusBookCountListItems.get(i).getCheckInDate();
                         String completeDate = bookCount.getCheckInDate().toString();
@@ -724,35 +719,27 @@ public class OwnerServiceImpl implements OwnerService {
                             plusBookCountListItems2.get(i).setCompleteCount(completeCount); //
                             break;
                         }
-                        if (i == plusBookCountListItems.size()-1)
-                        {
+                        if (i == plusBookCountListItems.size() - 1) {
                             OwnerBookCountListItem newItem = new OwnerBookCountListItem();
                             newItem.setCheckInDate(bookCount.getCheckInDate());
                             newItem.setCompleteCount(completeCount);
                             plusBookCountListItems2.add(newItem);
                         }
-
                     }
                 }
-
             }
-
-
             return plusBookCountListItems2;
-
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
         }
-
-        return null;
     }
 
     @Override // 성수기 비수기 등록
     public ResponseEntity<? super PatchOwnerPeakResponseDto> patchPeak(Long glampId, PatchOwnerPeakRequestDto p) {
         log.info("service: {}", p);
         //가격정보 찾아오기
-        try{
+        try {
             //리스트 그릇 세팅
             List<OwnerRoomPriceItem> priceResultSet = roomPriceRepository.getRoomPriceList(glampId);
             List<GetRoomPriceItem> priceItems = new ArrayList<>();
@@ -776,15 +763,16 @@ public class OwnerServiceImpl implements OwnerService {
     public ResponseEntity<? super GetGlampingPeakPeriodResponseDto> getGlampingPeakPeriod(Long glampId) {
         try {
             GetPeakDateResultSet peakDateResultSet = glampPeakRepository.getPeak(glampId);
-            if(peakDateResultSet == null) {
+            if (peakDateResultSet == null) {
                 throw new CustomException(NEGP);
             }
-            return GetGlampingPeakPeriodResponseDto.success(peakDateResultSet.getStartDate().toString(),peakDateResultSet.getEndDate().toString(),peakDateResultSet.getPercent());
+            return GetGlampingPeakPeriodResponseDto.success(peakDateResultSet.getStartDate().toString(), peakDateResultSet.getEndDate().toString(), peakDateResultSet.getPercent());
         } catch (CustomException e) {
             e.printStackTrace();
             throw new CustomException(e.getErrorCode());
         }
     }
+
     @Override // 성수기 초기화
     public ResponseEntity<? super OwnerSuccessResponseDto> delGlampingPeakPeriod(Long glampId) {
         Optional<GlampPeakEntity> peakEntity = glampPeakRepository.findByGlamp(glampingRepository.getReferenceById(glampId));
@@ -940,8 +928,8 @@ public class OwnerServiceImpl implements OwnerService {
             Integer weekdayPrice = item.getWeekdayPrice();
             Integer weekendPrice = item.getWeekendPrice();
             //가격 인상 적용
-            weekdayPrice += (int)(weekdayPrice * percent);
-            weekendPrice += (int)(weekendPrice * percent);
+            weekdayPrice += (int) (weekdayPrice * percent);
+            weekendPrice += (int) (weekendPrice * percent);
             //세팅 된 가격 DB insert
             RoomPriceEntity entity = roomPriceRepository.findRoomPriceByRoomId(item.getRoomId());
             if (entity != null) {
@@ -989,6 +977,7 @@ public class OwnerServiceImpl implements OwnerService {
             priceItems.add(item);
         }
     }
+
     private static void setBookDetailList(List<OwnerBookItem> reservationResultSetList, List<OwnerBookDetailListItem> bookDetailListItems) {
         for (OwnerBookItem resultSet : reservationResultSetList) {
             OwnerBookDetailListItem item = new OwnerBookDetailListItem();
@@ -1009,6 +998,7 @@ public class OwnerServiceImpl implements OwnerService {
             bookDetailListItems.add(item);
         }
     }
+
     private static void setReviewItem(List<GetUserReviewResultSet> reviewInfo, List<ReviewImageEntity> imageEntities, List<UserReviewListItem> reviewListItem) {
         for (GetUserReviewResultSet resultSet : reviewInfo) {
             UserReviewListItem item = new UserReviewListItem();
@@ -1045,7 +1035,6 @@ public class OwnerServiceImpl implements OwnerService {
         }).toList();
         return reviewEntityList;
     }
-
 
 
 }
