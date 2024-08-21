@@ -13,19 +13,12 @@ import static com.green.glampick.common.GlobalConst.SUCCESS_MESSAGE;
 @Setter
 public class PostMailSendResponseDto extends ResponseDto {
 
-    private int authKey;
-
     private PostMailSendResponseDto() {
         super(SUCCESS_CODE, SUCCESS_MESSAGE);
     }
 
-    private PostMailSendResponseDto(int authKey) {
-        super(SUCCESS_CODE, SUCCESS_MESSAGE);
-        this.authKey = authKey;
-    }
-
-    public static ResponseEntity<ResponseDto> success(int authKey) {
-        PostMailSendResponseDto result = new PostMailSendResponseDto(authKey);
+    public static ResponseEntity<ResponseDto> success() {
+        PostMailSendResponseDto result = new PostMailSendResponseDto();
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
