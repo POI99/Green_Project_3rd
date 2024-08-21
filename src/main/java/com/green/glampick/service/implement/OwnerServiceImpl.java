@@ -117,10 +117,11 @@ public class OwnerServiceImpl implements OwnerService {
             entity.setOwner(owner);
             // 사장님이 글램핑을 이미 가지고 있는가?
             GlampingModule.hasGlamping(repository(), owner);
+            // 이미지가 들어있는가?
+            GlampingModule.imgExist(glampImg);
         }
 
-        // 이미지가 들어있는가?
-        GlampingModule.imgExist(glampImg);
+
         // 글램핑 위치가 중복되는가?
         if(!req.getGlampLocation().equals(location)) {
             GlampingModule.existingLocation(repository(), req.getGlampLocation());
