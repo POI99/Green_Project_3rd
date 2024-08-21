@@ -106,10 +106,12 @@ public class OwnerServiceImpl implements OwnerService {
         OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
         GlampingModule.roleCheck(owner.getRole());
         GlampingWaitEntity entity = null;
+        String location = null;
         try {  // 오류가 난다 > 존재하지 않는다 > 처음 등록한다
             // 오류가 안난다 > 존재한다 > 반려 후 수정
             entity = glampingWaitRepository.findByOwner(owner);
             if (entity == null) throw new RuntimeException();
+            location = entity.getGlampLocation();
         } catch (Exception e) {
             entity = new GlampingWaitEntity();
             entity.setOwner(owner);
@@ -120,8 +122,9 @@ public class OwnerServiceImpl implements OwnerService {
         // 이미지가 들어있는가?
         GlampingModule.imgExist(glampImg);
         // 글램핑 위치가 중복되는가?
-        GlampingModule.existingLocation(repository(), req.getGlampLocation());
-
+        if(!req.getGlampLocation().equals(location)) {
+            GlampingModule.existingLocation(repository(), req.getGlampLocation());
+        }
         // 글램핑 아이디 받아오기
         entity.setGlampName(req.getGlampName());
         if (req.getGlampCall() != null && !req.getGlampCall().isEmpty()) {
