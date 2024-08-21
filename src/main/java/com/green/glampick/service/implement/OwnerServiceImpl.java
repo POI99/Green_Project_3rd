@@ -107,14 +107,14 @@ public class OwnerServiceImpl implements OwnerService {
         GlampingModule.roleCheck(owner.getRole());
         GlampingWaitEntity entity = null;
         String location = null;
-        boolean state = false;
+        boolean state = false;   // 글램핑 재등록 = true
+        boolean pic = glampImg != null && !glampImg.isEmpty(); // 사진 있으면 true
         try {  // 오류가 난다 > 존재하지 않는다 > 처음 등록한다
             // 오류가 안난다 > 존재한다 > 반려 후 수정
             entity = glampingWaitRepository.findByOwner(owner);
             if (entity == null) throw new RuntimeException();
             location = entity.getGlampLocation();
-            entity.setGlampImage("img");
-            state = true;   // 글램핑 재등록
+            state = true;
         } catch (Exception e) {
             entity = new GlampingWaitEntity();
             entity.setOwner(owner);
@@ -133,6 +133,7 @@ public class OwnerServiceImpl implements OwnerService {
         if (req.getGlampCall() != null && !req.getGlampCall().isEmpty()) {
             entity.setGlampCall(GlampingModule.glampingCall(req.getGlampCall()));
         }
+        if(pic) entity.setGlampImage("img");
         entity.setExclusionStatus(0);
         entity.setGlampLocation(req.getGlampLocation());
         entity.setRegion(req.getRegion());
@@ -150,11 +151,11 @@ public class OwnerServiceImpl implements OwnerService {
 
         // 좌표, 이미지 저장하기
 //        String point = String.format("POINT(%s %s)", req.getLat(), req.getLng());
-        if(glampImg != null && !glampImg.isEmpty() && state) { // 재등록인데 이미지를 수정한다.
+        if(pic && state) { // 재등록인데 이미지를 수정한다.
             String folderPath = String.format("glampingWait/%d/glamp", glampId);
             customFileUtils.deleteFolder(folderPath);
         }
-        if(glampImg != null && !glampImg.isEmpty()) {
+        if(pic) {
             String fileName = GlampingModule.imageUpload(customFileUtils, glampImg, glampId, "glampingWait");
             glampingWaitRepository.updateGlampImageByGlampId(fileName, glampId);
         }
