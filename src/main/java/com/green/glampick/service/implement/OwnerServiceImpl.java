@@ -678,46 +678,63 @@ public class OwnerServiceImpl implements OwnerService {
             for (GetOwnerBookCancelCountResponseDto bookCount : countCancel) {
 //                for (OwnerBookCountListItem ownerItem : bookCountListItems) {
 
-                for (Integer i = 0 ; i < bookCountListItems.size() ;i++ ) {
+                if(bookCountListItems.isEmpty()) {
+                    OwnerBookCountListItem item = new OwnerBookCountListItem();
+                    item.setCheckInDate(bookCount.getCheckInDate());
+                    item.setIngCount(bookCount.getCountCancel());
+                    bookCountListItems.add(item);
+                } else {
+                    for (Integer i = 0 ; i < bookCountListItems.size(); i++ ) {
 
-                    String checkInDate = bookCountListItems.get(i).getCheckInDate();
-                    String cancelDate = bookCount.getCheckInDate().toString();
-                    Long cancelCount = bookCount.getCountCancel();
-                    if (checkInDate.equals(cancelDate)) {
-                        plusBookCountListItems.get(i).setCancelCount(cancelCount); //
-                        break;
-                    }
-                    if (i == bookCountListItems.size()-1)
-                    {
-                        OwnerBookCountListItem newItem = new OwnerBookCountListItem();
-                        newItem.setCheckInDate(bookCount.getCheckInDate());
-                        newItem.setCancelCount(cancelCount);
-                        plusBookCountListItems.add(newItem);
+                        String checkInDate = bookCountListItems.get(i).getCheckInDate();
+                        String cancelDate = bookCount.getCheckInDate().toString();
+                        Long cancelCount = bookCount.getCountCancel();
+                        if (checkInDate.equals(cancelDate)) {
+                            plusBookCountListItems.get(i).setCancelCount(cancelCount); //
+                            break;
+                        }
+                        if (i == bookCountListItems.size()-1)
+                        {
+                            OwnerBookCountListItem newItem = new OwnerBookCountListItem();
+                            newItem.setCheckInDate(bookCount.getCheckInDate());
+                            newItem.setCancelCount(cancelCount);
+                            plusBookCountListItems.add(newItem);
+                        }
+
                     }
                 }
+
             }
             List<OwnerBookCountListItem> plusBookCountListItems2 = new LinkedList<>(plusBookCountListItems);
 
             for (GetOwnerBookCompleteCountResponseDto bookCount : countComplete) {
 //                for (OwnerBookCountListItem ownerItem : bookCountListItems) {
+                if(plusBookCountListItems.isEmpty()) {
+                    OwnerBookCountListItem item = new OwnerBookCountListItem();
+                    item.setCheckInDate(bookCount.getCheckInDate());
+                    item.setIngCount(bookCount.getCountComplete());
+                    bookCountListItems.add(item);
+                } else {
+                    for (Integer i = 0 ; i <plusBookCountListItems.size(); i++ ) {
 
-                for (Integer i = 0 ; i < plusBookCountListItems.size() ;i++ ) {
+                        String checkInDate = plusBookCountListItems.get(i).getCheckInDate();
+                        String completeDate = bookCount.getCheckInDate().toString();
+                        Long completeCount = bookCount.getCountComplete();
+                        if (checkInDate.equals(completeDate)) {
+                            plusBookCountListItems2.get(i).setCompleteCount(completeCount); //
+                            break;
+                        }
+                        if (i == plusBookCountListItems.size()-1)
+                        {
+                            OwnerBookCountListItem newItem = new OwnerBookCountListItem();
+                            newItem.setCheckInDate(bookCount.getCheckInDate());
+                            newItem.setCompleteCount(completeCount);
+                            plusBookCountListItems2.add(newItem);
+                        }
 
-                    String checkInDate = plusBookCountListItems.get(i).getCheckInDate();
-                    String completeDate = bookCount.getCheckInDate().toString();
-                    Long completeCount = bookCount.getCountComplete();
-                    if (checkInDate.equals(completeDate)) {
-                        plusBookCountListItems2.get(i).setCompleteCount(completeCount); //
-                        break;
-                    }
-                    if (i == plusBookCountListItems.size()-1)
-                    {
-                        OwnerBookCountListItem newItem = new OwnerBookCountListItem();
-                        newItem.setCheckInDate(bookCount.getCheckInDate());
-                        newItem.setCompleteCount(completeCount);
-                        plusBookCountListItems2.add(newItem);
                     }
                 }
+
             }
 
 
