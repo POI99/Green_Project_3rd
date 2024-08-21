@@ -183,7 +183,7 @@ public class AdminServiceImpl implements AdminService {
                     "<p class='message'>신청하신 사장님 회원가입 신청이 반려되었습니다.</p>" +
                     "<p class='message'>반려된 사유는 아래와 같습니다.</p>" +
                     "<p class='code highlight'>" + dto.getExclusionComment() + "</p>" +
-                    "<p class='message'>반려처리와 함께 회원가입은 취소처리 되오니, 사유를 다시 확인 하시고 승인 신청 부탁드립니다.</p>" +
+                    "<p class='message'>반려처리와 함께 회원가입은 취소처리 되오니, 사유를 다시 확인 하시고 회원가입 부탁드립니다.</p>" +
                     "</div>" +
                     "</body>" +
                     "</html>";
