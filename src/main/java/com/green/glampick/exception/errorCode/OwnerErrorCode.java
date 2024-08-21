@@ -22,8 +22,8 @@ public enum OwnerErrorCode implements ErrorCode {
     PUE(HttpStatus.BAD_REQUEST, "객실 인원은 2명부터 6명까지 가능합니다."),    // PERSONNEL_UPDATE_ERROR
     CF(HttpStatus.BAD_REQUEST, "파일을 삭제하지 못했습니다."),    // CANT_DELETE_FILE
     CFI(HttpStatus.BAD_REQUEST, "사진을 삭제할 수 없습니다. 사진 ID를 다시 확인해주세요."),    // CANT_FIND_IMAGE
-    CD(HttpStatus.BAD_REQUEST, "해당 글램핑에는 이용 예정인 예약이 존재하여 탈퇴를 할 수 없습니다.");    // CAN_NOT_DELETE
-
+    CD(HttpStatus.BAD_REQUEST, "해당 글램핑에는 이용 예정인 예약이 존재하여 탈퇴를 할 수 없습니다."),    // CAN_NOT_DELETE
+    DTE(HttpStatus.BAD_REQUEST, "입력하신 날짜가 벗어났습니다.");
     private final HttpStatus httpStatus;
     private final String message;
 }
