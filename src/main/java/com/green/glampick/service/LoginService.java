@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface LoginService {
@@ -70,5 +71,42 @@ public interface LoginService {
 
     //  로그인 및 회원가입 페이지 - 사장님 이메일 코드 체크하기  //
     ResponseEntity<? super PostMailCheckResponseDto> checkCodeOwner(String userEmail, int emailKey);
+
+    //  로그인 및 회원가입 페이지 - 유저 이메일 찾기  //
+    ResponseEntity<? super PostSearchEmailResponseDto> searchEmail (PostSearchEmailRequestDto dto);
+
+    //  로그인 및 회원가입 페이지 - 유저 이메일 찾기 - 휴대폰 인증 보내기  //
+    ResponseEntity<? super PostSmsSendResponseDto> sendOneSearchEmail(String userPhone);
+
+    //  로그인 및 회원가입 페이지 - 유저 이메일 찾기 - 휴대폰 인증 체크하기  //
+    ResponseEntity<? super PostSmsCheckResponseDto> checkPhoneSearchEmail(String userPhone, int phoneKey);
+
+    //  로그인 및 회원가입 페이지 - 유저 비밀번호 찾기 후 변경 처리  //
+    ResponseEntity<? super PostSearchPwResponseDto> searchPw(PostSearchPwRequestDto dto);
+
+    //  로그인 및 회원가입 페이지 - 유저 비밀번호 찾기 - 이메일 인증 보내기  //
+    ResponseEntity<? super PostMailSendResponseDto> sendMailSearchPw(String userEmail);
+
+    //  로그인 및 회원가입 페이지 - 유저 비밀번호 찾기 - 이메일 인증 체크하기  //
+    ResponseEntity<? super PostMailCheckResponseDto> mailCheckSearchPw(String userEmail, int emailKey);
+
+    //  로그인 및 회원가입 페이지 - 사장님 이메일 찾기  //
+    ResponseEntity<? super PostSearchEmailResponseDto> searchOwnerEmail(PostSearchOwnerEmailRequestDto dto);
+
+    //  로그인 및 회원가입 페이지 - 사장님 이메일 찾기 - 휴대폰 인증 보내기  //
+    ResponseEntity<? super PostSmsSendResponseDto> sendOneSearchOwnerEmail(String ownerPhone);
+
+    //  로그인 및 회원가입 페이지 - 사장님 이메일 찾기 - 휴대폰 인증 체크하기  //
+    ResponseEntity<? super PostSmsCheckResponseDto> checkPhoneSearchOwnerEmail(String ownerPhone, int phoneKey);
+
+    //  로그인 및 회원가입 페이지 - 사장님 비밀번호 검증 후 변경처리  //
+    ResponseEntity<? super PostSearchPwResponseDto> searchOwnerPw(PostSearchOwnerPwRequestDto dto);
+
+    //  로그인 및 회원가입 페이지 - 사장님 비밀번호 찾기 - 이메일 인증 보내기  //
+    ResponseEntity<? super PostMailSendResponseDto> sendMailSearchOwnerPw(String ownerEmail);
+
+    //  로그인 및 회원가입 페이지 - 사장님 비밀번호 찾기 - 이메일 인증 체크하기  //
+    ResponseEntity<? super PostMailCheckResponseDto> mailCheckSearchOwnerPw(String ownerEmail, int emailKey);
+
 
 }

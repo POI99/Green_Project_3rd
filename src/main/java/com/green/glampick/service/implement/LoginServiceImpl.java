@@ -784,6 +784,7 @@ public class LoginServiceImpl implements LoginService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.DBE);
         }
+
     }
 
     //  로그인 및 회원가입 페이지 - 사장님 휴대폰 인증 문자 보내기  //
@@ -987,6 +988,480 @@ public class LoginServiceImpl implements LoginService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.DBE);
         }
+    }
+
+    //  로그인 및 회원가입 페이지 - 유저 이메일 찾기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostSearchEmailResponseDto> searchEmail(PostSearchEmailRequestDto dto) {
+
+        try { if (dto == null) { throw new CustomException(CommonErrorCode.VF); }
+        } catch (CustomException e) { throw new CustomException(e.getErrorCode()); }
+
+        UserEntity userEntity = userRepository.findByUserNameAndUserPhone(dto.getUserName(), dto.getUserPhone());
+
+        try {
+            if (userEntity == null) { throw new CustomException(UserErrorCode.NU); }
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return PostSearchEmailResponseDto.success(userEntity.getUserEmail());
+
+    }
+
+    //  로그인 및 회원가입 페이지 - 유저 이메일 찾기 - 휴대폰 인증 보내기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostSmsSendResponseDto> sendOneSearchEmail(String userPhone) {
+        int verificationCode;
+
+        try {
+
+            String phoneRegex = "^(01[016789]-?\\d{3,4}-?\\d{4})|(0[2-9][0-9]-?\\d{3,4}-?\\d{4})$";
+            Pattern patternPhone = Pattern.compile(phoneRegex);
+            Matcher matcherPhone = patternPhone.matcher(userPhone);
+            if (!matcherPhone.matches()) { throw new CustomException(UserErrorCode.IPH); }
+
+            UserEntity userEntity = userRepository.findByUserPhone(userPhone);
+            if (userEntity == null) { throw new CustomException(UserErrorCode.NU); }
+
+
+            //  받아온 유저 휴대폰 번호의 "-" 부분을 없앤다. (010-1234-5678 -> 01012345678)  //
+            userPhone.replaceAll("-", "");
+
+            //  변수에 랜덤으로 생성되는 6자리의 숫자를 넣는다.  //
+            verificationCode = createKey();
+
+            //  Map 객체에 유저 휴대폰 번호와 위에서 생성한 코드를 추가하고, 유효시간은 5분으로 지정한다. (5분뒤 삭제) //
+            CodeMap.put(userPhone, verificationCode);
+            CodeExpiryMap.put(userPhone, System.currentTimeMillis() + 300000);
+
+            //  Cool SMS 를 통하여, 받아온 유저 휴대폰 번호에 코드를 보낸다.  //
+            smsUtils.sendOne(userPhone, verificationCode);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return PostSmsSendResponseDto.success();
+    }
+
+    //  로그인 및 회원가입 페이지 - 유저 이메일 찾기 - 휴대폰 인증 체크하기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostSmsCheckResponseDto> checkPhoneSearchEmail(String userPhone, int phoneKey) {
+
+        try {
+
+            if (CodeMap.containsKey(userPhone) && CodeMap.get(userPhone).equals(phoneKey)) {
+
+                if (System.currentTimeMillis() > CodeExpiryMap.get(userPhone)) {
+                    CodeMap.remove(userPhone);
+                    CodeExpiryMap.remove(userPhone);
+                    throw new CustomException(CommonErrorCode.EF);
+                }
+
+                CodeMap.remove(userPhone);
+                CodeExpiryMap.remove(userPhone);
+
+                return PostSmsCheckResponseDto.success();
+
+            } else { throw new CustomException(CommonErrorCode.IC); }
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+    }
+
+    //  로그인 및 회원가입 페이지 - 유저 비밀번호 검증 후 변경처리  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostSearchPwResponseDto> searchPw(PostSearchPwRequestDto dto) {
+
+        try { if (dto == null) { throw new CustomException(CommonErrorCode.VF); }
+        } catch (CustomException e) { throw new CustomException(e.getErrorCode()); }
+
+        UserEntity userEntity = userRepository.findByUserEmailAndUserName(dto.getUserEmail(), dto.getUserName());
+
+        try {
+
+            if (userEntity == null) { throw new CustomException(UserErrorCode.NU); }
+
+            String userPw = dto.getUserPw();
+            String passwordRegex = "^(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+            Pattern patternPw = Pattern.compile(passwordRegex);
+            Matcher matcherPw = patternPw.matcher(userPw);
+            if (!matcherPw.matches()) { throw new CustomException(UserErrorCode.IP); }
+
+            String encodingPw = passwordEncoder.encode(userPw);
+            dto.setUserPw(encodingPw);
+
+            userEntity.setUserPw(dto.getUserPw());
+
+            userRepository.save(userEntity);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return PostSearchPwResponseDto.success();
+
+    }
+
+    //  로그인 및 회원가입 페이지 - 유저 비밀번호 찾기 - 이메일 인증 보내기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostMailSendResponseDto> sendMailSearchPw(String userEmail) {
+
+        try {
+            if (userEmail == null || userEmail.isEmpty()) {
+                throw new CustomException(UserErrorCode.EE);
+            }
+
+            String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+            Pattern patternEmail = Pattern.compile(emailRegex);
+            Matcher matcherEmail = patternEmail.matcher(userEmail);
+            if (!matcherEmail.matches()) {
+                throw new CustomException(UserErrorCode.IE);
+            }
+
+            //  입력받은 이메일이 유저 테이블에 이미 있는 이메일 이라면, 중복 이메일에 대한 응답을 보낸다.  //
+            UserEntity userEntity = userRepository.findByUserEmail(userEmail);
+            if (userEntity == null) { throw new CustomException(UserErrorCode.NU); }
+
+            //  변수에 랜덤으로 생성되는 6자리의 숫자를 넣는다.  //
+            int mailCode = createKey();
+
+            //  Map 객체에 유저 이메일과 위에서 생성한 코드를 추가하고, 유효시간은 5분으로 지정한다. (5분뒤 삭제) //
+            CodeMap.put(userEmail, mailCode);
+            CodeExpiryMap.put(userEmail, System.currentTimeMillis() + 300000);
+
+            //  MimeMessage 객체를 만든다.  //
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+            //  MimeMessage 에 받아온 유저 이메일과, Text, Code 에 대한 값을 넣는다.  //
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(userEmail);
+            helper.setSubject("글램픽 인증 코드");
+
+            String htmlContent = "<!DOCTYPE html>" +
+                    "<html>" +
+                    "<head>" +
+                    "<style>" +
+                    "@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');" +
+                    "body {font-family: 'Pretendard-Regular', sans-serif;}" +
+                    ".container {padding: 20px; text-align: center;}" +
+                    ".message {font-size: 16px; color: #34495e; margin-top: 20px;}" +
+                    ".code {font-size: 24px; font-weight: bold; color: #2c3e50; margin-top: 10px;}" +
+                    ".highlight {color: #355179;}" + // 이미지 색상과 조화로운 색상
+                    "</style>" +
+                    "</head>" +
+                    "<body>" +
+                    "<div class='container'>" +
+                    "<img src='cid:mailImage' alt='메일 이미지' class='background-image'>" +
+                    "<p class='message'>안녕하세요.</p>" +
+                    "<p class='message'>글램픽 인증 코드는 다음과 같습니다.</p>" +
+                    "<p class='code highlight'>" + mailCode + "</p>" +
+                    "<p class='message'>글램픽을 이용해 주셔서 감사합니다 !</p>" +
+                    "</div>" +
+                    "</body>" +
+                    "</html>";
+            helper.setText(htmlContent, true);
+            helper.addInline("mailImage", new ClassPathResource("mailImage/main-big.png"));
+
+            //  위에서 정의한 MimeMessage 를 전송한다.  //
+            mailSender.send(mimeMessage);
+
+            return PostMailSendResponseDto.success();
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+    }
+
+    //  로그인 및 회원가입 페이지 - 유저 비밀번호 찾기 - 이메일 인증 체크하기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostMailCheckResponseDto> mailCheckSearchPw(String userEmail, int emailKey) {
+
+        try {
+            if (CodeMap.containsKey(userEmail) && CodeMap.get(userEmail).equals(emailKey)) {
+
+                if (System.currentTimeMillis() > CodeExpiryMap.get(userEmail)) {
+                    CodeMap.remove(userEmail);
+                    CodeExpiryMap.remove(userEmail);
+                    throw new CustomException(CommonErrorCode.EF);
+                }
+
+                CodeMap.remove(userEmail);
+                CodeExpiryMap.remove(userEmail);
+
+                return PostMailCheckResponseDto.success();
+
+            } else {
+                throw new CustomException(CommonErrorCode.IC);
+            }
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+    }
+
+    //  로그인 및 회원가입 페이지 - 사장님 이메일 찾기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostSearchEmailResponseDto> searchOwnerEmail(PostSearchOwnerEmailRequestDto dto) {
+
+        try { if (dto == null) { throw new CustomException(CommonErrorCode.VF); }
+        } catch (CustomException e) { throw new CustomException(e.getErrorCode()); }
+
+        OwnerEntity ownerEntity = ownerRepository.findByOwnerNameAndOwnerPhone(dto.getOwnerName(), dto.getOwnerPhone());
+
+        try {
+            if (ownerEntity == null) { throw new CustomException(UserErrorCode.NU); }
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return PostSearchEmailResponseDto.success(ownerEntity.getOwnerEmail());
+
+    }
+
+    //  로그인 및 회원가입 페이지 - 사장님 이메일 찾기 - 휴대폰 인증 보내기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostSmsSendResponseDto> sendOneSearchOwnerEmail(String ownerPhone) {
+        int verificationCode;
+
+        try {
+
+            String phoneRegex = "^(01[016789]-?\\d{3,4}-?\\d{4})|(0[2-9][0-9]-?\\d{3,4}-?\\d{4})$";
+            Pattern patternPhone = Pattern.compile(phoneRegex);
+            Matcher matcherPhone = patternPhone.matcher(ownerPhone);
+            if (!matcherPhone.matches()) { throw new CustomException(UserErrorCode.IPH); }
+
+            OwnerEntity ownerEntity = ownerRepository.findByOwnerPhone(ownerPhone);
+            if (ownerEntity == null) { throw new CustomException(UserErrorCode.NU); }
+
+
+            //  받아온 유저 휴대폰 번호의 "-" 부분을 없앤다. (010-1234-5678 -> 01012345678)  //
+            ownerPhone.replaceAll("-", "");
+
+            //  변수에 랜덤으로 생성되는 6자리의 숫자를 넣는다.  //
+            verificationCode = createKey();
+
+            //  Map 객체에 유저 휴대폰 번호와 위에서 생성한 코드를 추가하고, 유효시간은 5분으로 지정한다. (5분뒤 삭제) //
+            CodeMap.put(ownerPhone, verificationCode);
+            CodeExpiryMap.put(ownerPhone, System.currentTimeMillis() + 300000);
+
+            //  Cool SMS 를 통하여, 받아온 유저 휴대폰 번호에 코드를 보낸다.  //
+            smsUtils.sendOne(ownerPhone, verificationCode);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return PostSmsSendResponseDto.success();
+    }
+
+    //  로그인 및 회원가입 페이지 - 사장님 이메일 찾기 - 휴대폰 인증 체크하기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostSmsCheckResponseDto> checkPhoneSearchOwnerEmail(String ownerPhone, int phoneKey) {
+
+        try {
+
+            if (CodeMap.containsKey(ownerPhone) && CodeMap.get(ownerPhone).equals(phoneKey)) {
+
+                if (System.currentTimeMillis() > CodeExpiryMap.get(ownerPhone)) {
+                    CodeMap.remove(ownerPhone);
+                    CodeExpiryMap.remove(ownerPhone);
+                    throw new CustomException(CommonErrorCode.EF);
+                }
+
+                CodeMap.remove(ownerPhone);
+                CodeExpiryMap.remove(ownerPhone);
+
+                return PostSmsCheckResponseDto.success();
+
+            } else { throw new CustomException(CommonErrorCode.IC); }
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+    }
+
+    //  로그인 및 회원가입 페이지 - 사장님 비밀번호 검증 후 변경처리  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostSearchPwResponseDto> searchOwnerPw(PostSearchOwnerPwRequestDto dto) {
+
+        try { if (dto == null) { throw new CustomException(CommonErrorCode.VF); }
+        } catch (CustomException e) { throw new CustomException(e.getErrorCode()); }
+
+        OwnerEntity ownerEntity = ownerRepository.findByOwnerEmailAndOwnerName(dto.getOwnerEmail(), dto.getOwnerName());
+
+        try {
+
+            if (ownerEntity == null) { throw new CustomException(UserErrorCode.NU); }
+
+            String userPw = dto.getOwnerPw();
+            String passwordRegex = "^(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+            Pattern patternPw = Pattern.compile(passwordRegex);
+            Matcher matcherPw = patternPw.matcher(userPw);
+            if (!matcherPw.matches()) { throw new CustomException(UserErrorCode.IP); }
+
+            String encodingPw = passwordEncoder.encode(userPw);
+            dto.setOwnerPw(encodingPw);
+
+            ownerEntity.setOwnerPw(dto.getOwnerPw());
+
+            ownerRepository.save(ownerEntity);
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
+        return PostSearchPwResponseDto.success();
+
+    }
+
+    //  로그인 및 회원가입 페이지 - 사장님 비밀번호 찾기 - 이메일 인증 보내기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostMailSendResponseDto> sendMailSearchOwnerPw(String ownerEmail) {
+
+        try {
+            if (ownerEmail == null || ownerEmail.isEmpty()) {
+                throw new CustomException(UserErrorCode.EE);
+            }
+
+            String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+            Pattern patternEmail = Pattern.compile(emailRegex);
+            Matcher matcherEmail = patternEmail.matcher(ownerEmail);
+            if (!matcherEmail.matches()) {
+                throw new CustomException(UserErrorCode.IE);
+            }
+
+            //  입력받은 이메일이 유저 테이블에 이미 있는 이메일 이라면, 중복 이메일에 대한 응답을 보낸다.  //
+            UserEntity userEntity = userRepository.findByUserEmail(ownerEmail);
+            if (userEntity == null) { throw new CustomException(UserErrorCode.NU); }
+
+            //  변수에 랜덤으로 생성되는 6자리의 숫자를 넣는다.  //
+            int mailCode = createKey();
+
+            //  Map 객체에 유저 이메일과 위에서 생성한 코드를 추가하고, 유효시간은 5분으로 지정한다. (5분뒤 삭제) //
+            CodeMap.put(ownerEmail, mailCode);
+            CodeExpiryMap.put(ownerEmail, System.currentTimeMillis() + 300000);
+
+            //  MimeMessage 객체를 만든다.  //
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+            //  MimeMessage 에 받아온 유저 이메일과, Text, Code 에 대한 값을 넣는다.  //
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(ownerEmail);
+            helper.setSubject("글램픽 인증 코드");
+
+            String htmlContent = "<!DOCTYPE html>" +
+                    "<html>" +
+                    "<head>" +
+                    "<style>" +
+                    "@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');" +
+                    "body {font-family: 'Pretendard-Regular', sans-serif;}" +
+                    ".container {padding: 20px; text-align: center;}" +
+                    ".message {font-size: 16px; color: #34495e; margin-top: 20px;}" +
+                    ".code {font-size: 24px; font-weight: bold; color: #2c3e50; margin-top: 10px;}" +
+                    ".highlight {color: #355179;}" + // 이미지 색상과 조화로운 색상
+                    "</style>" +
+                    "</head>" +
+                    "<body>" +
+                    "<div class='container'>" +
+                    "<img src='cid:mailImage' alt='메일 이미지' class='background-image'>" +
+                    "<p class='message'>안녕하세요.</p>" +
+                    "<p class='message'>글램픽 인증 코드는 다음과 같습니다.</p>" +
+                    "<p class='code highlight'>" + mailCode + "</p>" +
+                    "<p class='message'>글램픽을 이용해 주셔서 감사합니다 !</p>" +
+                    "</div>" +
+                    "</body>" +
+                    "</html>";
+            helper.setText(htmlContent, true);
+            helper.addInline("mailImage", new ClassPathResource("mailImage/main-big.png"));
+
+            //  위에서 정의한 MimeMessage 를 전송한다.  //
+            mailSender.send(mimeMessage);
+
+            return PostMailSendResponseDto.success();
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+    }
+
+    //  로그인 및 회원가입 페이지 - 사장님 비밀번호 찾기 - 이메일 인증 체크하기  //
+    @Override
+    @Transactional
+    public ResponseEntity<? super PostMailCheckResponseDto> mailCheckSearchOwnerPw(String ownerEmail, int emailKey) {
+
+        try {
+            if (CodeMap.containsKey(ownerEmail) && CodeMap.get(ownerEmail).equals(emailKey)) {
+
+                if (System.currentTimeMillis() > CodeExpiryMap.get(ownerEmail)) {
+                    CodeMap.remove(ownerEmail);
+                    CodeExpiryMap.remove(ownerEmail);
+                    throw new CustomException(CommonErrorCode.EF);
+                }
+
+                CodeMap.remove(ownerEmail);
+                CodeExpiryMap.remove(ownerEmail);
+
+                return PostMailCheckResponseDto.success();
+
+            } else {
+                throw new CustomException(CommonErrorCode.IC);
+            }
+
+        } catch (CustomException e) {
+            throw new CustomException(e.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(CommonErrorCode.DBE);
+        }
+
     }
 
 }

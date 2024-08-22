@@ -199,4 +199,120 @@ public class LoginController {
         return service.checkCodeOwner(ownerEmail, emailKey);
     }
 
+    @PostMapping("/search/email")
+    @Operation(summary = "유저 이메일 찾기 (김수찬)")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostSearchEmailResponseDto.class)))
+    public ResponseEntity<? super PostSearchEmailResponseDto> searchEmail(@RequestBody PostSearchEmailRequestDto dto) {
+        return service.searchEmail(dto);
+    }
+
+    @PostMapping("/search/send-sms")
+    @Operation(summary = "유저 이메일 찾기 - 휴대폰 인증 보내기 (김수찬)", description = SEND_SMS_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = SEND_SMS_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostSmsSendResponseDto.class)))
+    public ResponseEntity<? super PostSmsSendResponseDto> sendOneSearchEmail(@RequestParam String userPhone) {
+        return service.sendOneSearchEmail(userPhone);
+    }
+
+    @PostMapping("/search/check-sms")
+    @Operation(summary = "유저 이메일 찾기 - 휴대폰 인증코드 체크 (김수찬)", description = CHECK_SMS_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = CHECK_SMS_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostSmsCheckResponseDto.class)))
+    public ResponseEntity<? super PostSmsCheckResponseDto> smsCheckSearchEmail(
+            @RequestParam String userPhone, @RequestParam int phoneKey)
+    {
+        return service.checkPhoneSearchEmail(userPhone, phoneKey);
+    }
+
+    @PostMapping("/search/password")
+    @Operation(summary = "유저 비밀번호 찾기 (김수찬)")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostMailCheckResponseDto.class)))
+    public ResponseEntity<? super PostSearchPwResponseDto> searchPw(@RequestBody PostSearchPwRequestDto dto) {
+        return service.searchPw(dto);
+    }
+
+    @PostMapping("/search/mail-send")
+    @Operation(summary = "유저 비밀번호 찾기 - 이메일 인증 보내기 (김수찬)", description = SEND_MAIL_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = SEND_MAIL_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostMailSendResponseDto.class)))
+    public ResponseEntity<? super PostMailSendResponseDto> sendMailSearchPw(@RequestParam String userEmail) {
+        return service.sendMailSearchPw(userEmail);
+    }
+
+    @PostMapping("/search/mail-check")
+    @Operation(summary = "유저 비밀번호 찾기 - 이메일 인증확인 (김수찬)", description = CHECK_MAIL_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = CHECK_MAIL_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostMailCheckResponseDto.class)))
+    public ResponseEntity<? super PostMailCheckResponseDto> mailCheckSearchPw(
+            @RequestParam String userEmail, @RequestParam int emailKey)
+    {
+        return service.mailCheckSearchPw(userEmail, emailKey);
+    }
+
+    @PostMapping("/search/owner/email")
+    @Operation(summary = "사장님 이메일 찾기 (김수찬)")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostSearchEmailResponseDto.class)))
+    public ResponseEntity<? super PostSearchEmailResponseDto> searchOwnerEmail(@RequestBody PostSearchOwnerEmailRequestDto dto) {
+        return service.searchOwnerEmail(dto);
+    }
+
+    @PostMapping("/search/owner/send-sms")
+    @Operation(summary = "사장님 이메일 찾기 - 휴대폰 인증 보내기 (김수찬)", description = SEND_SMS_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = SEND_SMS_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostSmsSendResponseDto.class)))
+    public ResponseEntity<? super PostSmsSendResponseDto> sendOneSearchOwnerEmail(@RequestParam String ownerPhone) {
+        return service.sendOneSearchOwnerEmail(ownerPhone);
+    }
+
+    @PostMapping("/search/owner/check-sms")
+    @Operation(summary = "사장님 이메일 찾기 - 휴대폰 인증코드 체크 (김수찬)", description = CHECK_SMS_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = CHECK_SMS_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostSmsCheckResponseDto.class)))
+    public ResponseEntity<? super PostSmsCheckResponseDto> checkPhoneSearchOwnerEmail(
+            @RequestParam String ownerPhone, @RequestParam int phoneKey)
+    {
+        return service.checkPhoneSearchOwnerEmail(ownerPhone, phoneKey);
+    }
+
+    @PostMapping("/search/owner/password")
+    @Operation(summary = "사장님 비밀번호 찾기 (김수찬)")
+    @ApiResponse(responseCode = "200", description = "",
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostMailCheckResponseDto.class)))
+    public ResponseEntity<? super PostSearchPwResponseDto> searchOwnerPw(@RequestBody PostSearchOwnerPwRequestDto dto) {
+        return service.searchOwnerPw(dto);
+    }
+
+    @PostMapping("/search/owner/mail-send")
+    @Operation(summary = "사장님 비밀번호 찾기 - 이메일 인증 보내기 (김수찬)", description = SEND_MAIL_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = SEND_MAIL_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostMailSendResponseDto.class)))
+    public ResponseEntity<? super PostMailSendResponseDto> sendMailSearchOwnerPw(@RequestParam String ownerEmail) {
+        return service.sendMailSearchOwnerPw(ownerEmail);
+    }
+
+    @PostMapping("/search/owner/mail-check")
+    @Operation(summary = "사장님 비밀번호 찾기 - 이메일 인증확인 (김수찬)", description = CHECK_MAIL_DESCRIPTION)
+    @ApiResponse(responseCode = "200", description = CHECK_MAIL_RESPONSE_ERROR_CODE,
+            content = @Content(
+                    mediaType = "application/json", schema = @Schema(implementation = PostMailCheckResponseDto.class)))
+    public ResponseEntity<? super PostMailCheckResponseDto> mailCheckSearchOwnerPw(
+            @RequestParam String ownerEmail, @RequestParam int emailKey)
+    {
+        return service.mailCheckSearchOwnerPw(ownerEmail, emailKey);
+    }
+
 }
