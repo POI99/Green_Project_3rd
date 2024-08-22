@@ -384,19 +384,29 @@ public class OwnerServiceImpl implements OwnerService {
     public ResponseEntity<? super GetGlampingInfoResponseDto> getGlamping() {
         /*
             state : owner table 에 glamping status 가 1이면 true 0이면 false
-                    true - glamping table 에서 get
-                    false -	glamping wait table 에서 get
+                    true - glamping table 에서 get (정상 등록 완료)
+                    false -	glamping wait table 에서 get (최초 등록 or 심사 중)
          */
 
         // 사장님 PK 불러오기
         long ownerId = GlampingModule.ownerId(authenticationFacade);
         OwnerEntity owner = ownerRepository.getReferenceById(ownerId);
         GlampingModule.roleCheck(owner.getRole());
-
+        GetGlampingInfoItem result = null;
         GetGlampingInfoResultSet resultSet = null;
         if (owner.getGlampingStatus() == 0) {
             resultSet = glampingWaitRepository.getGlampingInfo(owner);
-            return GetGlampingInfoResponseDto.successWait(false, resultSet);
+            if(resultSet == null) {
+                result = new GetGlampingInfoItem(); // 최초 등록 > 불러올 데이터가 없음
+                result.setState(false);
+            } else { // 불러오기 (반려 후 수정)
+                result = new GetGlampingInfoItem(false, result.getGlampId(), resultSet.getName()
+                , resultSet.getCall(), resultSet.getImage(), resultSet.getLocation(),
+                        resultSet.getRegion(), resultSet.getCharge(), resultSet.getIntro()
+                , resultSet.getBasic(), resultSet.getNotice(), resultSet.getTraffic(),
+                        resultSet.getExclusionStatus());
+            }
+            return GetGlampingInfoResponseDto.successWait(result);
         }
         resultSet = glampingRepository.getGlampingInfo(owner);
         return GetGlampingInfoResponseDto.success(true, resultSet);
