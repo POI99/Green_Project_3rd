@@ -21,9 +21,7 @@ public enum CommonErrorCode implements ErrorCode {
     NS(HttpStatus.BAD_REQUEST, "탈퇴한 회원 입니다."),
     WO(HttpStatus.BAD_REQUEST, "탈퇴 대기중인 회원 입니다."),
     WS(HttpStatus.BAD_REQUEST, "가입 대기중인 회원 입니다."),
-
-    // 401
-    SF(HttpStatus.UNAUTHORIZED, "로그인에 실패하였습니다."), // SIGN_IN_FAILED
+    SF(HttpStatus.BAD_REQUEST, "로그인에 실패하였습니다."), // SIGN_IN_FAILED
 
     // 403
     NP(HttpStatus.FORBIDDEN, "권한이 없습니다."); // NOT_PERMISSION
