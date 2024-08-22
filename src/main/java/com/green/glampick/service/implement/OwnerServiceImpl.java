@@ -400,7 +400,7 @@ public class OwnerServiceImpl implements OwnerService {
                 result = new GetGlampingInfoItem(); // 최초 등록 > 불러올 데이터가 없음
                 result.setState(false);
             } else { // 불러오기 (반려 후 수정)
-                result = new GetGlampingInfoItem(false, result.getGlampId(), resultSet.getName()
+                result = new GetGlampingInfoItem(false, resultSet.getGlampId(), resultSet.getName()
                 , resultSet.getCall(), resultSet.getImage(), resultSet.getLocation(),
                         resultSet.getRegion(), resultSet.getCharge(), resultSet.getIntro()
                 , resultSet.getBasic(), resultSet.getNotice(), resultSet.getTraffic(),
