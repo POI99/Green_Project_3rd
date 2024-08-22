@@ -840,8 +840,6 @@ public class OwnerServiceImpl implements OwnerService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.MNF);
         }
-        // 로그인 유저와 글램핑 PK가 매치되는가?
-        GlampingModule.isGlampIdOk(glampingRepository, ownerRepository.getReferenceById(dto.getOwnerId()), dto.getGlampId());
 
         Long total = 0L;
         List<GetPopularRoom> popRoom = new ArrayList<>();
@@ -908,8 +906,6 @@ public class OwnerServiceImpl implements OwnerService {
             e.printStackTrace();
             throw new CustomException(CommonErrorCode.MNF);
         }
-        // 로그인 유저와 글램핑 PK가 매치되는가?
-        GlampingModule.isGlampIdOk(glampingRepository, ownerRepository.getReferenceById(dto.getOwnerId()), dto.getGlampId());
 
         String formattedResult = null;
         List<GetCancelDto> room = new ArrayList<>();
