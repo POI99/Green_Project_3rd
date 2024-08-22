@@ -23,7 +23,7 @@ public interface GlampingWaitRepository extends JpaRepository<GlampingWaitEntity
     GlampingWaitEntity findByGlampId(Long glampId);
     GlampingWaitEntity findByGlampLocation(String glampLocation);
 
-    @Query(" select g.glampName AS name, g.glampCall AS call" +
+    @Query(" select g.glampId as glampId, g.glampName AS name, g.glampCall AS call" +
             ", g.glampImage AS image, g.glampLocation AS location, " +
             "g.region AS region, g.extraCharge AS charge, g.glampIntro AS intro, g.infoBasic AS basic" +
             ", g.infoNotice AS notice, g.traffic AS traffic, g.exclusionStatus AS exclusionStatus" +
