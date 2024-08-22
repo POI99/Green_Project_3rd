@@ -165,7 +165,7 @@ public class LoginController {
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = PostSmsSendResponseDto.class)))
     public ResponseEntity<? super PostSmsSendResponseDto> sendOneOwner(@RequestParam String ownerPhone) {
-        return service.sendOne(ownerPhone);
+        return service.sendOneOwner(ownerPhone);
     }
 
     @PostMapping("/owner/check-sms")
@@ -176,7 +176,7 @@ public class LoginController {
     public ResponseEntity<? super PostSmsCheckResponseDto> smsCheckOwner(
             @RequestParam String ownerPhone, @RequestParam int phoneKey)
     {
-        return service.checkPhone(ownerPhone, phoneKey);
+        return service.checkPhoneOwner(ownerPhone, phoneKey);
     }
 
     @PostMapping("/owner/mail-send")
@@ -185,7 +185,7 @@ public class LoginController {
             content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = PostMailSendResponseDto.class)))
     public ResponseEntity<? super PostMailSendResponseDto> sendMailOwner(@RequestParam String ownerEmail) {
-        return service.sendAuthCode(ownerEmail);
+        return service.sendAuthCodeOwner(ownerEmail);
     }
 
     @PostMapping("/owner/mail-check")
@@ -196,7 +196,7 @@ public class LoginController {
     public ResponseEntity<? super PostMailCheckResponseDto> mailCheckOwner(
             @RequestParam String ownerEmail, @RequestParam int emailKey)
     {
-        return service.checkCode(ownerEmail, emailKey);
+        return service.checkCodeOwner(ownerEmail, emailKey);
     }
 
 }
