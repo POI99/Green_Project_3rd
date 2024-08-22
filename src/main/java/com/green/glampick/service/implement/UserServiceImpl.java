@@ -248,16 +248,14 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(CommonErrorCode.MNF);
         }
 
-        ReviewEntity reviewEntity = new ReviewEntity();
-        try {
-            reviewRepository.findById(dto.getReviewId());
-            if (dto.getReviewId() == 0) {
-                throw new CustomException(UserErrorCode.NR);
-            }
-            List<ReviewImageEntity> list = reviewImageRepository.findByReviewEntity(reviewEntity);
 
-            for (int i = 0; i < list.size(); i++) {
-                reviewImageRepository.deleteById(list.get(i).getReviewImageId());
+        try {
+            ReviewEntity reviewEntity = reviewRepository.findById(dto.getReviewId())
+                    .orElseThrow(() -> new CustomException(UserErrorCode.NR));
+            List<ReviewImageEntity> list = reviewImageRepository.findByReviewEntityReviewId(dto.getReviewId());
+
+            for (ReviewImageEntity reviewImageEntity : list) {
+                reviewImageRepository.deleteById(reviewImageEntity.getReviewImageId());
             }
             reviewRepository.deleteById(dto.getReviewId());
             reviewRepository.findStarPointAvg();
