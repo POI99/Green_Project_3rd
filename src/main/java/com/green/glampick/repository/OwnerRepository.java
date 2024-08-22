@@ -5,6 +5,7 @@ import com.green.glampick.entity.OwnerEntity;
 import com.green.glampick.dto.object.owner.GetCancelDto;
 import com.green.glampick.dto.object.owner.GetRevenue;
 import com.green.glampick.dto.object.owner.GetStarHeart;
+import com.green.glampick.entity.UserEntity;
 import com.green.glampick.repository.resultset.GetDeleteOwnerListResultSet;
 import com.green.glampick.repository.resultset.OwnerInfoResultSet;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +21,10 @@ public interface OwnerRepository extends JpaRepository<OwnerEntity, Long> {
 
     OwnerEntity findByOwnerEmail(String ownerEmail);
     OwnerEntity findByOwnerId(Long ownerId);
+    OwnerEntity findByOwnerPhone(String ownerPhone);
+
+    OwnerEntity findByOwnerNameAndOwnerPhone(String ownerName, String ownerPhone);
+    OwnerEntity findByOwnerEmailAndOwnerName(String ownerEmail, String ownerName);
 
     @Modifying
     @Transactional
